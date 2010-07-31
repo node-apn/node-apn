@@ -26,6 +26,10 @@ exports.create = function (optionArgs) {
 		}
 	}
 	
+	self.socket.on('connect', function() { console.log("connect."); });
+	self.socket.on('data', function(data) {  });
+	self.socket.on('end', function () { console.log('closed'); self.socket.end() });
+	
 	fs.readFile(options['cert'], function(err, data) {
 		if(err) {
 			throw err;
@@ -51,9 +55,6 @@ exports.create = function (optionArgs) {
 	this.startSocket = function () {
 		self.socket.connect(options['port'], options['gateway']);
 		self.socket.setSecure(self.credentials);
-		self.socket.on('connect', function() { console.log("connect." + self.socket.secure + "."); });
-		self.socket.on('data', function(data) {  });
-		self.socket.on('close', function () { console.log('closed'); });
 	}
 	
 	this.sendMessage = function (device, note) {
@@ -69,6 +70,9 @@ exports.create = function (optionArgs) {
 		data.write(message, pos);
 		
 		if(self.socket.readyState != 'open') {
+			if(self.socket.readyState == 'closed' && hasKey && hasCert) {
+				self.startSocket();
+			}
 			self.socket.on('connect', 
 				function() { 
 					self.socket.write(data); 
@@ -89,23 +93,21 @@ exports.device = function (token) {
 	var self = this;
 	this.token = token;
 	
-	this.hexToken = function() { return tokToHex(self.token) };
-}
-
-function tokToHex(token) {
-	token = token.replace(/\s/g, "");
-	hexToken = "";
-	for(var i=0; i < token.length; i+=2) {
-		word = token[i];
-		if((i + 1) >= token.length || typeof(token[i+1]) === undefined) {
-			word += '0';
+	this.hexToken = function() { 
+		token = self.token.replace(/\s/g, "");
+		hexToken = "";
+		for(var i=0; i < token.length; i+=2) {
+			word = token[i];
+			if((i + 1) >= token.length || typeof(token[i+1]) === undefined) {
+				word += '0';
+			}
+			else {
+				word += token[i+1];
+			}
+			hexToken += String.fromCharCode(parseInt(word, 16));
 		}
-		else {
-			word += token[i+1];
-		}
-		hexToken += String.fromCharCode(parseInt(word, 16));
-	}
-	return hexToken;
+		return hexToken;
+	};
 }
 
 function binLength(string) {
@@ -113,6 +115,3 @@ function binLength(string) {
 	var retVal = String.fromCharCode((length >> 8), (length & 0xff));
 	return retVal;
 }
-
-//createSocket();
-//sendMessage();
