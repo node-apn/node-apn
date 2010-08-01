@@ -39,7 +39,7 @@ exports.create = function (optionArgs) {
 		self.credentials.context.setCert(data.toString());
 		hasCert = true;
 		if(hasCert && hasKey) {
-			self.startSocket();
+			startSocket();
 		}
 	});
 
@@ -50,11 +50,11 @@ exports.create = function (optionArgs) {
 		self.credentials.context.setKey(data.toString());
 		hasKey = true;
 		if(hasCert && hasKey) {
-			self.startSocket();
+			startSocket();
 		}
 	});
 	
-	this.startSocket = function () {
+	var startSocket = function () {
 		self.socket.connect(options['port'], options['gateway']);
 		self.socket.setSecure(self.credentials);
 	}
@@ -89,7 +89,7 @@ exports.create = function (optionArgs) {
 		
 		if(self.socket.readyState != 'open') {
 			if(self.socket.readyState == 'closed' && hasKey && hasCert) {
-				self.startSocket();
+				startSocket();
 			}
 			self.socket.on('connect', 
 				function() { 
