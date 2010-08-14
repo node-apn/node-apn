@@ -1,10 +1,11 @@
 var net = require('net');
+var EventEmitter = require('events').EventEmitter;
 var crypto = require('crypto');
 var sys = require('sys');
 var fs = require('fs');
 var Buffer = require('buffer').Buffer;
 
-exports.create = function (optionArgs) {
+var Connection = function (optionArgs) {
 	this.socket = new net.Stream();
 	this.credentials = crypto.createCredentials();
 
@@ -16,6 +17,7 @@ exports.create = function (optionArgs) {
 					, gateway: 'gateway.push.apple.com' /* gateway address */
 					, port: 2195 /* gateway port */
 					, enhanced: false /* enable enhanced format */
+					, errorCallback: undefined /* Callback when error occurs */
 					, feedback: false /* enable feedback service, set to callback */
 					, feedbackInterval: 3600 /* interval in seconds to connect to feedback service */
 					};
@@ -29,7 +31,7 @@ exports.create = function (optionArgs) {
 	}
 	
 	self.socket.on('connect', function() { console.log("connect."); });
-	self.socket.on('data', function(data) { /* Handle error data sent back */ });
+	self.socket.on('data', function(data) { handleTransmissionError(data); });
 	self.socket.on('end', function () { console.log('closed'); self.socket.end(); });
 	
 	fs.readFile(options['cert'], function(err, data) {
@@ -87,6 +89,12 @@ exports.create = function (optionArgs) {
 		pos += data.write(int16val(message.length), pos, 'binary');
 		pos += data.write(message, pos);
 		
+		// Generate our own identifiers?
+		// Need to check notification length at some point
+		// Push to array
+		// If array exceeds a certain length then pop and item off
+		// If error occurs then slice array and resend all stored notes.
+		
 		if(self.socket.readyState != 'open') {
 			if(self.socket.readyState == 'closed' && hasKey && hasCert) {
 				startSocket();
@@ -101,7 +109,16 @@ exports.create = function (optionArgs) {
 			self.socket.write(data);
 		}
 	}
+	
+	var handleTransmissionEror = function() {
+		
+	}
 }
+
+Connection.prototype = new EventEmitter;
+Connection.prototype.constructor = Connection;
+
+exports.connection = Connection;
 
 exports.notification = function () {
 	this.payload = {aps: {}};
