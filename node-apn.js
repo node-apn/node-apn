@@ -29,38 +29,34 @@ var Connection = function (optionArgs) {
 			if (optionArgs[k] !== undefined) options[k] = optionArgs[k];
 		}
 	}
-	
-	self.socket.on('connect', function() { console.log("connect."); });
-	self.socket.on('data', function(data) { handleTransmissionError(data); });
-	self.socket.on('end', function () { console.log('closed'); self.socket.end(); });
-	
-	fs.readFile(options['cert'], function(err, data) {
-		if(err) {
-			throw err;
-		}
-		self.credentials.context.setCert(data.toString());
-		hasCert = true;
-		if(hasCert && hasKey) {
-			startSocket();
-		}
-	});
-
-	fs.readFile(options['key'], function(err, data) {
-		if(err) {
-			throw err;
-		}
-		self.credentials.context.setKey(data.toString());
-		hasKey = true;
-		if(hasCert && hasKey) {
-			startSocket();
-		}
-	});
-	
+		
 	var startSocket = function () {
 		self.socket.connect(options['port'], options['gateway']);
 		self.socket.setSecure(self.credentials);
 	}
 	
+	self.socket.on('connect', function() { console.log("connect."); });
+	self.socket.on('data', function(data) { handleTransmissionError(data); });
+	self.socket.on('end', function () { console.log('closed'); self.socket.end(); });
+	
+	var connect = invoke_after(startSocket);
+	
+	fs.readFile(options['cert'], connect(function(err, data) {
+		if(err) {
+			throw err;
+		}
+		self.credentials.context.setCert(data.toString());
+		hasCert = true;
+	}));
+
+	fs.readFile(options['key'], connect(function(err, data) {
+		if(err) {
+			throw err;
+		}
+		self.credentials.context.setKey(data.toString());
+		hasKey = true;
+	}));
+
 	this.sendNotification = function (note) {
 		var hexTok = note.device.hexToken();
 		var message = JSON.stringify(note.payload);
@@ -154,4 +150,15 @@ function int16val(number) {
 
 function int32val(number) {
 	return String.fromCharCode((number >> 24), ((number >> 16) & 0xff), ((number >> 8) & 0xff), (number & 0xfF));
+}
+
+function invoke_after(callback) {
+	n = 0;
+	return function (delegate) {
+		n++;
+		return function() {
+			delegate.apply(delegate, arguments);
+			if(--n == 0) callback();
+		};
+	};
 }
