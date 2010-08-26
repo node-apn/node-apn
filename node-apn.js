@@ -107,8 +107,9 @@ var Connection = function (optionArgs) {
 		}
 	}
 	
-	var handleTransmissionEror = function() {
 		
+	var handleTransmissionError = function(data) {
+		console.log(data);
 	}
 }
 
