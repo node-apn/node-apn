@@ -66,6 +66,8 @@ var Connection = function (optionArgs) {
 		var messageLength = Buffer.byteLength(message);
 		var pos = 0;
 		
+		// Check notification length here. Return non-zero as error
+		
 		note._uid = this.currentId++;
 		
 		if(options.enhanced) {
@@ -94,7 +96,6 @@ var Connection = function (optionArgs) {
 		pos += data.write(int16val(messageLength), pos, 'binary');
 		pos += data.write(message, pos);
 		
-		// Need to check notification length at some point
 		// If error occurs then slice array and resend all stored notes.
 		
 		if(self.socket.readyState != 'open') {
