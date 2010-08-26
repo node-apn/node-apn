@@ -60,10 +60,11 @@ var Connection = function (optionArgs) {
 	this.sendNotification = function (note) {
 		var hexTok = note.device.hexToken();
 		var message = JSON.stringify(note.payload);
+		var messageLength = Buffer.byteLength(message);
 		var pos = 0;
 		
 		if(options.enhanced) {
-			var data = new Buffer(1 + 4 + 4 + 2 + hexTok.length + 2 + message.length);
+			var data = new Buffer(1 + 4 + 4 + 2 + hexTok.length + 2 + messageLength);
 			// Command
 			data[pos] = 1;
 			pos++;
@@ -75,14 +76,14 @@ var Connection = function (optionArgs) {
 			pos += data.write(int32val(note.expiry), pos, 'binary');
 		}
 		else {
-			var data = new Buffer(1 + 2 + hexTok.length + 2 + message.length);
+			var data = new Buffer(1 + 2 + hexTok.length + 2 + messageLength);
 			data[pos] = 0;
 			pos++;
 		}
 		
 		pos += data.write(int16val(hexTok.length), pos, 'binary');
 		pos += data.write(hexTok, pos, 'binary');
-		pos += data.write(int16val(message.length), pos, 'binary');
+		pos += data.write(int16val(messageLength), pos, 'binary');
 		pos += data.write(message, pos);
 		
 		// Generate our own identifiers?
