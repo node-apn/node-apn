@@ -9,6 +9,7 @@ var Connection = function (optionArgs) {
 	this.socket = new net.Stream();
 	this.credentials = crypto.createCredentials();
 	this.currentId = 0;
+	this.cachedNotes = [];
 
 	var self = this;
 	var hasKey = hasCert = false;
@@ -21,6 +22,7 @@ var Connection = function (optionArgs) {
 					, errorCallback: undefined /* Callback when error occurs */
 					, feedback: false /* enable feedback service, set to callback */
 					, feedbackInterval: 3600 /* interval in seconds to connect to feedback service */
+					, cacheLength: 5 /* Number of notifications to cache for response */
 					};
 	
 	if (optionArgs) {
@@ -77,6 +79,9 @@ var Connection = function (optionArgs) {
 			
 			// Expiry
 			pos += data.write(int32val(note.expiry), pos, 'binary');
+			
+			self.cachedNotes.push(note);
+			tidyCachedNotes();
 		}
 		else {
 			var data = new Buffer(1 + 2 + hexTok.length + 2 + messageLength);
@@ -90,8 +95,6 @@ var Connection = function (optionArgs) {
 		pos += data.write(message, pos);
 		
 		// Need to check notification length at some point
-		// Push to array
-		// If array exceeds a certain length then pop and item off
 		// If error occurs then slice array and resend all stored notes.
 		
 		if(self.socket.readyState != 'open') {
@@ -109,6 +112,12 @@ var Connection = function (optionArgs) {
 		}
 	}
 	
+	var tidyCachedNotes = function() {
+		// Maybe a timestamp should be stored for each note and kept for a duration?
+		if(self.cachedNotes.length > options.cacheLength) {
+			self.cachedNotes.shift();
+		}
+	}
 		
 	var handleTransmissionError = function(data) {
 		console.log(data);
