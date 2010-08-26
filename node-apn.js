@@ -8,6 +8,7 @@ var Buffer = require('buffer').Buffer;
 var Connection = function (optionArgs) {
 	this.socket = new net.Stream();
 	this.credentials = crypto.createCredentials();
+	this.currentId = 0;
 
 	var self = this;
 	var hasKey = hasCert = false;
@@ -63,6 +64,8 @@ var Connection = function (optionArgs) {
 		var messageLength = Buffer.byteLength(message);
 		var pos = 0;
 		
+		note._uid = this.currentId++;
+		
 		if(options.enhanced) {
 			var data = new Buffer(1 + 4 + 4 + 2 + hexTok.length + 2 + messageLength);
 			// Command
@@ -70,7 +73,7 @@ var Connection = function (optionArgs) {
 			pos++;
 			
 			// Identifier
-			pos += data.write(int32val(note.identifier), pos, 'binary');
+			pos += data.write(int32val(note._uid), pos, 'binary');
 			
 			// Expiry
 			pos += data.write(int32val(note.expiry), pos, 'binary');
@@ -86,7 +89,6 @@ var Connection = function (optionArgs) {
 		pos += data.write(int16val(messageLength), pos, 'binary');
 		pos += data.write(message, pos);
 		
-		// Generate our own identifiers?
 		// Need to check notification length at some point
 		// Push to array
 		// If array exceeds a certain length then pop and item off
