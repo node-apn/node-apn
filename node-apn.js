@@ -121,7 +121,28 @@ var Connection = function (optionArgs) {
 	}
 		
 	var handleTransmissionError = function(data) {
-		console.log(data);
+		// Need to check message that errors
+		//	return failed notification to owner
+		//	resend all following notifications
+		if(data[0] == 8) {
+			var currentCache = self.cachedNotes;
+			self.cachedNotes = [];
+			self.socket.end();
+			// This is an error condition
+			var errorCode = data[1];
+			var identifier = int32(data.slice(2,6));
+			while(currentCache.length) {
+				note = currentCache.shift();
+				if(note['_uid'] == identifier) {
+					break;
+				}
+			}
+			// Notify callback of failed notification
+			while(currentCache.length) {
+				note = currentCache.shift();
+				self.sendNotification(note);
+			}
+		}
 	}
 }
 
@@ -164,6 +185,10 @@ function int16val(number) {
 
 function int32val(number) {
 	return String.fromCharCode((number >> 24), ((number >> 16) & 0xff), ((number >> 8) & 0xff), (number & 0xfF));
+}
+
+function int32(bytes) {
+	return (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
 }
 
 function invoke_after(callback) {
