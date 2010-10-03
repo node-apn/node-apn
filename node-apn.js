@@ -35,10 +35,9 @@ var Connection = function (optionArgs) {
 		
 	var startSocket = function () {
 		self.socket.connect(options['port'], options['gateway']);
-		self.socket.setSecure(self.credentials);
 	}
 	
-	self.socket.on('connect', function() { console.log("connect."); });
+	self.socket.on('connect', function() { console.log("connect."); self.socket.setSecure(self.credentials); });
 	self.socket.on('data', function(data) { handleTransmissionError(data); });
 	self.socket.on('end', function () { console.log('closed'); self.socket.end(); });
 	
