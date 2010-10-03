@@ -192,7 +192,7 @@ function int32(bytes) {
 }
 
 function invoke_after(callback) {
-	n = 0;
+	var n = 0;
 	return function (delegate) {
 		n++;
 		return function() {
