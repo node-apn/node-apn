@@ -209,6 +209,10 @@ exports.feedback = function (optionArgs) {
 	var self = this;
 	var hasKey = hasCert = false;
 	
+	var responsePacketLength = 38;	
+	var readBuffer = new Buffer(responsePacketLength);
+	var readLength = 0;
+	
 	var options =	{ cert: 'cert.pem' /* Certificate file */
 					, key:	'key.pem'  /* Key file */
 					, address: 'feedback.push.apple.com' /* feedback address */
@@ -272,7 +276,37 @@ exports.feedback = function (optionArgs) {
 	}
 	
 	var processData = function(data) {
+		// Need to parse this data in correct lengths;
+		var pos = 0;
+		if(readLength > 0) {
+			data.copy(readBuffer, readLength, 0, 38-readLength);
+			decodeResponse(readBuffer, 0);
+			pos = responsePacketLength-readLength;
+			readLength = 0;
+		}
+		while(pos<data.length-1) {
+			if((data.length-pos) < responsePacketLength) {
+				//Buffer remaining data until next time
+				data.copy(readBuffer, 0, pos);
+				readLength = data.length - pos;
+				break;
+			}
+			decodeResponse(data, pos);
+			pos += responsePacketLength;
+		}
+	}
+	
+	var decodeResponse = function(data, start) {
+		time = bytes2int(data, 4, start);
+		start += 4;
+		len  = bytes2int(data, 2, start);
+		start += 2;
+		tok  = new Buffer(len);
+		data.copy(tok, 0, start, start+len);
 		
+		if(typeof options['feedback'] == 'function') {
+			options['feedback'](time, tok);
+		}
 	}
 }
 
@@ -285,11 +319,12 @@ function int2buf(number, buffer, start, length) {
 	return length+1;
 }
 
-function bytes2int(bytes, length) {
+function bytes2int(bytes, length, start) {
+	if(start === undefined) start = 0;
 	var num = 0;
 	length -= 1;
 	for(var i=0; i<=length; i++) {
-		num += (bytes[i] << ((length - i) * 8));
+		num += (bytes[start+i] << ((length - i) * 8));
 	}
 	return num;
 }
