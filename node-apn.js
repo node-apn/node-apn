@@ -1,5 +1,4 @@
 var net = require('net');
-var EventEmitter = require('events').EventEmitter;
 var crypto = require('crypto');
 var sys = require('sys');
 var fs = require('fs');
@@ -148,9 +147,6 @@ var Connection = function (optionArgs) {
 		}
 	}
 }
-
-Connection.prototype = new EventEmitter;
-Connection.prototype.constructor = Connection;
 
 exports.connection = Connection;
 
