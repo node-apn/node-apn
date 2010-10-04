@@ -299,7 +299,7 @@ exports.feedback = function (optionArgs) {
 		data.copy(tok, 0, start, start+len);
 		
 		if(typeof options['feedback'] == 'function') {
-			options['feedback'](time, tok);
+			options['feedback'](time, new exports.device().setToken(tok));
 		}
 	}
 }
