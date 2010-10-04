@@ -19,8 +19,6 @@ var Connection = function (optionArgs) {
 					, port: 2195 /* gateway port */
 					, enhanced: false /* enable enhanced format */
 					, errorCallback: undefined /* Callback when error occurs */
-					, feedback: false /* enable feedback service, set to callback */
-					, feedbackInterval: 3600 /* interval in seconds to connect to feedback service */
 					, cacheLength: 5 /* Number of notifications to cache for response */
 					};
 	
