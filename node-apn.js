@@ -76,10 +76,10 @@ var Connection = function (optionArgs) {
 			pos++;
 			
 			// Identifier
-			pos += data.write(int32val(note._uid), pos, 'binary');
+			pos += data.write(int2bytes(note._uid, 4), pos, 'binary');
 			
 			// Expiry
-			pos += data.write(int32val(note.expiry), pos, 'binary');
+			pos += data.write(int2bytes(note.expiry, 4), pos, 'binary');
 			
 			self.cachedNotes.push(note);
 			tidyCachedNotes();
@@ -90,9 +90,9 @@ var Connection = function (optionArgs) {
 			pos++;
 		}
 		
-		pos += data.write(int16val(hexTok.length), pos, 'binary');
+		pos += data.write(int2bytes(hexTok.length, 2), pos, 'binary');
 		pos += data.write(hexTok, pos, 'binary');
-		pos += data.write(int16val(messageLength), pos, 'binary');
+		pos += data.write(int2bytes(messageLength, 2), pos, 'binary');
 		pos += data.write(message, pos);
 		
 		// If error occurs then slice array and resend all stored notes.
@@ -129,7 +129,7 @@ var Connection = function (optionArgs) {
 			self.socket.end();
 			// This is an error condition
 			var errorCode = data[1];
-			var identifier = int32(data.slice(2,6));
+			var identifier = bytes2int(data.slice(2,6), 4);
 			while(currentCache.length) {
 				note = currentCache.shift();
 				if(note['_uid'] == identifier) {
@@ -178,16 +178,23 @@ exports.device = function (token) {
 	};
 }
 
-function int16val(number) {
-	return String.fromCharCode(((number >> 8) & 0xff), (number & 0xff));
+
+function int2bytes(number, length) {
+	var chars = [];
+	for(var i=0; i<length; i++) {
+		chars.unshift(number & 0xff);
+		number = number >> 8;
+	}
+	return String.fromCharCode.apply(String, chars);
 }
 
-function int32val(number) {
-	return String.fromCharCode((number >> 24), ((number >> 16) & 0xff), ((number >> 8) & 0xff), (number & 0xfF));
-}
-
-function int32(bytes) {
-	return (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
+function bytes2int(bytes, length) {
+	var num = 0;
+	length -= 1;
+	for(var i=0; i<=length; i++) {
+		num += (bytes[i] << ((length - i) * 8));
+	}
+	return num;
 }
 
 function invoke_after(callback) {
