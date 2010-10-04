@@ -130,6 +130,7 @@ var Connection = function (optionArgs) {
 			// This is an error condition
 			var errorCode = data[1];
 			var identifier = bytes2int(data.slice(2,6), 4);
+			var note = undefined;
 			while(currentCache.length) {
 				note = currentCache.shift();
 				if(note['_uid'] == identifier) {
@@ -137,6 +138,9 @@ var Connection = function (optionArgs) {
 				}
 			}
 			// Notify callback of failed notification
+			if(errorCallback !== undefined && typeof errorCallback == 'function') {
+				errorCallback(errorCode, note);
+			}
 			while(currentCache.length) {
 				note = currentCache.shift();
 				self.sendNotification(note);
