@@ -161,9 +161,9 @@ exports.notification = function () {
 	this.device;
 }
 
-exports.device = function (token) {
+exports.device = function () {
 	var self = this;
-	this.token = parseToken(token);
+	self.token = undefined;
 	
 	function parseToken(token) {
 		token = token.replace(/\s/g, "");
@@ -180,6 +180,14 @@ exports.device = function (token) {
 			hexToken[i/2] = parseInt(word, 16);
 		}
 		return hexToken;
+	}
+	
+	self.setToken = function (newToken, ascii) {
+		if(ascii) {
+			newToken = parseToken(newToken);
+		}
+		self.token = newToken;
+		return self;
 	}
 	
 	this.hexToken = function () {
