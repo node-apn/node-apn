@@ -178,6 +178,79 @@ exports.device = function (token) {
 	};
 }
 
+exports.feedback = function (optionArgs) {
+	this.socket = new net.Stream();
+	this.credentials = crypto.createCredentials();
+
+	var self = this;
+	var hasKey = hasCert = false;
+	
+	var options =	{ cert: 'cert.pem' /* Certificate file */
+					, key:	'key.pem'  /* Key file */
+					, address: 'feedback.push.apple.com' /* feedback address */
+					, port: 2196 /* feedback port */
+					, feedback: false /* enable feedback service, set to callback */
+					, interval: 3600 /* interval in seconds to connect to feedback service */
+					};
+	
+	if (optionArgs) {
+		var keys = Object.keys(options);
+		for (var i = 0; i < keys.length; i++) {
+			var k = keys[i];
+			if (optionArgs[k] !== undefined) options[k] = optionArgs[k];
+		}
+	}
+		
+	var startSocket = function () {
+		self.socket.connect(options['port'], options['address']);
+	}
+	
+	self.socket.on('connect', function() { self.socket.setSecure(self.credentials); });
+	self.socket.on('data', function(data) { processData(data); });
+	self.socket.on('end', function () { self.socket.end(); });
+	
+	var connect = invoke_after(startSocket);
+	
+	fs.readFile(options['cert'], connect(function(err, data) {
+		if(err) {
+			throw err;
+		}
+		self.credentials.context.setCert(data.toString());
+		hasCert = true;
+	}));
+
+	fs.readFile(options['key'], connect(function(err, data) {
+		if(err) {
+			throw err;
+		}
+		self.credentials.context.setKey(data.toString());
+		hasKey = true;
+	}));
+	
+	this.request = function () {
+		if(self.socket.readyState == 'closed') {
+			if(!hasKey || !hasCert) {
+				// Connection will be made once both key and cert are available
+				return;
+			}
+			startSocket();
+		}
+	}
+	
+	this.cancel = function () {
+		if(this.interval !== undefined) {
+			clearInterval(this.interval);
+		}
+	}
+	
+	if(options['interval'] > 0) {
+		this.interval = setInterval(this.request, options['interval'] * 1000);
+	}
+	
+	var processData = function(data) {
+		
+	}
+}
 
 function int2bytes(number, length) {
 	var chars = [];
