@@ -60,7 +60,7 @@ var Connection = function (optionArgs) {
 	}));
 
 	this.sendNotification = function (note) {
-		var hexTok = note.device.hexToken();
+		var token = note.device.token;
 		var message = JSON.stringify(note.payload);
 		var messageLength = Buffer.byteLength(message);
 		var pos = 0;
@@ -70,7 +70,7 @@ var Connection = function (optionArgs) {
 		note._uid = this.currentId++;
 		
 		if(options.enhanced) {
-			var data = new Buffer(1 + 4 + 4 + 2 + hexTok.length + 2 + messageLength);
+			var data = new Buffer(1 + 4 + 4 + 2 + token.length + 2 + messageLength);
 			// Command
 			data[pos] = 1;
 			pos++;
@@ -85,14 +85,14 @@ var Connection = function (optionArgs) {
 			tidyCachedNotes();
 		}
 		else {
-			var data = new Buffer(1 + 2 + hexTok.length + 2 + messageLength);
+			var data = new Buffer(1 + 2 + token.length + 2 + messageLength);
 			data[pos] = 0;
 			pos++;
 		}
 		
 		pos += data.write(int2bytes(hexTok.length, 2), pos, 'binary');
-		pos += data.write(hexTok, pos, 'binary');
 		pos += data.write(int2bytes(messageLength, 2), pos, 'binary');
+		pos += token.copy(data, pos, 0);
 		pos += data.write(message, pos);
 		
 		// If error occurs then slice array and resend all stored notes.
@@ -159,11 +159,12 @@ exports.notification = function () {
 
 exports.device = function (token) {
 	var self = this;
-	this.token = token;
+	this.token = parseToken(token);
 	
-	this.hexToken = function() { 
-		token = self.token.replace(/\s/g, "");
-		hexToken = "";
+	function parseToken(token) {
+		token = token.replace(/\s/g, "");
+		length = Number(token.length / 2);
+		hexToken = new Buffer(length);
 		for(var i=0; i < token.length; i+=2) {
 			word = token[i];
 			if((i + 1) >= token.length || typeof(token[i+1]) === undefined) {
@@ -172,10 +173,21 @@ exports.device = function (token) {
 			else {
 				word += token[i+1];
 			}
-			hexToken += String.fromCharCode(parseInt(word, 16));
+			hexToken[i/2] = parseInt(word, 16);
 		}
 		return hexToken;
-	};
+	}
+	
+	this.hexToken = function () {
+		var out = [],
+			len = this.token.length;
+		for (var i = 0; i < len; i++) {
+			n = this.token[i];
+			if (n < 16) out[i] = "0" + n.toString(16);
+			else out[i] = n.toString(16);
+		}
+		return out.join("");
+	}
 }
 
 exports.feedback = function (optionArgs) {
