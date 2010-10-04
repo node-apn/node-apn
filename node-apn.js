@@ -76,10 +76,10 @@ var Connection = function (optionArgs) {
 			pos++;
 			
 			// Identifier
-			pos += data.write(int2bytes(note._uid, 4), pos, 'binary');
+			pos += int2buf(note._uid, data, pos, 4);
 			
 			// Expiry
-			pos += data.write(int2bytes(note.expiry, 4), pos, 'binary');
+			pos += int2buf(note.expiry, data, pos, 4);
 			
 			self.cachedNotes.push(note);
 			tidyCachedNotes();
@@ -90,9 +90,9 @@ var Connection = function (optionArgs) {
 			pos++;
 		}
 		
-		pos += data.write(int2bytes(hexTok.length, 2), pos, 'binary');
-		pos += data.write(int2bytes(messageLength, 2), pos, 'binary');
+		pos += int2buf(token.length, data, pos, 2);
 		pos += token.copy(data, pos, 0);
+		pos += int2buf(messageLength, data, pos, 2);
 		pos += data.write(message, pos);
 		
 		// If error occurs then slice array and resend all stored notes.
@@ -264,13 +264,13 @@ exports.feedback = function (optionArgs) {
 	}
 }
 
-function int2bytes(number, length) {
-	var chars = [];
-	for(var i=0; i<length; i++) {
-		chars.unshift(number & 0xff);
+function int2buf(number, buffer, start, length) {
+	length -= 1;
+	for(var i=0; i<=length; i++) {
+		buffer[start+length-i] = number & 0xff;
 		number = number >> 8;
 	}
-	return String.fromCharCode.apply(String, chars);
+	return length+1;
 }
 
 function bytes2int(bytes, length) {
