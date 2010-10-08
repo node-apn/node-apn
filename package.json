@@ -1,0 +1,16 @@
+{
+  "name": "apn",
+  "description": "An interface to the Apple Push Notification service for Node.js",
+  "version": "1.0.0",
+  "author": "Andrew Naylor <argon@mkbot.net>",
+  "contributors": [ 
+    { "name": "Andrew Naylor", "email": "argon@mkbot.net" }
+  ],
+  "keywords": ["apple", "push", "push notifications", "iOS", "apns"],
+  "main": "lib/apn.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/argon/node-apn.git"
+  },
+  "engines": { "node": ">= 0.2.0" }
+}
