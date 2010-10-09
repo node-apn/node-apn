@@ -11,20 +11,17 @@ A Node.js module for interfacing with the Apple Push Notification service.
 
 ## Installation
 
-npm:
+Via [npm][]:
 
 	$ npm install apn
 	
-git clone
+As a submodule of your project
 
-download tarball manually.
+	$ git submodule add http://github.com/argon/node-apn.git apn
+	$ git submodule update --init
 
 ## Usage
 ### Load in the module
-
-	var apns = require('./lib/apn');
-	
-If installed via npm:
 
 	var apns = require('apn');
 	
@@ -43,7 +40,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 	var apnsConnection = apns.connection(options);
 
 ### Sending a notification
-To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string or alternatively as a `Buffer` object containing the binary token, setting the second argument to `false`.
+To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string, or alternatively as a `Buffer` object containing the binary token, setting the second argument to `false`.
 
 	var myDevice = new apns.device(token /*, ascii=true*/);
 
@@ -63,6 +60,14 @@ The above options will compile the following dictionary to send to the device:
 
 	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"You have a new message"}}
 	
+### Handling Errors
+
+If the enhanced binary interface is enabled and an error occurs when sending a message then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with 2 arguments.
+
+1. The error number as returned from Apple. This can be compared to the predefined values in the `Errors` object.
+1. The notification object as it existed when the notification was converted and sent to the server.
+
+\* N.B.: The `cacheLength` option specifies the number of sent notifications which will be cached for error handling purposes. At present if more than the specified number of notifications have been sent between the incorrect notification being sent and the error being received then no resending will occur. This is only envisaged within very high volume environments and a higher cache number might be desired.
 ### Setting up the feedback service
 
 Apple recommends checking the feedback service periodically for a list of devices for which there were failed delivery attempts.
@@ -94,6 +99,8 @@ If you are using a development certificate you may wish to name them differently
 
 Written and maintained by [Andrew Naylor][mphys].
 
+Special thanks to [Ben Noordhuis][bnoordhuis] for `invoke_after` code.
+
 ## License
 
 Released under the MIT License
@@ -114,3 +121,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 [pl]: https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
 [mphys]: http://mphys.com
+[bnoordhuis]: http://bnoordhuis.nl
+[npm]: http://github.com/isaacs/npm
