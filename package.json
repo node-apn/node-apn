@@ -7,7 +7,7 @@
     { "name": "Andrew Naylor", "email": "argon@mkbot.net" }
   ],
   "keywords": ["apple", "push", "push notifications", "iOS", "apns"],
-  "main": "lib/apn.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "http://github.com/argon/node-apn.git"
