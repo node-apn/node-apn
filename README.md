@@ -123,3 +123,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [mphys]: http://mphys.com
 [bnoordhuis]: http://bnoordhuis.nl
 [npm]: http://github.com/isaacs/npm
+
+## Changelog
+
+1.0.1:
+
+* Moved some object methods into the prototype to save memory
+* Tidied up some connecting code
+* Introduced an `index.js` to make module loading tidier
+* Fixed a couple of typos. 
+
+1.0.0: 
+ 
+* Well I created a module; Version 0.0.0 had no code, and now it does, and it works, so that's pretty neat, right?
