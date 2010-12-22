@@ -126,6 +126,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.0.2:
+
+* Fixes critical issue with error callback not firing (Issue #1)
+
 1.0.1:
 
 * Moved some object methods into the prototype to save memory
