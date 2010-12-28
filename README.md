@@ -37,7 +37,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 				, cacheLength: 5 /* Notifications to cache for error purposes */
 				};
 	
-	var apnsConnection = apns.connection(options);
+	var apnsConnection = new apns.connection(options);
 
 ### Sending a notification
 To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string, or alternatively as a `Buffer` object containing the binary token, setting the second argument to `false`.
