@@ -126,6 +126,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.0.3:
+
+* Fixes a typo in the documentation in this very file
+
 1.0.2:
 
 * Fixes critical issue with error callback not firing (Issue #1)
