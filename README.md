@@ -126,6 +126,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.1.0:
+
+* First shot at node-0.4.0 compatibility with new tls API.
+* Fixed a bug with parsing device token which could cause an out-of-bounds error.
+
+1.0.4:
+
+* The 1.0.x tree is now a maintenance branch as the TLS API used has been deprecated as of node 0.4.0
+* Changed package.json to specify the inoperability of this version with node > 0.4.0
+
 1.0.3:
 
 * Fixes a typo in the documentation in this very file
