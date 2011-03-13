@@ -126,6 +126,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.0.5:
+
+* Fixed a bug with parsing device token which could cause an out-of-bounds error.
+
 1.0.4:
 
 * The 1.0.x tree is now a maintenance branch as the TLS API used has been deprecated as of node 0.4.0
