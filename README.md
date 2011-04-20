@@ -126,6 +126,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.1.1:
+
+* Fixes issue #6 where a socket emitting an error could bring down the whole node instance as the exception is uncaught.
+
 1.1.0:
 
 * First shot at node-0.4.0 compatibility with new tls API.
