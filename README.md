@@ -126,6 +126,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.0.7:
+
+* Addresses an issue if the socket disconnects with queued notifications it would be reinitialised before its teardown is completed leaving the system in an undefined state.
+
 1.0.6:
 
 * Fixes issue #6 where a socket emitting an error could bring down the whole node instance as the exception is uncaught.
