@@ -99,6 +99,8 @@ If you are using a development certificate you may wish to name them differently
 
 Written and maintained by [Andrew Naylor][mphys].
 
+Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle]
+
 Special thanks to [Ben Noordhuis][bnoordhuis] for `invoke_after` code.
 
 ## License
@@ -123,8 +125,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [mphys]: http://mphys.com
 [bnoordhuis]: http://bnoordhuis.nl
 [npm]: http://github.com/isaacs/npm
+[bobrik]: http://bobrik.name
+[dgthistle]: https://github.com/dgthistle
 
 ## Changelog
+
+1.1.3:
+
+* Fixes #11,#12,#13,#14: Ensure delivery of notifications to Apple even under heavy load.
 
 1.1.2:
 
