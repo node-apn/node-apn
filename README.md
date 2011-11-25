@@ -132,6 +132,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.1.4:
+
+* Fixes #15: Sending unified emoji via apn; Added encoding parameter when sending notification
+
 1.1.3:
 
 * Fixes #11,#12,#13,#14: Ensure delivery of notifications to Apple even under heavy load.
