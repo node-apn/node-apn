@@ -60,6 +60,8 @@ The above options will compile the following dictionary to send to the device:
 
 	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"You have a new message"}}
 	
+\* N.B.: If you wish to send notifications containing emoji or other multi-byte characters you will need to set `note.encoding = 'ucs2'`. This tells node to send the message with 16bit characters, however it also means your message payload will be limited to 127 characters.
+	
 ### Handling Errors
 
 If the enhanced binary interface is enabled and an error occurs when sending a message then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with 2 arguments.
