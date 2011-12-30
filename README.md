@@ -24,29 +24,39 @@ As a submodule of your project
 ### Load in the module
 
 	var apns = require('apn');
-	
+
+### Exported Objects
+- Connection
+- Notification
+- Device
+- Feedback
+- errors
+
 ### Connecting
 Create a new connection to the gateway server using a dictionary of options. The defaults are listed below:
 
-	options =   { cert: 'cert.pem' /* Certificate file */
-				, key:	'key.pem'  /* Key file */
-				, gateway: 'gateway.push.apple.com' /* gateway address */
-				, port: 2195 /* gateway port */
-				, enhanced: true /* enable enhanced format */
-				, errorCallback: undefined /* Callback when error occurs */
-				, cacheLength: 5 /* Notifications to cache for error purposes */
-				};
-	
-	var apnsConnection = new apns.connection(options);
+	var options = {
+		cert: 'cert.pem',                 /* Certificate file */
+		certData: null,                   /* Optional: if supplied uses this instead of Certificate File */
+		key:  'key.pem',                  /* Key file */
+		keyData: null,                    /* Optional: if supplied uses this instead of Key file */
+		gateway: 'gateway.push.apple.com',/* gateway address */
+		port: 2195,                       /* gateway port */
+		enhanced: true,                   /* enable enhanced format */
+		errorCallback: undefined,         /* Callback when error occurs */
+		cacheLength: 5                    /* Number of notifications to cache for error purposes */
+	};
+
+	var apnsConnection = new apns.Connection(options);
 
 ### Sending a notification
 To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string, or alternatively as a `Buffer` object containing the binary token, setting the second argument to `false`.
 
-	var myDevice = new apns.device(token /*, ascii=true*/);
+	var myDevice = new apns.Device(token /*, ascii=true*/);
 
 Next create a notification object and set parameters. See the [payload documentation][pl] for more details
 
-	var note = new apns.notification();
+	var note = new apns.Notification();
 	
 	note.badge = 3;
 	note.sound = "ping.aiff";
@@ -76,15 +86,18 @@ Apple recommends checking the feedback service periodically for a list of device
 
 Using the `Feedback` object it is possible to periodically query the server for the list. You should provide a function which will accept two arguments, the `time` returned by the server (epoch time) and a `Device` object containing the device token. You can also set the query interval in seconds. Again the default options are shown below.
 
-	options =	{ cert: 'cert.pem' /* Certificate file */
-				, key:	'key.pem'  /* Key file */
-				, address: 'feedback.push.apple.com' /* feedback address */
-				, port: 2196 /* feedback port */
-				, feedback: false /* callback function */
-				, interval: 3600 /* query interval in seconds */
-				};
+	var options = {
+		cert: 'cert.pem',                   /* Certificate file */
+		certData: null,                     /* Certificate file contents */
+		key:  'key.pem',                    /* Key file */
+		keyData: null,                      /* Key file contents */
+		address: 'feedback.push.apple.com', /* feedback address */
+		port: 2196,                         /* feedback port */
+		feedback: false,                    /* enable feedback service, set to callback */
+		interval: 3600                      /* interval in seconds to connect to feedback service */
+	};
 
-	var feedback = new apns.feedback(options);
+	var feedback = new apns.Feedback(options);
 
 ## Converting your APNs Certificate
 
