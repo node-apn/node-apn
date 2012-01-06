@@ -114,7 +114,7 @@ If you are using a development certificate you may wish to name them differently
 
 Written and maintained by [Andrew Naylor][mphys].
 
-Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle]
+Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark]
 
 Special thanks to [Ben Noordhuis][bnoordhuis] for `invoke_after` code.
 
@@ -139,11 +139,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [pl]: https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
 [mphys]: http://mphys.com
 [bnoordhuis]: http://bnoordhuis.nl
-[npm]: http://github.com/isaacs/npm
+[npm]: https://github.com/isaacs/npm
 [bobrik]: http://bobrik.name
 [dgthistle]: https://github.com/dgthistle
+[keithnlarsen]: https://github.com/keithnlarsen
+[mypark]: https://github.com/mypark
 
 ## Changelog
+
+1.1.5:
+
+* Feature: Certificate and Key data can be passed directly when creating a new connection instead of providing a file name on disk. (See: `certData` and `keyData` options)
+* Deliver whole write buffer if the socket is ready.
+* Fixed some global memory leaks.
+* Tidied up some code formatting glitches flagged by jslint
+* Fixes #16, #17, #18, #19, #20
 
 1.1.4:
 
