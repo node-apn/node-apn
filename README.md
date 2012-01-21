@@ -147,6 +147,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.1.6:
+* Fixes a regression from v1.1.5 causing connections to stall and messages to not be sent.
+
 1.1.5:
 
 * Feature: Certificate and Key data can be passed directly when creating a new connection instead of providing a file name on disk. (See: `certData` and `keyData` options)
