@@ -44,6 +44,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 		port: 2195,                       /* gateway port */
 		enhanced: true,                   /* enable enhanced format */
 		errorCallback: undefined,         /* Callback when error occurs */
+		successCallback: undefined	  /* Callback when notification is sent */
 		cacheLength: 5                    /* Number of notifications to cache for error purposes */
 	};
 
@@ -79,7 +80,28 @@ If the enhanced binary interface is enabled and an error occurs when sending a m
 1. The error number as returned from Apple. This can be compared to the predefined values in the `Errors` object.
 1. The notification object as it existed when the notification was converted and sent to the server.
 
+
+
 \* N.B.: The `cacheLength` option specifies the number of sent notifications which will be cached for error handling purposes. At present if more than the specified number of notifications have been sent between the incorrect notification being sent and the error being received then no resending will occur. This is only envisaged within very high volume environments and a higher cache number might be desired.
+
+### Extended Options while sending
+
+sendNotification can also take options as a second argument, which will override the one presented during the connection setup. This is well suited to web servers listening on an endpoint. When the server starts, create the apns connection with initial options. eg: for an express based app that responds to an endpoint when the notification is sent based on some query parameters:
+
+                                                             /* an express app sets apnsConnection,options on startup */
+        app.get('/:token', function(req,res){                /* an endpoint wants its success callback to send JSON   */
+                var note;                                    /* create a note, set device based like in earler eg's   */
+                var extendedOptions = _.extend(options,{     /* using a library like underscore.js to extend options  */
+                        errorCallback: onError(req,res),     /* in this case, errors are handled seperately           */
+                        successCallback: function(){         /* in its success, the request finally replies with JSON */
+                            res.send({note:note,sent:true}); 
+                        }
+                });
+                apnsConnection.sendNotification(note, extendedOptions);
+                                                             /* each sendNotification can now have it's own options   */
+        });
+
+
 ### Setting up the feedback service
 
 Apple recommends checking the feedback service periodically for a list of devices for which there were failed delivery attempts.
