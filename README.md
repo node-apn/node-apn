@@ -40,6 +40,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 		certData: null,                   /* Optional: if supplied uses this instead of Certificate File */
 		key:  'key.pem',                  /* Key file */
 		keyData: null,                    /* Optional: if supplied uses this instead of Key file */
+		passphrase: null,                 /* Optional: A passphrase for the Key file */
 		gateway: 'gateway.push.apple.com',/* gateway address */
 		port: 2195,                       /* gateway port */
 		enhanced: true,                   /* enable enhanced format */
@@ -91,6 +92,7 @@ Using the `Feedback` object it is possible to periodically query the server for 
 		certData: null,                     /* Certificate file contents */
 		key:  'key.pem',                    /* Key file */
 		keyData: null,                      /* Key file contents */
+		passphrase: null,                   /* Optional: A passphrase for the Key file */
 		address: 'feedback.push.apple.com', /* feedback address */
 		port: 2196,                         /* feedback port */
 		feedback: false,                    /* enable feedback service, set to callback */
