@@ -149,6 +149,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.1.7:
+* Fixes a problem with sockets being closed on transmission error causing EPIPE errors in node.
+* Issues #29, #30
+
 1.1.6:
 * Fixes a regression from v1.1.5 causing connections to stall and messages to not be sent.
 
