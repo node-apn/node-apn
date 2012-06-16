@@ -62,7 +62,7 @@ Next, create a notification object and set parameters. See the [payload document
 
 	var note = new apns.Notification();
 	
-	note.expiry = (Date.now() / 1000) + 3600; // Expires 1 hour from now.
+	note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
 	note.badge = 3;
 	note.sound = "ping.aiff";
 	note.alert = "You have a new message";
