@@ -135,7 +135,7 @@ If you are using a development certificate you may wish to name them differently
 
 Written and maintained by [Andrew Naylor][andrewnaylor].
 
-Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark]
+Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro]
 
 ## License
 
@@ -165,6 +165,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [dgthistle]: https://github.com/dgthistle
 [keithnlarsen]: https://github.com/keithnlarsen
 [mypark]: https://github.com/mypark
+[neoziro]: https://github.com/neoziro
 [q]: https://github.com/kriskowal/q
 
 ## Changelog
