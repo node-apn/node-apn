@@ -170,6 +170,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.2.1:
+
+* Earlier versions had some incorrect logic in the handling of reconnection. This should be fixed now
+* Issue #46 ```.clone()``` did not set the badge property correctly.
+
 1.2.0:
 
 * Complete rewrite of the connection handling.
