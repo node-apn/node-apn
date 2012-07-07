@@ -170,6 +170,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Changelog
 
+1.2.3:
+
+* Added some more error handling to the connection methods.
+* Fixed a problem where an error handler was not bound to the correct context and wouldn't fire.
+
+1.2.2:
+
+* Fixes issue #47, Syntax Error in feedback.js
+
 1.2.1:
 
 * Earlier versions had some incorrect logic in the handling of reconnection. This should be fixed now
