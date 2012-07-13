@@ -41,7 +41,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 		key:  'key.pem',                  /* Key file path */
 		keyData: null,                    /* String or Buffer containing key data, as certData */
 		passphrase: null,                 /* A passphrase for the Key file */
-		ca: null						  /* String or Buffer of CA data to use for the TLS connection */
+		ca: null,			  /* String or Buffer of CA data to use for the TLS connection */
 		gateway: 'gateway.push.apple.com',/* gateway address */
 		port: 2195,                       /* gateway port */
 		enhanced: true,                   /* enable enhanced format */
