@@ -18,6 +18,7 @@
   },
   "dependencies": {
   	"q": ">=0.8.5"
+  	"debug": "*"
   },
   "engines": { "node": ">= 0.6.6" },
   "license": "MIT"
