@@ -41,7 +41,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 		key:  'key.pem',                  /* Key file path */
 		keyData: null,                    /* String or Buffer containing key data, as certData */
 		passphrase: null,                 /* A passphrase for the Key file */
-		ca: null						  /* String or Buffer of CA data to use for the TLS connection */
+		ca: null,						  /* String or Buffer of CA data to use for the TLS connection */
 		gateway: 'gateway.push.apple.com',/* gateway address */
 		port: 2195,                       /* gateway port */
 		enhanced: true,                   /* enable enhanced format */
@@ -131,11 +131,17 @@ Now, in the directory containing cert.cer and key.p12 execute the following comm
 	
 If you are using a development certificate you may wish to name them differently to enable fast switching between development and production. The filenames are configurable within the module options, so feel free to name them something more appropriate.
 
+## Debugging
+
+If you experience difficulties sending notifications or using the feedback service you can enable debug messages within the library by running your application with `DEBUG=apn` or `DEBUG=apnfb`.
+
+You will need the `debug` module which can be installed with `npm install debug`.
+
 ## Credits
 
 Written and maintained by [Andrew Naylor][andrewnaylor].
 
-Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro]
+Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR]
 
 ## License
 
@@ -166,9 +172,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [keithnlarsen]: https://github.com/keithnlarsen
 [mypark]: https://github.com/mypark
 [neoziro]: https://github.com/neoziro
+[AsadR]: https://github.com/AsadR
 [q]: https://github.com/kriskowal/q
 
 ## Changelog
+
+1.2.4:
+
+* Fixed some typos in the feedback methods
+* Added some debug messages available during development
 
 1.2.3:
 
