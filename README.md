@@ -180,7 +180,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 1.2.4:
 
 * Fixed some typos in the feedback methods
-* Added some debug messages available during development
+* Added some debug messages available during development, see debug section above.
 
 1.2.3:
 
