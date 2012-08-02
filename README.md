@@ -133,7 +133,7 @@ If you are using a development certificate you may wish to name them differently
 
 ## Debugging
 
-If you experience difficulties sending notifications or using the feedback service you can enable debug messages within the library by running your application with `DEBUG=apn` or `DEBUG=apnfb`.
+If you experience difficulties sending notifications or using the feedback service you can enable debug messages within the library by running your application with `DEBUG=apn` or `DEBUG=apnfb` set as an environment variable.
 
 You will need the `debug` module which can be installed with `npm install debug`.
 
