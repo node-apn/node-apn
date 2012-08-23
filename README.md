@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/argon/node-apn.png)](http://travis-ci.org/argon/node-apn)
 #node-apn
 
 A Node.js module for interfacing with the Apple Push Notification service.
