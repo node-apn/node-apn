@@ -141,7 +141,7 @@ You will need the `debug` module which can be installed with `npm install debug`
 
 Written and maintained by [Andrew Naylor][andrewnaylor].
 
-Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR]
+Contributors: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR], [Nebojsa Sabovic][nsabovic]
 
 ## License
 
@@ -173,6 +173,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [mypark]: https://github.com/mypark
 [neoziro]: https://github.com/neoziro
 [AsadR]: https://github.com/AsadR
+[nsabovic]: https://github.com/nsabovic
 [q]: https://github.com/kriskowal/q
 
 ## Changelog
