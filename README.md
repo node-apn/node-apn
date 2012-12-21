@@ -109,6 +109,7 @@ Using the `Feedback` object it is possible to periodically query the server for 
 		address: 'feedback.push.apple.com', /* feedback address */
 		port: 2196,                         /* feedback port */
 		feedback: false,                    /* enable feedback service, set to callback */
+		batchFeedback: false,				/* if feedback should be called once per connection. */
 		interval: 3600                      /* interval in seconds to connect to feedback service */
 	};
 
