@@ -44,9 +44,12 @@ Create a new connection to the gateway server using a dictionary of options. The
 		ca: null,						  /* String or Buffer of CA data to use for the TLS connection */
 		gateway: 'gateway.push.apple.com',/* gateway address */
 		port: 2195,                       /* gateway port */
+		rejectUnauthorized: true,		  /* Value of rejectUnauthorized property to be passed through to tls.connect() */
 		enhanced: true,                   /* enable enhanced format */
 		errorCallback: undefined,         /* Callback when error occurs function(err,notification) */
 		cacheLength: 100                  /* Number of notifications to cache for error purposes */
+		autoAdjustCache: true,			  /* Whether the cache should grow in response to messages being lost after errors. */
+		connectionTimeout: 0 			  /* The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. */
 	};
 
 	var apnsConnection = new apns.Connection(options);
@@ -81,7 +84,9 @@ The above options will compile the following dictionary to send to the device:
 	
 ### Handling Errors
 
-If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with 2 arguments `(err, notification)`
+If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with 2 arguments `(err, notification)`. Alternatively it is possible to specify an error callback function on a notification-by-notification basis by setting the ```.errorCallback``` property on the notification object to the callback function before sending.
+
+**\*N.B.:** As of v1.2.5 a new events system has been implemented to provide more feedback to the application on the state of the connection. At present the ```errorCallback``` is still called in the following cases in addition to the new event system. It is strongly recommended that you migrate your application to use the new event system as the existing overloading of the ```errorCallback``` method will be deprecated and removed in future versions.
 
 If a notification fails to be sent because a connection error occurs then the `errorCallback` will be called for each notification waiting for the connection which failed. In this case the first parameter will be an Error object instead of an error number.
 
@@ -92,6 +97,28 @@ If a notification fails to be sent because a connection error occurs then the `e
 1. A connection error has occurred before the notification can be sent. `errorCallback(Error object, notification)`
 
 **\*N.B.:** The `cacheLength` option for the connection specifies the number of sent notifications which will be cached, on a FIFO basis for error handling purposes. If `cacheLength` is not set to a large enough value, then in high volume environments, a notification - possibly including some subsequent notifications - may be removed from the cache before Apple returns an error associated with it. In this case the `errorCallback` will still be called, but with a `null` notification and error code 255. If this happens you should consider increasing `cacheLength` to prevent losing notifications. All the notifications still residing in the cache will be resent automatically.
+
+### Events emitted by the connection
+
+The following events have been introduced as of v1.2.5 to allow closer monitoring and information about the internal processes in node-apn. If the events are not useful to you they can all be safely ignored (with the exception of ```error``` which indicates a failure to load the security credentials) and no action needs to be taken on your part when events are emitted. The ```disconnected``` event, for instance, is provided for informational purposes, the library will automatically re-establish the connection as necessary. The events are emitted by the connection itself so you should use ```apnsConnection.on('error', errorHandler)``` to attach listeners.
+
+####Events (arguments):
+
+- ```error (error)```: emitted when an error occurs during initialisation of the module, usually due to a problem with the keys and certificates.
+
+- ```transmitted (notification)```: emitted when a notification has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it make occur later on. A notification may also be sent several times if an earlier notification caused an error requiring retransmission.
+
+- ```timeout```: emitted when the connectionTimeout option has been specified and no activity has occurred on a socket for a specified duration. The socket will be closed immediately after this event.
+
+- ```connected```: emitted when the connection to Apple is successfully established. No action is required as the connection is managed internally.
+
+- ```disconnected```: emitted when the connection to Apple has been closed, this could be for numerous reasons, for example an error has occurred or the connection has timed out. No action is required.
+
+- ```socketError (error)```: emitted when the connection socket experiences an error. This is useful for debugging but no action should be necessary.
+
+- ```transmissionError (error code, notification)```: emitted when a message has been received from Apple stating that a notification was invalid. If we still have the notification in cache it will be passed as the second argument, otherwise null.
+
+- ```cacheTooSmall (difference)```: emitted when Apple returns a notification as invalid but the notification has been expunged from the cache - usually due to high throughput. The parameter estimates how many notifications have been lost. You should experiment with increasing the cache size or enabling ```autoAdjustCache``` if you see this frequently. Note: With ```autoAdjustCache``` enabled this event will still be emitted when an adjustment is triggered.
 
 ### Setting up the feedback service
 
@@ -142,7 +169,7 @@ You will need the `debug` module which can be installed with `npm install debug`
 
 Written and maintained by [Andrew Naylor][andrewnaylor].
 
-Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR], [Nebojsa Sabovic][nsabovic], [Alberto Gimeno][gimenete]
+Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR], [Nebojsa Sabovic][nsabovic], [Alberto Gimeno][gimenete], [Randall Tombaugh][rwtombaugh]
 
 ## License
 
@@ -176,9 +203,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [AsadR]: https://github.com/AsadR
 [nsabovic]: https://github.com/nsabovic
 [gimenete]: https://github.com/gimenete
+[rwtombaugh]: https://github.com/rwtombaugh
 [q]: https://github.com/kriskowal/q
 
 ## Changelog
+
+1.2.5:
+
+* Introduced a new event model. The connection class is now an event emitter which will emit events on connection state changes. This should largely replace the existing, somewhat inadequate error handling in previous versions. Please see the section above for more details or the message on commit d0a1d17961
+* Fixed a bug relating to rejecting unauthorized hosts
+* Added support for PFX files instead of separate Certificate and Key Files
+* Added a batched feedback feature which can callback with an array of all devices instead of calling the method for each device separately
+* Added support for error callbacks on a per notification basis.
+* Changed the socket behaviour to enable the TCP Nagle algorithm as recommended by Apple
+* Fixed lots of small bugs around connection handling which should make high volume applications more stable. Node should no longer crash completely on EPIPE errors.
+* Added connection socket timeout after a period of inactivity, configured by ```options.connectionTimeout```. The socket will then be re-established automatically if further notifications are sent.
+* Added cache autoadjustment. If ```options.autoAdjustCache = true``` and a notification error occurs after the notification is purged from the cache the library will attempt to increase the cache size to prevent it happening in future.
 
 1.2.4:
 

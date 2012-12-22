@@ -1,7 +1,7 @@
 {
   "name": "apn",
   "description": "An interface to the Apple Push Notification service for Node.js",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "author": "Andrew Naylor <argon@mkbot.net>",
   "contributors": [ 
     { "name": "Andrew Naylor", "email": "argon@mkbot.net" }
