@@ -42,6 +42,8 @@ Create a new connection to the gateway server using a dictionary of options. The
 		keyData: null,                    /* String or Buffer containing key data, as certData */
 		passphrase: null,                 /* A passphrase for the Key file */
 		ca: null,						  /* String or Buffer of CA data to use for the TLS connection */
+		pfx: null,						  /* File path for private key, certificate and CA certs in PFX or PKCS12 format. If supplied will be used instead of certificate and key above */
+		pfxData: null,					  /* PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk. */
 		gateway: 'gateway.push.apple.com',/* gateway address */
 		port: 2195,                       /* gateway port */
 		rejectUnauthorized: true,		  /* Value of rejectUnauthorized property to be passed through to tls.connect() */
@@ -133,6 +135,8 @@ Using the `Feedback` object it is possible to periodically query the server for 
 		keyData: null,                      /* Key file contents (String|Buffer) */
 		passphrase: null,                   /* A passphrase for the Key file */
 		ca: null,							/* Certificate authority data to pass to the TLS connection */
+		pfx: null,							/* File path for private key, certificate and CA certs in PFX or PKCS12 format. If supplied will be used instead of certificate and key above */
+		pfxData: null,						/* PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk. */
 		address: 'feedback.push.apple.com', /* feedback address */
 		port: 2196,                         /* feedback port */
 		feedback: false,                    /* enable feedback service, set to callback */
@@ -158,6 +162,8 @@ Now, in the directory containing cert.cer and key.p12 execute the following comm
 	$ openssl pkcs12 -in key.p12 -out key.pem -nodes
 	
 If you are using a development certificate you may wish to name them differently to enable fast switching between development and production. The filenames are configurable within the module options, so feel free to name them something more appropriate.
+
+It is also possible to supply a PFX package containing your certificate, key and any relevant CA certificates. The method to accomplish this is left as an exercise to the reader.
 
 ## Debugging
 
