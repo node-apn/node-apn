@@ -5,6 +5,8 @@ A Node.js module for interfacing with the Apple Push Notification service.
 ## Features
 
 - Maintains a connection to the server to maximise notification batching
+- Binds up multiple notifications and sends them in a single transmission
+- Supports a pull model notification source traversal for less memory usage
 - Enhanced binary interface support with error handling
 - Automatically sends unsent notifications if an error occurs
 - Feedback service support
@@ -49,9 +51,9 @@ Create a new connection to the gateway server using a dictionary of options. The
 		rejectUnauthorized: true,		  /* Value of rejectUnauthorized property to be passed through to tls.connect() */
 		enhanced: true,                   /* enable enhanced format */
 		errorCallback: undefined,         /* Callback when error occurs function(err,notification) */
-		cacheLength: 100                  /* Number of notifications to cache for error purposes */
-		autoAdjustCache: true,			  /* Whether the cache should grow in response to messages being lost after errors. */
-		connectionTimeout: 0 			  /* The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. */
+		connectionTimeout: 0, 			  /* The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. */
+		bucketLength: 8192, 			  /* The length of the bucket, which contains notifications for a single transmission. Greater value than 8192 may cause EPIPE error. */
+		notificationWaitingTime: 300	  /* The duration since the latest notification arrival in milliseconds. Each time it exceeds, the content of the bucket will be sent automatically. 0 = Disabled. */
 	};
 
 	var apnsConnection = new apns.Connection(options);
@@ -59,11 +61,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 **Important:** In a development environment you must set `gateway` to `gateway.sandbox.push.apple.com`.
 
 ### Sending a notification
-To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string, or alternatively as a `Buffer` object containing the token in binary form.
-
-	var myDevice = new apns.Device(token);
-
-Next, create a notification object and set parameters. See the [payload documentation][pl] for more details.
+To send a notification first create a notification object and set parameters. See the [payload documentation][pl] for more details.
 
 	var note = new apns.Notification();
 	
@@ -72,10 +70,16 @@ Next, create a notification object and set parameters. See the [payload document
 	note.sound = "ping.aiff";
 	note.alert = "You have a new message";
 	note.payload = {'messageFrom': 'Caroline'};
-	note.device = myDevice;
 	
-	apnsConnection.sendNotification(note);
-	
+Next, add it with a device token to the connection. The token is either a hexadecimal string or as a `Buffer` object containing the token in binary form.
+
+	apnsConnection.addNotification(note, token);
+
+Then the connection will send a notification after ```options.notificationWaitingTime``` exceeds, which is for binding up multiple notifications automatically.
+If you want to send the notification immediately, you can call ```.flush``` method.
+
+	apnsConnection.flush();
+
 As of version 1.2.0 it is also possible to use a set of methods provided by Notification object (`setAlertText`, `setActionLocKey`, `setLocKey`, `setLocArgs`, `setLaunchImage`) to aid the creation of the alert parameters. For applications which provide Newsstand capability there is a new boolean parameter `note.newsstandAvailable` to specify `content-available` in the payload.
 
 The above options will compile the following dictionary to send to the device:
@@ -84,21 +88,54 @@ The above options will compile the following dictionary to send to the device:
 	
 **\*N.B.:** If you wish to send notifications containing emoji or other multi-byte characters you will need to set `note.encoding = 'ucs2'`. This tells node to send the message with 16bit characters, however it also means your message payload will be limited to 127 characters.
 	
+
+### Broadcasting
+You can broadcast a notification content to a dozen of devices with a pull model device token traversal.
+
+	var note = new apns.Notification();
+	note.expiry = ...;  // set expiry and other properties.
+	
+	apnsConnection.broadcast(note, function () {
+		return getNextTokenOfOurUser();  // returns token, or false/null/undefined if there is no more token.
+	});
+
+A batch of notifications will be sent automatically everytime the inner bucket gets full.
+This is a cpu efficient way since it reuses same notification, internally compiles it just once. And also it is memory wise than the push model, cycle of fetch and call outside, since for the latter the connections stocks devices data for future transmission whenever the bucket overflowed.
+
+### Bulksending
+If you need to send a notification content per group, you can still use the pull model with ```.bulksend```
+
+	var englishNote = new apns.Notification();
+	englishNote.alert = 'hello';
+	var frenchNote = new apns.Notification();
+	frenchNote.alert = 'bonjour';
+	
+	// to save cpu usage, you can compile notifications in advance.
+	var compiledNotes = {
+		english: englishNote.compile(),
+		frehch: frenchNote.compile()
+	};
+	apnsConnection.broadcast(function () {
+		var user = getNextOurUser();
+		return user ? [compiledNotes[user.locale], user.token] : null; // returns array of [notification, token], or any false value
+	});
+
+Internally all of notifications will be compiled for APN transmission. Pre-compiling will save cpu usage if a notification content used more than once.
+
 ### Handling Errors
 
-If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with 2 arguments `(err, notification)`. Alternatively it is possible to specify an error callback function on a notification-by-notification basis by setting the ```.errorCallback``` property on the notification object to the callback function before sending.
+If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with argument `(err)`. 
 
 **\*N.B.:** As of v1.2.5 a new events system has been implemented to provide more feedback to the application on the state of the connection. At present the ```errorCallback``` is still called in the following cases in addition to the new event system. It is strongly recommended that you migrate your application to use the new event system as the existing overloading of the ```errorCallback``` method will be deprecated and removed in future versions.
 
 If a notification fails to be sent because a connection error occurs then the `errorCallback` will be called for each notification waiting for the connection which failed. In this case the first parameter will be an Error object instead of an error number.
 
-`errorCallback` will be called in 3 situations with the parameters shown.
+`errorCallback` will be called in 2 situations with the parameters shown.
 
-1. The notification has been rejected by Apple (or determined to have an invalid device token or payload before sending) for one of the reasons shown in Table 5-1 [here][errors] `errorCallback(errorCode, notification)`
-1. A notification has been rejected by Apple but it has been removed from the cache so it is not possible to identify which. In this case subsequent notifications may be lost. **If this happens you should consider increasing your `cacheLength` value to prevent data loss** `errorCallback(255, null)`
-1. A connection error has occurred before the notification can be sent. `errorCallback(Error object, notification)`
+1. The notification has been rejected by Apple (or determined to have an invalid device token or payload before sending) for one of the reasons shown in Table 5-1 [here][errors] `errorCallback(errorCode)`
+1. A connection error has occurred before the notification can be sent. `errorCallback(Error object)`
 
-**\*N.B.:** The `cacheLength` option for the connection specifies the number of sent notifications which will be cached, on a FIFO basis for error handling purposes. If `cacheLength` is not set to a large enough value, then in high volume environments, a notification - possibly including some subsequent notifications - may be removed from the cache before Apple returns an error associated with it. In this case the `errorCallback` will still be called, but with a `null` notification and error code 255. If this happens you should consider increasing `cacheLength` to prevent losing notifications. All the notifications still residing in the cache will be resent automatically.
+**\*N.B.:** With produce of the bucket architecture As of v2.0.0, ```errorCallback``` won't receive the second argument, a notification caused an error, since the new design doesn't stock plain notification in the connection object.
 
 ### Events emitted by the connection
 
@@ -108,7 +145,11 @@ The following events have been introduced as of v1.2.5 to allow closer monitorin
 
 - ```error (error)```: emitted when an error occurs during initialisation of the module, usually due to a problem with the keys and certificates.
 
-- ```transmitted (notification)```: emitted when a notification has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it make occur later on. A notification may also be sent several times if an earlier notification caused an error requiring retransmission.
+- ```bucketAvailable (notificationCount, availableLength)```: emitted whenever the internal bucket gets ready to contain one or more notifications.
+
+- ```transmitted (notification)```: emitted when a batch of notifications has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it make occur later on. A notification may also be sent several times if an earlier notification caused an error requiring retransmission.
+
+- ```sent (sentCount)```: emitted when notification has been processed by Apple. One or less notification has been rejected with an error, others should be sent successfully.
 
 - ```timeout```: emitted when the connectionTimeout option has been specified and no activity has occurred on a socket for a specified duration. The socket will be closed immediately after this event.
 
@@ -119,8 +160,6 @@ The following events have been introduced as of v1.2.5 to allow closer monitorin
 - ```socketError (error)```: emitted when the connection socket experiences an error. This is useful for debugging but no action should be necessary.
 
 - ```transmissionError (error code, notification)```: emitted when a message has been received from Apple stating that a notification was invalid. If we still have the notification in cache it will be passed as the second argument, otherwise null.
-
-- ```cacheTooSmall (difference)```: emitted when Apple returns a notification as invalid but the notification has been expunged from the cache - usually due to high throughput. The parameter estimates how many notifications have been lost. You should experiment with increasing the cache size or enabling ```autoAdjustCache``` if you see this frequently. Note: With ```autoAdjustCache``` enabled this event will still be emitted when an adjustment is triggered.
 
 ### Setting up the feedback service
 
