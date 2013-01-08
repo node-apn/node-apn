@@ -258,7 +258,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 2.0.0:
 
-* Redesign the internal nortification architecutre.
+* Redesign the internal architecutre.
 * Introduced notification bucket object, this enables client to send multiple notifications in a single transimission for traffic efficient delivery. Also it has come to prevent unexpectable EPIPE error; the error can be observed when some amount of data has been sent via a connection, > 8192 bytes. Now the connection reopen itself every time after the bucket went out.
 * Removed ```Notification.device``` and ```Connection.sendNotification```.
 * Removed sent notification caching feature and related options `cacheLength` and `autoAdjustCache`.
@@ -268,7 +268,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Added options `bucketLength` and `notificationWaitingTime`.
 * Added `Connection#notificationWaitingTimer` to flush notifications automatically and periodically when the bucket is not full.
 * Removed `notification` argument from `Connection#raiseError` event. Since the Connection doesn't store plain notification objects no more.
-* Added tests, work with [busterjs][busterjs].
+* Added tests, work on [busterjs][busterjs].
  
 1.2.5:
 
