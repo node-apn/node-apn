@@ -49,6 +49,32 @@ buster.testCase('Connection', {
         });
     },
 
+    'broadcast calls can be stopped by null, too': function(done) {
+        var connection = this.connection;
+
+        var notification = new Notification();
+
+        // should be called three times.
+        var calledTimes = 0;
+        var callback = this.spy(function () {
+            switch (++calledTimes) {
+            case 1: return '0001';
+            case 2: return '0002';
+            case 3: return null;
+            }
+        });
+
+        // disable Connection#run
+        this.stub(connection, 'run');
+
+        connection.broadcast(notification, callback);
+
+        connection.deferredBucketSendable.promise.then(function() {
+            assert(callback.calledThrice);
+            done();
+        });
+    },
+
     'broadcast calls flush() when the bucket gets full': function(done) {
         var connection = this.connection;
 
