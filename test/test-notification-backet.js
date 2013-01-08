@@ -30,39 +30,39 @@ buster.testCase('NotificationBucket', {
         // append an almost empty notification
         var emptyNotification = new Notification();
         emptyNotification.alert = '';
-        var templateEmpty = emptyNotification.toBinaryTemplate();
-        var token = new Buffer(0);
+        var compiled0 = emptyNotification.getCompiledNotification();
+        var token0 = new Buffer(0);
 
-        var expectedLength = 1 + 4 + 4 + 2 + token.length + 2 + templateEmpty.payload.length;
-        assert.equals(bucket.calculateNotificationLength(templateEmpty, token), expectedLength);
+        var expectedLength = 1 + 4 + 4 + 2 + token0.length + 2 + compiled0.payload.length;
+        assert.equals(bucket.calculateNotificationLength(compiled0, token0), expectedLength);
                       
-        bucket.appendToBuffer(templateEmpty, token, 1);
+        bucket.appendToBuffer(compiled0, token0, 1);
         assert.equals(bucket.availableLength(), bucket.options.maxLength - expectedLength);
         assert.equals(bucket.notificationCount, 1);
 
         // append another
         var notification1 = new Notification();
         notification1.alert = 'abc';
-        var template1 = notification1.toBinaryTemplate();
-        assert.equals(template1.payload.length, templateEmpty.payload.length + 3);
+        var compiled1 = notification1.getCompiledNotification();
+        assert.equals(compiled1.payload.length, compiled0.payload.length + 3);
         var token1 = new Buffer(8);
 
         var availableLength = bucket.availableLength();
-        var expectedLength1 = 1 + 4 + 4 + 2 + token1.length + 2 + template1.payload.length;
-        assert.equals(bucket.calculateNotificationLength(template1, token1), expectedLength1);
-        bucket.appendToBuffer(template1, token1, 2);
+        var expectedLength1 = 1 + 4 + 4 + 2 + token1.length + 2 + compiled1.payload.length;
+        assert.equals(bucket.calculateNotificationLength(compiled1, token1), expectedLength1);
+        bucket.appendToBuffer(compiled1, token1, 2);
         assert.equals(bucket.availableLength(), availableLength - expectedLength1);
         assert.equals(bucket.notificationCount, 2);
 
         // make the buffer full (append sentinel to its tail)
         var id = 3;
         while (expectedLength1 * 2 < bucket.availableLength()) {
-            bucket.appendToBuffer(template1, token1, id++);
+            bucket.appendToBuffer(compiled1, token1, id++);
         }
         var lastTokenLength = token1.length + (bucket.availableLength() - expectedLength1) -
             bucket.sentinelNotificationLength();
         var token2 = new Buffer(lastTokenLength);
-        bucket.appendToBuffer(template1, token2, id);
+        bucket.appendToBuffer(compiled1, token2, id);
         var lastId = id;
 
         bucket.appendSentinelNotification(9999);
@@ -93,7 +93,7 @@ buster.testCase('NotificationBucket', {
         assert.equals(bucket.availableLength(), bucket.options.maxLength);
 
         // clear notification
-        bucket.appendToBuffer(template1, token2, id);
+        bucket.appendToBuffer(compiled1, token2, id);
         bucket.clear();
         assert.equals(bucket.notificationCount, 0);
         assert.equals(bucket.availableLength(), bucket.options.maxLength);

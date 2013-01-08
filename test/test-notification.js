@@ -7,8 +7,8 @@ buster.testCase('Notification', {
         assert.equals(notification.encoding, 'utf8');
         assert.equals(notification.expiry, 0);
         assert.equals(JSON.stringify(notification), '{"aps":{}}');
-        assert.equals(notification.toBinaryTemplate(),
-                      { expiry: 0, payload: JSON.stringify(notification) });
+        assert.equals(notification.getCompiledNotification(),
+                      { expiry: 0, isCompiled: true, payload: JSON.stringify(notification) });
     },
 
     'expiry': function() {
@@ -16,16 +16,16 @@ buster.testCase('Notification', {
         var now = (new Date()).getTime() / 1000;
         notification.expiry = now;
         assert.equals(JSON.stringify(notification), '{"aps":{}}');
-        assert.equals(notification.toBinaryTemplate(),
-                      { expiry: now, payload: JSON.stringify(notification) });
+        assert.equals(notification.getCompiledNotification(),
+                      { expiry: now, isCompiled: true, payload: JSON.stringify(notification) });
     },
 
     'alert': function() {
         var notification = new Notification();
         notification.setAlertText('hello');
         assert.equals(JSON.stringify(notification), '{"aps":{"alert":"hello"}}');
-        assert.equals(notification.toBinaryTemplate(),
-                      { expiry: 0, payload: JSON.stringify(notification) });
+        assert.equals(notification.getCompiledNotification(),
+                      { expiry: 0, isCompiled: true, payload: JSON.stringify(notification) });
 
         notification.setLocKey('localizedHello');
         notification.setActionLocKey('localizedHelloAction');
@@ -34,7 +34,7 @@ buster.testCase('Notification', {
 
         assert.equals(JSON.stringify(notification),
                       '{"aps":{"alert":{"body":"hello","loc-key":"localizedHello","action-loc-key":"localizedHelloAction","loc-args":["argX","argY"],"launch-image":"http://example.com/image.jpg"}}}');
-        assert.equals(notification.toBinaryTemplate(),
-                      { expiry: 0, payload: JSON.stringify(notification) });
+        assert.equals(notification.getCompiledNotification(),
+                      { expiry: 0, isCompiled: true, payload: JSON.stringify(notification) });
     }
 });
