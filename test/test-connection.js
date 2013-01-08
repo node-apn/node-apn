@@ -43,10 +43,15 @@ buster.testCase('Connection', {
         
         connection.broadcast(notification, callback);
 
+        var notificationLength = connection.notificationBucket.calculateNotificationLength(
+            notification.getCompiledNotification(), new Buffer('0001', 'hex'));
+        var requiredLength = notificationLength * 2 +
+            connection.notificationBucket.sentinelNotificationLength();
+
         connection.deferredBucketSendable.promise.then(function() {
             assert(callback.calledThrice);
             done();
-        });
+        }).done();
     },
 
     'broadcast calls can be stopped by null, too': function(done) {
@@ -72,7 +77,7 @@ buster.testCase('Connection', {
         connection.deferredBucketSendable.promise.then(function() {
             assert(callback.calledThrice);
             done();
-        });
+        }).done();
     },
 
     'broadcast calls flush() when the bucket gets full': function(done) {
@@ -96,8 +101,42 @@ buster.testCase('Connection', {
             assert(true);
             flushed = true;
             done();
+        }).done();
+
+    },
+
+    'bulksend': function(done) {
+        var connection = this.connection;
+
+        var notification = new Notification();
+        var compiledNotification = notification.getCompiledNotification();
+
+        // should be called three times.
+        var calledTimes = 0;
+        var callback = this.spy(function () {
+            switch (++calledTimes) {
+            case 1: return [notification, '0001'];
+            case 2: return [compiledNotification, '0002'];
+            case 3: return undefined;
+            }
         });
 
+        // disable Connection#run
+        this.stub(connection, 'run');
+        
+        connection.bulksend(callback);
+
+        var notificationLength = connection.notificationBucket.calculateNotificationLength(
+            compiledNotification, new Buffer('0001', 'hex'));
+        var requiredLength = notificationLength * 2 +
+            connection.notificationBucket.sentinelNotificationLength();
+
+        connection.deferredBucketSendable.promise.then(function() {
+            assert(callback.calledThrice);
+            assert.equals(connection.notificationBucket.availableLength(),
+                          connection.notificationBucket.options.maxLength - requiredLength);
+            done();
+        }).done();
     },
 
     'addNotification': function() {
