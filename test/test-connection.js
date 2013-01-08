@@ -44,7 +44,7 @@ buster.testCase('Connection', {
         connection.broadcast(notification, callback);
 
         var notificationLength = connection.notificationBucket.calculateNotificationLength(
-            notification.getCompiledNotification(), new Buffer('0001', 'hex'));
+            notification.compile(), new Buffer('0001', 'hex'));
         var requiredLength = notificationLength * 2 +
             connection.notificationBucket.sentinelNotificationLength();
 
@@ -109,7 +109,7 @@ buster.testCase('Connection', {
         var connection = this.connection;
 
         var notification = new Notification();
-        var compiledNotification = notification.getCompiledNotification();
+        var compiledNotification = notification.compile();
 
         // should be called three times.
         var calledTimes = 0;

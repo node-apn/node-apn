@@ -7,7 +7,7 @@ buster.testCase('Notification', {
         assert.equals(notification.encoding, 'utf8');
         assert.equals(notification.expiry, 0);
         assert.equals(JSON.stringify(notification), '{"aps":{}}');
-        assert.equals(notification.getCompiledNotification(),
+        assert.equals(notification.compile(),
                       { expiry: 0, isCompiled: true, payload: JSON.stringify(notification) });
     },
 
@@ -16,7 +16,7 @@ buster.testCase('Notification', {
         var now = (new Date()).getTime() / 1000;
         notification.expiry = now;
         assert.equals(JSON.stringify(notification), '{"aps":{}}');
-        assert.equals(notification.getCompiledNotification(),
+        assert.equals(notification.compile(),
                       { expiry: now, isCompiled: true, payload: JSON.stringify(notification) });
     },
 
@@ -24,7 +24,7 @@ buster.testCase('Notification', {
         var notification = new Notification();
         notification.setAlertText('hello');
         assert.equals(JSON.stringify(notification), '{"aps":{"alert":"hello"}}');
-        assert.equals(notification.getCompiledNotification(),
+        assert.equals(notification.compile(),
                       { expiry: 0, isCompiled: true, payload: JSON.stringify(notification) });
 
         notification.setLocKey('localizedHello');
@@ -34,7 +34,7 @@ buster.testCase('Notification', {
 
         assert.equals(JSON.stringify(notification),
                       '{"aps":{"alert":{"body":"hello","loc-key":"localizedHello","action-loc-key":"localizedHelloAction","loc-args":["argX","argY"],"launch-image":"http://example.com/image.jpg"}}}');
-        assert.equals(notification.getCompiledNotification(),
+        assert.equals(notification.compile(),
                       { expiry: 0, isCompiled: true, payload: JSON.stringify(notification) });
     }
 });

@@ -30,7 +30,7 @@ buster.testCase('NotificationBucket', {
         // append an almost empty notification
         var emptyNotification = new Notification();
         emptyNotification.alert = '';
-        var compiled0 = emptyNotification.getCompiledNotification();
+        var compiled0 = emptyNotification.compile();
         var token0 = new Buffer(0);
 
         var expectedLength = 1 + 4 + 4 + 2 + token0.length + 2 + compiled0.payload.length;
@@ -43,7 +43,7 @@ buster.testCase('NotificationBucket', {
         // append another
         var notification1 = new Notification();
         notification1.alert = 'abc';
-        var compiled1 = notification1.getCompiledNotification();
+        var compiled1 = notification1.compile();
         assert.equals(compiled1.payload.length, compiled0.payload.length + 3);
         var token1 = new Buffer(8);
 
