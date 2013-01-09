@@ -6,7 +6,6 @@ A Node.js module for interfacing with the Apple Push Notification service.
 
 - Maintains a connection to the server to maximise notification batching
 - Binds up multiple notifications and sends them in a single transmission
-- Supports a pull model notification source traversal for less memory usage
 - Enhanced binary interface support with error handling
 - Automatically sends unsent notifications if an error occurs
 - Feedback service support
@@ -88,40 +87,6 @@ The above options will compile the following dictionary to send to the device:
 	
 **\*N.B.:** If you wish to send notifications containing emoji or other multi-byte characters you will need to set `note.encoding = 'ucs2'`. This tells node to send the message with 16bit characters, however it also means your message payload will be limited to 127 characters.
 	
-
-### Broadcasting
-You can broadcast a notification content to a dozen of devices with a pull model device token traversal.
-
-	var note = new apns.Notification();
-	note.expiry = ...;  // set expiry and other properties.
-	
-	apnsConnection.broadcast(note, function () {
-		return getNextTokenOfOurUser();  // returns token, or false/null/undefined if there is no more token.
-	});
-
-A batch of notifications will be sent automatically whenever the inner bucket gets full.
-This is a cpu efficient way since it reuses the same notification, internally compiles it just once. And also it is memory wise than the push model, cycle of fetch and call outside, since for the latter the connection needs to stocks a bunch of device data for future transmission while the bucket being overflow.
-
-### Bulksending
-If you need to send a notification content per group, you can still use the pull model with ```.bulksend```
-
-	var englishNote = new apns.Notification();
-	englishNote.alert = 'hello';
-	var frenchNote = new apns.Notification();
-	frenchNote.alert = 'bonjour';
-	
-	// to save cpu usage, you can compile notifications in advance.
-	var compiledNotes = {
-		english: englishNote.compile(),
-		frehch: frenchNote.compile()
-	};
-	apnsConnection.bulksend(function () {
-		var user = getNextOurUser();
-		// returns array of [notification, token], or any false value
-		return user ? [compiledNotes[user.locale], user.token] : null; 
-	});
-
-Internally all of notifications will be compiled for APN transmission. Pre-compiling will save cpu usage if a notification content used more than once.
 
 ### Handling Errors
 
@@ -264,7 +229,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Removed sent notification caching feature and related options `cacheLength` and `autoAdjustCache`.
 * Added ```Connection.addNotification```.
 * Added ```Connection.flush```.
-* Added ```Connection.broadcast``` and ```Connection.bulksend```. Which enables you to send notifications to many devices in a cpu and memory efficient way.
 * Added options `bucketLength` and `notificationWaitingTime`.
 * Added `Connection#notificationWaitingTimer` to flush notifications automatically and periodically when the bucket is not full.
 * Removed `notification` argument from `Connection#raiseError` event. Since the Connection doesn't store plain notification objects no more.
