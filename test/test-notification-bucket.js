@@ -31,7 +31,7 @@ buster.testCase('NotificationBucket', {
         var emptyNotification = new Notification();
         emptyNotification.alert = '';
         var compiled0 = emptyNotification.compile();
-        var token0 = new Buffer(0);
+        var token0 = new Buffer('0102', 'hex');
 
         var expectedLength = 1 + 4 + 4 + 2 + token0.length + 2 + compiled0.payload.length;
         assert.equals(bucket.calculateNotificationLength(compiled0, token0), expectedLength);
@@ -45,7 +45,7 @@ buster.testCase('NotificationBucket', {
         notification1.alert = 'abc';
         var compiled1 = notification1.compile();
         assert.equals(compiled1.payload.length, compiled0.payload.length + 3);
-        var token1 = new Buffer(8);
+        var token1 = new Buffer('03050709', 'hex');
 
         var availableLength = bucket.availableLength();
         var expectedLength1 = 1 + 4 + 4 + 2 + token1.length + 2 + compiled1.payload.length;
@@ -61,7 +61,7 @@ buster.testCase('NotificationBucket', {
         }
         var lastTokenLength = token1.length + (bucket.availableLength() - expectedLength1) -
             bucket.sentinelNotificationLength();
-        var token2 = new Buffer(lastTokenLength);
+        var token2 = new Buffer((new Array(lastTokenLength + 1)).join('3'));
         bucket.appendToBuffer(compiled1, token2, id);
         var lastId = id;
 
@@ -72,7 +72,7 @@ buster.testCase('NotificationBucket', {
         var currentCount = bucket.notificationCount;
 
         // purge the head
-        assert.equals(bucket.purgeNotificationUntil(1), 1);
+        assert.equals(bucket.purgeNotificationUntil(1), '0102');
         --currentCount;
         assert.equals(bucket.notificationCount, currentCount);
 
@@ -84,11 +84,11 @@ buster.testCase('NotificationBucket', {
         assert.same(bucket.purgeNotificationUntil(998), false);
 
         // purge next
-        assert.equals(bucket.purgeNotificationUntil(2), 1);
+        assert.equals(bucket.purgeNotificationUntil(2), '03050709');
         --currentCount;
 
         // purge for tail
-        assert.equals(bucket.purgeNotificationUntil(lastId), currentCount);
+        assert.equals(bucket.purgeNotificationUntil(lastId), token2.toString('hex'));
         assert.equals(bucket.notificationCount, 0);
         assert.equals(bucket.availableLength(), bucket.options.maxLength);
 

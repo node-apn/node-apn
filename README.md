@@ -90,18 +90,16 @@ The above options will compile the following dictionary to send to the device:
 
 ### Handling Errors
 
-If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with argument `(err)`. 
-
-**\*N.B.:** As of v1.2.5 a new events system has been implemented to provide more feedback to the application on the state of the connection. At present the ```errorCallback``` is still called in the following cases in addition to the new event system. It is strongly recommended that you migrate your application to use the new event system as the existing overloading of the ```errorCallback``` method will be deprecated and removed in future versions.
+If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with argument `(error, deviceToken)`.
 
 If a notification fails to be sent because a connection error occurs then the `errorCallback` will be called for each notification waiting for the connection which failed. In this case the first parameter will be an Error object instead of an error number.
 
 `errorCallback` will be called in 2 situations with the parameters shown.
 
-1. The notification has been rejected by Apple (or determined to have an invalid device token or payload before sending) for one of the reasons shown in Table 5-1 [here][errors] `errorCallback(errorCode)`
+1. The notification has been rejected by Apple (or determined to have an invalid device token or payload before sending) for one of the reasons shown in Table 5-1 [here][errors] `errorCallback(errorCode, deviceToken)`
 1. A connection error has occurred before the notification can be sent. `errorCallback(Error object)`
 
-**\*N.B.:** With produce of the bucket architecture As of v2.0.0, ```errorCallback``` won't receive the second argument, a notification caused an error, since the new design doesn't stock plain notification in the connection object.
+**\*N.B.:** With produce of the batch transmission architecture As of v2.0.0, ```errorCallback``` replaced the second argument, previously was `notification`.
 
 ### Events emitted by the connection
 
@@ -115,7 +113,7 @@ The following events have been introduced as of v1.2.5 to allow closer monitorin
 
 - ```transmitted (notification)```: emitted when a batch of notifications has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it make occur later on. A notification may also be sent several times if an earlier notification caused an error requiring retransmission.
 
-- ```sent (sentCount)```: emitted when notification has been processed by Apple. One or less notification has been rejected with an error, others should be sent successfully.
+- ```sent (sent count)```: emitted when notification has been processed by Apple. ```sent count``` may include of one error notification. In this case, ```sent count - 1``` should be sent successfully.
 
 - ```timeout```: emitted when the connectionTimeout option has been specified and no activity has occurred on a socket for a specified duration. The socket will be closed immediately after this event.
 
@@ -125,7 +123,7 @@ The following events have been introduced as of v1.2.5 to allow closer monitorin
 
 - ```socketError (error)```: emitted when the connection socket experiences an error. This is useful for debugging but no action should be necessary.
 
-- ```transmissionError (error code, notification)```: emitted when a message has been received from Apple stating that a notification was invalid. If we still have the notification in cache it will be passed as the second argument, otherwise null.
+- ```transmissionError (error code, device token)```: emitted when a message has been received from Apple stating that a notification was invalid.
 
 ### Setting up the feedback service
 
@@ -231,7 +229,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Added ```Connection.flush```.
 * Added options `bucketLength` and `notificationWaitingTime`.
 * Added `Connection#notificationWaitingTimer` to flush notifications automatically and periodically when the bucket is not full.
-* Removed `notification` argument from `Connection#raiseError` event. Since the Connection doesn't store plain notification objects no more.
+* Replaced the second argument of `Connection#raiseError` event from `notification` to `deviceToken`. Since the Connection doesn't store plain notification objects no more.
 * Added tests, work on [busterjs][busterjs].
  
 1.2.5:
