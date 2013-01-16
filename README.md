@@ -29,7 +29,6 @@ As a submodule of your project (you will also need to install [q][q])
 ### Exported Objects
 - Connection
 - Notification
-- Device
 - Feedback
 - Errors
 
@@ -142,7 +141,6 @@ Using the `Feedback` object it is possible to periodically query the server for 
 		pfxData: null,						/* PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk. */
 		address: 'feedback.push.apple.com', /* feedback address */
 		port: 2196,                         /* feedback port */
-		feedback: false,                    /* enable feedback service, set to callback */
 		batchFeedback: false,				/* if feedback should be called once per connection. */
 		interval: 3600                      /* interval in seconds to connect to feedback service */
 	};
@@ -154,6 +152,22 @@ This will automatically start a timer to check with Apple every `interval` secon
 **Important:** In a development environment you must set `address` to `feedback.sandbox.push.apple.com`.
 
 More information about the feedback service can be found in the [feedback service documentation][fs].
+
+### Events emitted by the Feedback object
+
+The following events have been introduced as of v2.0.0.
+
+####Events (arguments):
+
+- ```feedback (time, device token)```: emitted when a feedback has been received. `time` is a UTC timestamp when Apple determined the token is invalid. ```device token``` is a HEX string represents a device token. This event is available if ```options.batchFeedback``` is `false`. 
+
+- ```batchFeedback (list of time and device token)```: emitted when all of feedback has been received. Each entry in the list is a object consisits of {"time": timestamp, "token": device_token}. This event is available if ```options.batchFeedback``` is `true`. 
+
+- ```error (error)```: emitted when an error occurs on establishing the connection, usually due to a problem with the keys and certificates. If this event has not been handled, node.js will terminate the running process.
+
+- ```connected```: emitted when the connection to Apple is successfully established. No action is required.
+
+- ```disconnected```: emitted when the connection to Apple has been closed. No action is required.
 
 ## Converting your APNs Certificate
 
@@ -231,6 +245,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Added `Connection#notificationWaitingTimer` to flush notifications automatically and periodically when the bucket is not full.
 * Replaced the second argument of `Connection#raiseError` event from `notification` to `deviceToken`. Since the Connection doesn't store plain notification objects no more.
 * Added tests, work on [busterjs][busterjs].
+* Introduced event system to `Feedback`. Please see the section above for more details.
+* Removed ```options.feedback``` and ```options.errorCallback``` from `Feedback` service options.
  
 1.2.5:
 
