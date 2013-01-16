@@ -109,7 +109,7 @@ The following events have been introduced as of v1.2.5 to allow closer monitorin
 
 - ```error (error)```: emitted when an error occurs during initialisation of the module, usually due to a problem with the keys and certificates.
 
-- ```bucketAvailable (leftNotificationCount, availableLength)```: emitted whenever the internal bucket gets ready to contain one or more notifications.
+- ```ready (leftNotificationCount, bucketAvailableLength)```: emitted whenever the internal bucket gets ready to contain one or more notifications.
 
 - ```transmitted (notification)```: emitted when a batch of notifications has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it make occur later on. A notification may also be sent several times if an earlier notification caused an error requiring retransmission.
 
