@@ -48,7 +48,6 @@ Create a new connection to the gateway server using a dictionary of options. The
 		port: 2195,                       /* gateway port */
 		rejectUnauthorized: true,		  /* Value of rejectUnauthorized property to be passed through to tls.connect() */
 		enhanced: true,                   /* enable enhanced format */
-		errorCallback: undefined,         /* Callback when error occurs function(err,notification) */
 		connectionTimeout: 0, 			  /* The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. */
 		bucketLength: 8192, 			  /* The length of the bucket, which contains notifications for a single transmission. Greater value than 8192 may cause EPIPE error. */
 		notificationWaitingTime: 300	  /* The duration since the latest notification arrival in milliseconds. Each time it exceeds, the content of the bucket will be sent automatically. 0 = Disabled. */
@@ -89,16 +88,11 @@ The above options will compile the following dictionary to send to the device:
 
 ### Handling Errors
 
-If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an `errorCallback` is also specified in the connection options then it will be invoked with argument `(error, deviceToken)`.
+If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. Also `rejected` event will be emitted by the connection with arguments `(error code, device token)`. `error code` indicates one of the reasons shown in Table 5-1 [here][errors]. `device token` is the target of the rejected notification.
 
-If a notification fails to be sent because a connection error occurs then the `errorCallback` will be called for each notification waiting for the connection which failed. In this case the first parameter will be an Error object instead of an error number.
+If a notification fails to be sent because a connection error occurs then the `error` will be emitted with an argument `Error` object.
 
-`errorCallback` will be called in 2 situations with the parameters shown.
-
-1. The notification has been rejected by Apple (or determined to have an invalid device token or payload before sending) for one of the reasons shown in Table 5-1 [here][errors] `errorCallback(errorCode, deviceToken)`
-1. A connection error has occurred before the notification can be sent. `errorCallback(Error object)`
-
-**\*N.B.:** With produce of the batch transmission architecture As of v2.0.0, ```errorCallback``` replaced the second argument, previously was `notification`.
+**\*N.B.:** With produce of the batch transmission architecture As of v2.0.0, ```errorCallback``` was replaced with events `rejected` and `error`.
 
 ### Events emitted by the connection
 
@@ -106,9 +100,11 @@ The following events have been introduced as of v1.2.5 to allow closer monitorin
 
 ####Events (arguments):
 
-- ```error (error)```: emitted when an error occurs during initialisation of the module, usually due to a problem with the keys and certificates.
+- ```error (error)```: emitted when an error occurs, usually due to a problem with the keys and certificates.
 
 - ```ready (leftNotificationCount, bucketAvailableLength)```: emitted whenever the internal bucket gets ready to contain one or more notifications.
+
+- ```rejected (error code, device token)```: emmited when a notification had been rejected by Apple. `error code` indicates one of the reasons shown in Table 5-1 [here][errors]. `device token` is the target of the rejected notification.
 
 - ```transmitted (notification)```: emitted when a batch of notifications has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it make occur later on. A notification may also be sent several times if an earlier notification caused an error requiring retransmission.
 
@@ -235,14 +231,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 2.0.0:
 
-* Redesign the internal architecutre.
-* Introduced notification bucket object, this enables client to send multiple notifications in a single transimission for traffic efficient delivery. Also it has come to prevent unexpectable EPIPE error; the error can be observed when some amount of data has been sent via a connection, > 8192 bytes. Now the connection reopen itself every time after the bucket went out.
+* Redesigned the internal architecutre and reviewed APIs. Mostly for CPU/memory performance, stability and reliability.
+* Introduced new `NotificationBuckcet` object, which enables client to send multiple notifications within a single transimission for traffic efficient delivery. 
+* Eech time the `Connection` object try to rebuild its connection when the transmission ends up. This behavior has been required for preventing unexpected EPIPE error, which can be observed when data size in total larger than 8192 bytes is sent via a connection.
 * Removed ```Notification.device``` and ```Connection.sendNotification```.
 * Removed sent notification caching feature and related options `cacheLength` and `autoAdjustCache`.
+* Removed ```Device``` object and dropped ```device.js```.
+* Removed ```options.errorCallback``` from `Connection` service options.
 * Added ```Connection.addNotification```.
 * Added ```Connection.flush```.
 * Added options `bucketLength` and `notificationWaitingTime`.
 * Added `Connection#notificationWaitingTimer` to flush notifications automatically and periodically when the bucket is not full.
+* Added `Connection.ready` and `Connection.rejected` events.
 * Replaced the second argument of `Connection#raiseError` event from `notification` to `deviceToken`. Since the Connection doesn't store plain notification objects no more.
 * Added tests, work on [busterjs][busterjs].
 * Introduced event system to `Feedback`. Please see the section above for more details.
