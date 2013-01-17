@@ -137,7 +137,6 @@ Using the `Feedback` object it is possible to periodically query the server for 
 		pfxData: null,						/* PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk. */
 		address: 'feedback.push.apple.com', /* feedback address */
 		port: 2196,                         /* feedback port */
-		batchFeedback: false,				/* if feedback should be called once per connection. */
 		interval: 3600                      /* interval in seconds to connect to feedback service */
 	};
 
@@ -155,9 +154,7 @@ The following events have been introduced as of v2.0.0.
 
 ####Events (arguments):
 
-- ```feedback (time, device token)```: emitted when a feedback has been received. `time` is a UTC timestamp when Apple determined the token is invalid. ```device token``` is a HEX string represents a device token. This event is available if ```options.batchFeedback``` is `false`. 
-
-- ```batchFeedback (list of time and device token)```: emitted when all of feedback has been received. Each entry in the list is a object consisits of {"time": timestamp, "token": device_token}. This event is available if ```options.batchFeedback``` is `true`. 
+- ```feedback (time, device token)```: emitted when a feedback has been received. `time` is a UTC timestamp when Apple determined the token is invalid. ```device token``` is a HEX string represents a device token. 
 
 - ```error (error)```: emitted when an error occurs on establishing the connection, usually due to a problem with the keys and certificates. If this event has not been handled, node.js will terminate the running process.
 
@@ -247,6 +244,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Added tests, work on [busterjs][busterjs].
 * Introduced event system to `Feedback`. Please see the section above for more details.
 * Removed ```options.feedback``` and ```options.errorCallback``` from `Feedback` service options.
+* Removed ```options.batchFeedback``` and dropped related function; it is not library's task but client's.
  
 1.2.5:
 
