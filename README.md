@@ -104,7 +104,7 @@ The following events have been introduced as of v1.2.5 to allow closer monitorin
 
 - ```ready (leftNotificationCount, bucketAvailableLength)```: emitted whenever the internal bucket gets ready to contain one or more notifications.
 
-- ```rejected (error code, device token)```: emmited when a notification had been rejected by Apple. `error code` indicates one of the reasons shown in Table 5-1 [here][errors]. `device token` is the target of the rejected notification.
+- ```rejected (error code, device token)```: emmited when a notification had been rejected by Apple. `error code` indicates one of the reasons shown in Table 5-1 [here][errors]. `device token` is the target of the rejected notification. 
 
 - ```transmitted (notification)```: emitted when a batch of notifications has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it make occur later on. A notification may also be sent several times if an earlier notification caused an error requiring retransmission.
 
@@ -137,7 +137,8 @@ Using the `Feedback` object it is possible to periodically query the server for 
 		pfxData: null,						/* PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk. */
 		address: 'feedback.push.apple.com', /* feedback address */
 		port: 2196,                         /* feedback port */
-		interval: 3600                      /* interval in seconds to connect to feedback service */
+		interval: 3600,                     /* interval in seconds to connect to feedback service */
+		tokenType: "string"                 /* Type of the `device token` argument of the `feedback` event, "string" or "binary". If it is "binary", the argument will be a `Buffer` object. If it is "string", the argument will be a hex string. */
 	};
 
 	var feedback = new apns.Feedback(options);
@@ -154,7 +155,7 @@ The following events have been introduced as of v2.0.0.
 
 ####Events (arguments):
 
-- ```feedback (time, device token)```: emitted when a feedback has been received. `time` is a UTC timestamp when Apple determined the token is invalid. ```device token``` is a HEX string represents a device token. 
+- ```feedback (time, device token)```: emitted when a feedback has been received. `time` is a UTC timestamp when Apple determined the token is invalid. ```device token``` is a HEX string represents a device token. If `options.tokenType` is `string`, the `device token` is a hex string. If it is `binary`, the `device token` is a `Buffer` object.
 
 - ```error (error)```: emitted when an error occurs on establishing the connection, usually due to a problem with the keys and certificates. If this event has not been handled, node.js will terminate the running process.
 
@@ -243,6 +244,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Replaced the second argument of `Connection#raiseError` event from `notification` to `deviceToken`. Since the Connection doesn't store plain notification objects no more.
 * Added tests, work on [busterjs][busterjs].
 * Introduced event system to `Feedback`. Please see the section above for more details.
+* Added ```options.tokenType``` to `Feedback` service options.
 * Removed ```options.feedback``` and ```options.errorCallback``` from `Feedback` service options.
 * Removed ```options.batchFeedback``` and dropped related function; it is not library's task but client's.
  
