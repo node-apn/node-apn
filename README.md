@@ -84,7 +84,44 @@ The above options will compile the following dictionary to send to the device:
 	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"You have a new message"}}
 	
 **\*N.B.:** If you wish to send notifications containing emoji or other multi-byte characters you will need to set `note.encoding = 'ucs2'`. This tells node to send the message with 16bit characters, however it also means your message payload will be limited to 127 characters.
+
+### Broadcasting
+
+As of version 2.0.0 it supports broadcasting - to send same content to many devices - in CPU/memory efficient way.
+To do it, first create a notification as same as above.
+
+	var note = new apns.Notification();
 	
+	note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+	note.badge = 3;
+	note.sound = "ping.aiff";
+	note.alert = "You have a new message";
+	note.payload = {'messageFrom': 'Caroline'};
+
+Then compile it. This compilation reduces CPU and memory usage on notification.
+
+	var compiledNote = note.compile();
+
+Next, setup event handlers to `Connection` object to pull destination device tokens. The handle for `connected` will be called just once when the first connection will be establised. Another handler for  `ready` will be called each time when the `Connection` object find it is ready to add another notification after appending one or after sending a batch of notifications.
+
+	apnsConnection.once('connected', sendNextToken);
+	apnsConnection.on('ready', sendNextToken);
+
+	// get next device token and send to it
+    function sendNextToken() {
+	    getOurNextToken(function(error, token) {
+		    if (token) {
+                apnsConnection.addNotification(compiledNote, token);
+			} else {
+			    finalizeOurTask();
+			}
+		});
+	}
+
+And finally, connect to the APN service. Once the connection is established, the handlers perform broadcasting.
+
+	// start notification cycle.
+	apnsConnection.connect();
 
 ### Handling Errors
 
