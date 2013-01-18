@@ -1,9 +1,6 @@
 exports.Connection = require('./lib/connection');
 exports.connection = exports.Connection;
 
-exports.Device = require("./lib/device");
-exports.device = exports.Device;
-
 exports.Errors = require('./lib/errors');
 exports.error = exports.Errors;
 
