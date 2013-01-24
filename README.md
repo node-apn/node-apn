@@ -49,7 +49,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 		rejectUnauthorized: true,		  /* Value of rejectUnauthorized property to be passed through to tls.connect() */
 		enhanced: true,                   /* enable enhanced format */
 		errorCallback: undefined,         /* Callback when error occurs function(err,notification) */
-		cacheLength: 100                  /* Number of notifications to cache for error purposes */
+		cacheLength: 100,                  /* Number of notifications to cache for error purposes */
 		autoAdjustCache: true,			  /* Whether the cache should grow in response to messages being lost after errors. */
 		connectionTimeout: 0 			  /* The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. */
 	};
