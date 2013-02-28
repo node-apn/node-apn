@@ -175,7 +175,7 @@ You will need the `debug` module which can be installed with `npm install debug`
 
 Written and maintained by [Andrew Naylor][andrewnaylor].
 
-Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR], [Nebojsa Sabovic][nsabovic], [Alberto Gimeno][gimenete], [Randall Tombaugh][rwtombaugh]
+Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR], [Nebojsa Sabovic][nsabovic], [Alberto Gimeno][gimenete], [Randall Tombaugh][rwtombaugh], [Michael Stewart][thegreatmichael], [Olivier Louvignes][mgcrea], [porsager][porsager]
 
 ## License
 
@@ -210,9 +210,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [nsabovic]: https://github.com/nsabovic
 [gimenete]: https://github.com/gimenete
 [rwtombaugh]: https://github.com/rwtombaugh
+[thegreatmichael]: https://github.com/thegreatmichael
+[mgcrea]: https://github.com/mgcrea
+[porsager]: https://porsager
 [q]: https://github.com/kriskowal/q
 
 ## Changelog
+
+1.2.6:
+
+* Added mdm support.
+* Constrained 'q' module to 0.8.x because 0.9.0 is API incompatible.
+* Fixed a `trim()` bug when compiling notification.
+* ***NOTICE:*** v1.3.0 which will be released soon will break some API compatibility with error handling and there will be a new sending API (the legacy sending API will remain)
 
 1.2.5:
 
