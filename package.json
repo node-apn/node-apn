@@ -17,7 +17,7 @@
     "url": "https://github.com/argon/node-apn.git"
   },
   "dependencies": {
-  	"q": ">=0.8.5"
+  	"q": "0.8.x"
   },
   "engines": { "node": ">= 0.6.6" },
   "license": "MIT"
