@@ -59,7 +59,7 @@ Create a new connection to the gateway server using a dictionary of options. The
 **Important:** In a development environment you must set `gateway` to `gateway.sandbox.push.apple.com`.
 
 ### Sending a notification
-To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string, or alternatively as a `Buffer` object containing the token in binary form.
+To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string (note: you can use .toString(16) to convert a regular string into a hexadecimal string), or alternatively as a `Buffer` object containing the token in binary form. 
 
 	var myDevice = new apns.Device(token);
 
