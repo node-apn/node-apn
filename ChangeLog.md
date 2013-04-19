@@ -1,0 +1,130 @@
+## Changelog
+
+1.3.0:
+
+This release represents a major re-think with how the module should function, it brings much needed functionality, dramatically improved reliability and lays foundations for future plans to increase message throughput.
+
+* New API (`Connection#pushNotification) to support sending one notification to multiple devices.
+* Updated feedback service to emit events.
+* Switched to `q` v0.9.x
+* Added `buffersNotifications` option to allow disabling automatic resending.
+* Fixed `Notification#Trim()` for multibyte strings
+* New `fastMode` to aggressively deliver notifications (Only recommended for "worker" applications where node-apn is servicing a queue as it may impact responsiveness under heavy workload)
+* Support for opening multiple connections to the push service. This option doesn't seem to be of much use yet, please let me know if it is.
+* Improvements to better support node 0.10.x
+* Better device token sanitisation in `Device`
+* Minimise EPIPE errors
+* Other small bug fixes
+
+1.2.6:
+
+* Added mdm support.
+* Constrained 'q' module to 0.8.x because 0.9.0 is API incompatible.
+* Fixed a `trim()` bug when compiling notification.
+* ***NOTICE:*** v1.3.0 which will be released soon will break some API compatibility with error handling and there will be a new sending API (the legacy sending API will remain)
+
+1.2.5:
+
+* Introduced a new event model. The connection class is now an event emitter which will emit events on connection state changes. This should largely replace the existing, somewhat inadequate error handling in previous versions. Please see the section above for more details or the message on commit d0a1d17961
+* Fixed a bug relating to rejecting unauthorized hosts
+* Added support for PFX files instead of separate Certificate and Key Files
+* Added a batched feedback feature which can callback with an array of all devices instead of calling the method for each device separately
+* Added support for error callbacks on a per notification basis.
+* Changed the socket behaviour to enable the TCP Nagle algorithm as recommended by Apple
+* Fixed lots of small bugs around connection handling which should make high volume applications more stable. Node should no longer crash completely on EPIPE errors.
+* Added connection socket timeout after a period of inactivity, configured by ```options.connectionTimeout```. The socket will then be re-established automatically if further notifications are sent.
+* Added cache autoadjustment. If ```options.autoAdjustCache = true``` and a notification error occurs after the notification is purged from the cache the library will attempt to increase the cache size to prevent it happening in future.
+
+1.2.4:
+
+* Fixed some typos in the feedback methods
+* Added some debug messages available during development, see debug section above.
+
+1.2.3:
+
+* Added some more error handling to the connection methods.
+* Fixed a problem where an error handler was not bound to the correct context and wouldn't fire.
+
+1.2.2:
+
+* Fixes issue #47, Syntax Error in feedback.js
+
+1.2.1:
+
+* Earlier versions had some incorrect logic in the handling of reconnection. This should be fixed now
+* Issue #46 ```.clone()``` did not set the badge property correctly.
+
+1.2.0:
+
+* Complete rewrite of the connection handling.
+* [q][q] is now required.
+* Change in the error handling logic. When a notification errors and it cannot be found in the cache, then all notifications in the cache will be resent instead of being discarded.
+* `errorCallback` will also be invoked for connection errors.
+* New methods on `Notification` to aid settings the alert properties.
+* `content-available` can now be set for Newsstand applications by setting the `newsstandAvailable` property on the Notification object.
+* `Notification` objects now have a `.clone(device)` method to assist you in sending the same notification to multiple devices.
+* Included some js-doc tags in the source.
+* Device object now provides a `.toString()` method to return the hex representation of the device token.
+* Fixes #23, #28, #32, #34, #35, #40, #42
+
+1.1.7:
+
+* Fixes a problem with sockets being closed on transmission error causing EPIPE errors in node.
+* Issues #29, #30
+
+1.1.6:
+
+* Fixes a regression from v1.1.5 causing connections to stall and messages to not be sent.
+
+1.1.5:
+
+* Feature: Certificate and Key data can be passed directly when creating a new connection instead of providing a file name on disk. (See: `certData` and `keyData` options)
+* Deliver whole write buffer if the socket is ready.
+* Fixed some global memory leaks.
+* Tidied up some code formatting glitches flagged by jslint
+* Fixes #16, #17, #18, #19, #20
+
+1.1.4:
+
+* Fixes #15: Sending unified emoji via apn; Added encoding parameter when sending notification
+
+1.1.3:
+
+* Fixes #11,#12,#13,#14: Ensure delivery of notifications to Apple even under heavy load.
+
+1.1.2:
+
+* Fixes #9, Addresses an issue if the socket disconnects with queued notifications it would be reinitialised before its teardown is completed leaving the system in an undefined state.
+
+1.1.1:
+
+* Fixes issue #6 where a socket emitting an error could bring down the whole node instance as the exception is uncaught.
+
+1.1.0:
+
+* First shot at node-0.4.0 compatibility with new tls API.
+* Fixed a bug with parsing device token which could cause an out-of-bounds error.
+
+1.0.4:
+
+* The 1.0.x tree is now a maintenance branch as the TLS API used has been deprecated as of node 0.4.0
+* Changed package.json to specify the inoperability of this version with node > 0.4.0
+
+1.0.3:
+
+* Fixes a typo in the documentation in this very file
+
+1.0.2:
+
+* Fixes critical issue with error callback not firing (Issue #1)
+
+1.0.1:
+
+* Moved some object methods into the prototype to save memory
+* Tidied up some connecting code
+* Introduced an `index.js` to make module loading tidier
+* Fixed a couple of typos. 
+
+1.0.0: 
+ 
+* Well I created a module; Version 0.0.0 had no code, and now it does, and it works, so that's pretty neat, right?
