@@ -1,46 +1,49 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Node-apn : Apple Push Notification module for Node.js" />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-    <title>Node-apn</title>
+    <title>node-apn by argon</title>
   </head>
 
   <body>
+    <header>
+      <div class="inner">
+        <h1>node-apn</h1>
+        <h2>Apple Push Notification module for Node.js</h2>
+        <a href="https://github.com/argon/node-apn" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/argon/node-apn">View on GitHub</a>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>node-apn</h1>
 
-          <h1 id="project_title">Node-apn</h1>
-          <h2 id="project_tagline">Apple Push Notification module for Node.js</h2>
+<p>A Node.js module for interfacing with the Apple Push Notification service.</p>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/argon/node-apn/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/argon/node-apn/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h2>Features</h2>
+<h2>Features</h2>
 
 <ul>
-<li>Maintains a connection to the server to maximise notification batching</li>
-<li>Enhanced binary interface support with error handling</li>
+<li>Fast</li>
+<li>Maintains a connection to the server to maximise notification batching and throughput.</li>
+<li>Enhanced binary interface support, with error handling</li>
 <li>Automatically sends unsent notifications if an error occurs</li>
 <li>Feedback service support</li>
+<li>Complies with all best practises laid out by Apple</li>
 </ul><h2>Installation</h2>
 
-<p>Via <a href="https://github.com/isaacs/npm">npm</a>:</p>
+<p>Via <a href="https://npmjs.org">npm</a>:</p>
 
 <pre><code>$ npm install apn
 </code></pre>
@@ -51,11 +54,13 @@
 $ git submodule update --init
 </code></pre>
 
-<h2>Usage</h2>
+<h2>Quick Start</h2>
+
+<p>This is intended as a brief introduction, please refer to the documentation in <code>doc/</code> for more details.</p>
 
 <h3>Load in the module</h3>
 
-<pre><code>var apns = require('apn');
+<pre><code>var apn = require('apn');
 </code></pre>
 
 <h3>Exported Objects</h3>
@@ -68,24 +73,12 @@ $ git submodule update --init
 <li>Errors</li>
 </ul><h3>Connecting</h3>
 
-<p>Create a new connection to the gateway server using a dictionary of options. The defaults are listed below:</p>
+<p>Create a new connection to the APN gateway server using a dictionary of options. If you name your certificate and key files appropriately (<code>cert.pem</code> and <code>key.pem</code>) then the defaults should be suitable to get you up and running, the only thing you'll need to change is the <code>gateway</code> if you're in the sandbox environment.</p>
 
-<pre><code>var options = {
-    cert: 'cert.pem',                 /* Certificate file path */
-    certData: null,                   /* String or Buffer containing certificate data, if supplied uses this instead of cert file path */
-    key:  'key.pem',                  /* Key file path */
-    keyData: null,                    /* String or Buffer containing key data, as certData */
-    passphrase: null,                 /* A passphrase for the Key file */
-    ca: null                          /* String or Buffer of CA data to use for the TLS connection */
-    gateway: 'gateway.push.apple.com',/* gateway address */
-    port: 2195,                       /* gateway port */
-    enhanced: true,                   /* enable enhanced format */
-    errorCallback: undefined,         /* Callback when error occurs function(err,notification) */
-    cacheLength: 100                  /* Number of notifications to cache for error purposes */
-};
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"gateway"</span><span class="o">:</span> <span class="s2">"gateway.sandbox.push.apple.com"</span> <span class="p">};</span>
 
-var apnsConnection = new apns.Connection(options);
-</code></pre>
+    <span class="kd">var</span> <span class="nx">apnConnection</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">apn</span><span class="p">.</span><span class="nx">Connection</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+</pre></div>
 
 <p><strong>Important:</strong> In a development environment you must set <code>gateway</code> to <code>gateway.sandbox.push.apple.com</code>.</p>
 
@@ -93,72 +86,51 @@ var apnsConnection = new apns.Connection(options);
 
 <p>To send a notification first create a <code>Device</code> object. Pass it the device token as either a hexadecimal string, or alternatively as a <code>Buffer</code> object containing the token in binary form.</p>
 
-<pre><code>var myDevice = new apns.Device(token);
+<pre><code>var myDevice = new apn.Device(token);
 </code></pre>
 
 <p>Next, create a notification object and set parameters. See the <a href="https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1" title="Local and Push Notification Programming Guide: Apple Push Notification Service">payload documentation</a> for more details.</p>
 
-<pre><code>var note = new apns.Notification();
+<pre><code>var note = new apn.Notification();
 
 note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
 note.badge = 3;
 note.sound = "ping.aiff";
 note.alert = "You have a new message";
 note.payload = {'messageFrom': 'Caroline'};
-note.device = myDevice;
 
-apnsConnection.sendNotification(note);
+apnConnection.pushNotification(note, myDevice);
 </code></pre>
-
-<p>As of version 1.2.0 it is also possible to use a set of methods provided by Notification object (<code>setAlertText</code>, <code>setActionLocKey</code>, <code>setLocKey</code>, <code>setLocArgs</code>, <code>setLaunchImage</code>) to aid the creation of the alert parameters. For applications which provide Newsstand capability there is a new boolean parameter <code>note.newsstandAvailable</code> to specify <code>content-available</code> in the payload.</p>
 
 <p>The above options will compile the following dictionary to send to the device:</p>
 
 <pre><code>{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"You have a new message"}}
 </code></pre>
 
-<p><strong>*N.B.:</strong> If you wish to send notifications containing emoji or other multi-byte characters you will need to set <code>note.encoding = 'ucs2'</code>. This tells node to send the message with 16bit characters, however it also means your message payload will be limited to 127 characters.</p>
-
-<h3>Handling Errors</h3>
-
-<p>If the enhanced binary interface is enabled and an error occurs - as defined in Apple's documentation - when sending a message, then subsequent messages will be automatically resent* and the connection will be re-established. If an <code>errorCallback</code> is also specified in the connection options then it will be invoked with 2 arguments <code>(err, notification)</code></p>
-
-<p>If a notification fails to be sent because a connection error occurs then the <code>errorCallback</code> will be called for each notification waiting for the connection which failed. In this case the first parameter will be an Error object instead of an error number.</p>
-
-<p><code>errorCallback</code> will be called in 3 situations with the parameters shown.</p>
-
-<ol>
-<li>The notification has been rejected by Apple (or determined to have an invalid device token or payload before sending) for one of the reasons shown in Table 5-1 <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4" title="The Binary Interface and Notification Formats">here</a> <code>errorCallback(errorCode, notification)</code>
-</li>
-<li>A notification has been rejected by Apple but it has been removed from the cache so it is not possible to identify which. In this case subsequent notifications may be lost. <strong>If this happens you should consider increasing your <code>cacheLength</code> value to prevent data loss</strong> <code>errorCallback(255, null)</code>
-</li>
-<li>A connection error has occurred before the notification can be sent. <code>errorCallback(Error object, notification)</code>
-</li>
-</ol><p><strong>*N.B.:</strong> The <code>cacheLength</code> option for the connection specifies the number of sent notifications which will be cached, on a FIFO basis for error handling purposes. If <code>cacheLength</code> is not set to a large enough value, then in high volume environments, a notification - possibly including some subsequent notifications - may be removed from the cache before Apple returns an error associated with it. In this case the <code>errorCallback</code> will still be called, but with a <code>null</code> notification and error code 255. If this happens you should consider increasing <code>cacheLength</code> to prevent losing notifications. All the notifications still residing in the cache will be resent automatically.</p>
+<p><strong>*N.B.:</strong> If you wish to send notifications containing emoji or other multi-byte characters you will need to set <code>note.encoding = 'ucs2'</code>. This tells node to send the message with 16bit characters, however it also means your message payload will be limited to 128 characters.</p>
 
 <h3>Setting up the feedback service</h3>
 
 <p>Apple recommends checking the feedback service periodically for a list of devices for which there were failed delivery attempts.</p>
 
-<p>Using the <code>Feedback</code> object it is possible to periodically query the server for the list. You should provide a function <code>feedback</code> which will accept two arguments, the <code>time</code> returned by the server (epoch time) and a <code>Buffer</code> object containing the device token. You can also set the query interval in seconds. The default options are shown below.</p>
+<p>Using the <code>Feedback</code> object it is possible to periodically query the server for the list. Many of the options are similar to that of <code>Connection</code>.</p>
+
+<p>Attach a listener to the <code>feedback</code> event to receive the output as two arguments, the <code>time</code> returned by the server (epoch time) and a <code>Buffer</code> object containing the device token - this event will be emitted for each device separately. Alternatively you can enable the <code>batchFeedback</code> option and the <code>feedback</code> event will provide an array of objects containing <code>time</code> and <code>device</code> properties.</p>
 
 <pre><code>var options = {
-    cert: 'cert.pem',                   /* Certificate file */
-    certData: null,                     /* Certificate file contents (String|Buffer) */
-    key:  'key.pem',                    /* Key file */
-    keyData: null,                      /* Key file contents (String|Buffer) */
-    passphrase: null,                   /* A passphrase for the Key file */
-    ca: null,                           /* Certificate authority data to pass to the TLS connection */
-    address: 'feedback.push.apple.com', /* feedback address */
-    port: 2196,                         /* feedback port */
-    feedback: false,                    /* enable feedback service, set to callback */
-    interval: 3600                      /* interval in seconds to connect to feedback service */
+    "batchFeedback": true,
+    "interval": 300
 };
 
-var feedback = new apns.Feedback(options);
+var feedback = new apn.Feedback(options);
+feedback.on("feedback", function(devices) {
+    devices.forEach(function(item) {
+        // Do something with item.device and item.time;
+    });
+});
 </code></pre>
 
-<p>This will automatically start a timer to check with Apple every <code>interval</code> seconds. You can cancel the interval by calling <code>feedback.cancel()</code>. If you do not wish to have the service automatically queried then set <code>interval</code> to 0 and use <code>feedback.start()</code>.</p>
+<p>By specifying a time interval (in seconds) <code>Feedback</code> will periodically query the service without further intervention.</p>
 
 <p><strong>Important:</strong> In a development environment you must set <code>address</code> to <code>feedback.sandbox.push.apple.com</code>.</p>
 
@@ -176,11 +148,23 @@ $ openssl pkcs12 -in key.p12 -out key.pem -nodes
 
 <p>If you are using a development certificate you may wish to name them differently to enable fast switching between development and production. The filenames are configurable within the module options, so feel free to name them something more appropriate.</p>
 
+<p>It is also possible to supply a PFX (PFX/PKCS12) package containing your certificate, key and any relevant CA certificates. The method to accomplish this is left as an exercise to the reader. It should be possible to select the relevant items in "Keychain Access" and use the export option with ".p12" format.</p>
+
+<h2>Debugging</h2>
+
+<p>If you experience difficulties sending notifications or using the feedback service you can enable debug messages within the library by running your application with <code>DEBUG=apn</code> or <code>DEBUG=apnfb</code> set as an environment variable.</p>
+
+<p>You will need the <code>debug</code> module which can be installed with <code>npm install debug</code>.</p>
+
+<p>You are encouraged to read the extremely informative <a href="http://developer.apple.com/library/ios/#technotes/tn2265/_index.html" title="Troubleshooting Push Notifications">Troubleshooting Push Notifications</a> Tech Note in the first instance, in case your query is answered there.</p>
+
+<p>If you experience any difficulties please create an Issue on GitHub and if possible include a log of the debug output around the time the problem manifests itself. If the problem is reproducible sample code is also extremely helpful.</p>
+
 <h2>Credits</h2>
 
 <p>Written and maintained by <a href="http://andrewnaylor.co.uk">Andrew Naylor</a>.</p>
 
-<p>Contributors: <a href="http://bobrik.name">Ian Babrou</a>, <a href="https://github.com/dgthistle">dgthistle</a>, <a href="https://github.com/keithnlarsen">Keith Larsen</a>, <a href="https://github.com/mypark">Mike P</a>, <a href="https://github.com/neoziro">Greg Bergé</a></p>
+<p>Thanks to: <a href="http://bobrik.name">Ian Babrou</a>, <a href="https://github.com/dgthistle">dgthistle</a>, <a href="https://github.com/keithnlarsen">Keith Larsen</a>, <a href="https://github.com/mypark">Mike P</a>, <a href="https://github.com/neoziro">Greg Bergé</a>, <a href="https://github.com/AsadR">Asad ur Rehman</a>, <a href="https://github.com/nsabovic">Nebojsa Sabovic</a>, <a href="https://github.com/gimenete">Alberto Gimeno</a>, <a href="https://github.com/rwtombaugh">Randall Tombaugh</a>, <a href="https://github.com/thegreatmichael">Michael Stewart</a>, <a href="https://github.com/mgcrea">Olivier Louvignes</a>, <a href="https://github.com/porsager">porsager</a></p>
 
 <h2>License</h2>
 
@@ -199,101 +183,26 @@ furnished to do so, subject to the following conditions:</p>
 all copies or substantial portions of the Software.</p>
 
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+        </section>
 
-<h2>Changelog</h2>
+        <aside id="sidebar">
+          <a href="https://github.com/argon/node-apn/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/argon/node-apn/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
 
-<p>1.2.0:</p>
+          <p class="repo-owner"><a href="https://github.com/argon/node-apn"></a> is maintained by <a href="https://github.com/argon">argon</a>.</p>
 
-<ul>
-<li>Complete rewrite of the connection handling.</li>
-<li>
-<a href="https://github.com/kriskowal/q">q</a> is now required.</li>
-<li>Change in the error handling logic. When a notification errors and it cannot be found in the cache, then all notifications in the cache will be resent instead of being discarded.</li>
-<li>
-<code>errorCallback</code> will also be invoked for connection errors.</li>
-<li>New methods on <code>Notification</code> to aid settings the alert properties.</li>
-<li>
-<code>content-available</code> can now be set for Newsstand applications by setting the <code>newsstandAvailable</code> property on the Notification object.</li>
-<li>
-<code>Notification</code> objects now have a <code>.clone(device)</code> method to assist you in sending the same notification to multiple devices.</li>
-<li>Included some js-doc tags in the source.</li>
-<li>Device object now provides a <code>.toString()</code> method to return the hex representation of the device token.</li>
-<li>Fixes #23, #28, #32, #34, #35, #40, #42</li>
-</ul><p>1.1.7:</p>
-
-<ul>
-<li>Fixes a problem with sockets being closed on transmission error causing EPIPE errors in node.</li>
-<li>Issues #29, #30</li>
-</ul><p>1.1.6:</p>
-
-<ul>
-<li>Fixes a regression from v1.1.5 causing connections to stall and messages to not be sent.</li>
-</ul><p>1.1.5:</p>
-
-<ul>
-<li>Feature: Certificate and Key data can be passed directly when creating a new connection instead of providing a file name on disk. (See: <code>certData</code> and <code>keyData</code> options)</li>
-<li>Deliver whole write buffer if the socket is ready.</li>
-<li>Fixed some global memory leaks.</li>
-<li>Tidied up some code formatting glitches flagged by jslint</li>
-<li>Fixes #16, #17, #18, #19, #20</li>
-</ul><p>1.1.4:</p>
-
-<ul>
-<li>Fixes #15: Sending unified emoji via apn; Added encoding parameter when sending notification</li>
-</ul><p>1.1.3:</p>
-
-<ul>
-<li>Fixes #11,#12,#13,#14: Ensure delivery of notifications to Apple even under heavy load.</li>
-</ul><p>1.1.2:</p>
-
-<ul>
-<li>Fixes #9, Addresses an issue if the socket disconnects with queued notifications it would be reinitialised before its teardown is completed leaving the system in an undefined state.</li>
-</ul><p>1.1.1:</p>
-
-<ul>
-<li>Fixes issue #6 where a socket emitting an error could bring down the whole node instance as the exception is uncaught.</li>
-</ul><p>1.1.0:</p>
-
-<ul>
-<li>First shot at node-0.4.0 compatibility with new tls API.</li>
-<li>Fixed a bug with parsing device token which could cause an out-of-bounds error.</li>
-</ul><p>1.0.4:</p>
-
-<ul>
-<li>The 1.0.x tree is now a maintenance branch as the TLS API used has been deprecated as of node 0.4.0</li>
-<li>Changed package.json to specify the inoperability of this version with node &gt; 0.4.0</li>
-</ul><p>1.0.3:</p>
-
-<ul>
-<li>Fixes a typo in the documentation in this very file</li>
-</ul><p>1.0.2:</p>
-
-<ul>
-<li>Fixes critical issue with error callback not firing (Issue #1)</li>
-</ul><p>1.0.1:</p>
-
-<ul>
-<li>Moved some object methods into the prototype to save memory</li>
-<li>Tidied up some connecting code</li>
-<li>Introduced an <code>index.js</code> to make module loading tidier</li>
-<li>Fixed a couple of typos. </li>
-</ul><p>1.0.0: </p>
-
-<ul>
-<li>Well I created a module; Version 0.0.0 had no code, and now it does, and it works, so that's pretty neat, right?</li>
-</ul>
-      </section>
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Node-apn maintained by <a href="https://github.com/argon">argon</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-              <script type="text/javascript">
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -303,7 +212,6 @@ all copies or substantial portions of the Software.</p>
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
-
 
   </body>
 </html>
