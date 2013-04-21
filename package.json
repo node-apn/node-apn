@@ -6,7 +6,7 @@
   "contributors": [ 
     { "name": "Andrew Naylor", "email": "argon@mkbot.net" }
   ],
-  "keywords": ["apple", "push", "push notifications", "iOS", "apns"],
+  "keywords": ["apple", "push", "push notifications", "iOS", "apns", "notifications"],
   "main": "index.js",
   "bugs": {
       "email": "argon@mkbot.net",

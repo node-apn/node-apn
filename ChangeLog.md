@@ -4,13 +4,13 @@
 
 This release represents a major re-think with how the module should function, it brings much needed functionality, dramatically improved reliability and lays foundations for future plans to increase message throughput.
 
-* New API (`Connection#pushNotification) to support sending one notification to multiple devices.
+* New API (`Connection#pushNotification`) to support sending one notification to multiple devices. (Please see `doc/Migration.markdown` for more info)
 * Updated feedback service to emit events.
 * Switched to `q` v0.9.x
 * Added `buffersNotifications` option to allow disabling automatic resending.
 * Fixed `Notification#Trim()` for multibyte strings
 * New `fastMode` to aggressively deliver notifications (Only recommended for "worker" applications where node-apn is servicing a queue as it may impact responsiveness under heavy workload)
-* Support for opening multiple connections to the push service. This option doesn't seem to be of much use yet, please let me know if it is.
+* Support for opening multiple connections to the push service. This option doesn't seem to offer any benefits yet, please let me know if you find otherwise.
 * Improvements to better support node 0.10.x
 * Better device token sanitisation in `Device`
 * Minimise EPIPE errors
