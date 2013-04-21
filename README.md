@@ -122,6 +122,12 @@ You are encouraged to read the extremely informative [Troubleshooting Push Notif
 
 If you experience any difficulties please create an Issue on GitHub and if possible include a log of the debug output around the time the problem manifests itself. If the problem is reproducible sample code is also extremely helpful.
 
+## Resources
+
+* [Local and Push Notification Programming Guide: Apple Push Notification Service][pl]
+* [Apple Technical Note: Troubleshooting Push Notifications][tn2265]
+* [List of Projects, Applications and Companies Using Node-apn][pacapn]
+
 ## Credits
 
 Written and maintained by [Andrew Naylor][andrewnaylor].
@@ -148,8 +154,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 [errors]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
 [pl]: https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
-[fs]:https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "Communicating With APS"
-[tn2265]:http://developer.apple.com/library/ios/#technotes/tn2265/_index.html "Troubleshooting Push Notifications"
+[fs]: https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "Communicating With APS"
+[tn2265]: http://developer.apple.com/library/ios/#technotes/tn2265/_index.html "Troubleshooting Push Notifications"
+[pacapn]:https://github.com/argon/node-apn/wiki/Projects,-Applications,-and-Companies-Using-Node-apn "List of Projects, Applications and Companies Using Node-apn"
 [andrewnaylor]: http://andrewnaylor.co.uk
 [bnoordhuis]: http://bnoordhuis.nl
 [npm]: https://npmjs.org
