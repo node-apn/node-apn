@@ -1,5 +1,10 @@
 ## Changelog
 
+1.3.1:
+
+* Removed an unnecessary check that a `feedback` method had been specified on `Feedback` constructor.
+* Added a debug warning when a listener hasn't been added on `Feedback`.
+
 1.3.0:
 
 This release represents a major re-think with how the module should function, it brings much needed functionality, dramatically improved reliability and lays foundations for future plans to increase message throughput.
