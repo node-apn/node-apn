@@ -1,24 +1,36 @@
 {
   "name": "apn",
   "description": "An interface to the Apple Push Notification service for Node.js",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "author": "Andrew Naylor <argon@mkbot.net>",
-  "contributors": [ 
-    { "name": "Andrew Naylor", "email": "argon@mkbot.net" }
+  "contributors": [
+    {
+      "name": "Andrew Naylor",
+      "email": "argon@mkbot.net"
+    }
   ],
-  "keywords": ["apple", "push", "push notifications", "iOS", "apns", "notifications"],
+  "keywords": [
+    "apple",
+    "push",
+    "push notifications",
+    "iOS",
+    "apns",
+    "notifications"
+  ],
   "main": "index.js",
   "bugs": {
-      "email": "argon@mkbot.net",
-      "url": "https://github.com/argon/node-apn/issues"
-   },
+    "email": "argon@mkbot.net",
+    "url": "https://github.com/argon/node-apn/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/argon/node-apn.git"
   },
   "dependencies": {
-  	"q": "0.9.x"
+    "q": "0.9.x"
   },
-  "engines": { "node": ">= 0.6.6" },
+  "engines": {
+    "node": ">= 0.6.6"
+  },
   "license": "MIT"
 }
