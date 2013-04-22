@@ -1,5 +1,9 @@
 ## Changelog
 
+1.3.2:
+
+* Fixed #97: EventEmitter.listenerCount was only introduced in 0.9, no good for backward compatibility
+
 1.3.1:
 
 * Removed an unnecessary check that a `feedback` method had been specified on `Feedback` constructor.
