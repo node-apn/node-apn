@@ -1,5 +1,9 @@
 ## Changelog
 
+1.3.3:
+
+* Fixed #98: Ensure `Notification#trim` cleanly trims Unicode characters.
+
 1.3.2:
 
 * Fixed #97: EventEmitter.listenerCount was only introduced in 0.9, no good for backward compatibility

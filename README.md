@@ -60,7 +60,7 @@ Next, create a notification object and set parameters. See the [payload document
 	note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
 	note.badge = 3;
 	note.sound = "ping.aiff";
-	note.alert = "You have a new message";
+	note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
 	note.payload = {'messageFrom': 'Caroline'};
 	
 	apnConnection.pushNotification(note, myDevice);
@@ -69,9 +69,13 @@ Next, create a notification object and set parameters. See the [payload document
 
 The above options will compile the following dictionary to send to the device:
 
-	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"You have a new message"}}
-	
-**\*N.B.:** If you wish to send notifications containing emoji or other multi-byte characters you will need to set `note.encoding = 'ucs2'`. This tells node to send the message with 16bit characters, however it also means your message payload will be limited to 128 characters.
+	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
+
+#### A note on Unicode.
+
+If you wish to send notifications containing emoji or other multi-byte characters you will need to ensure they are encoded correctly within the string. Notifications can be transmitted to Apple in either UTF-8 or UTF-16 and strings passed in for the Alert will be converted accordingly. UTF-8 is recommended for most cases as it can represent exactly the same characters as UTF-16 but is usually more space-efficient. When manually encoding strings as above with `\uD83D\uDCE7` the character (in this case a surrogate pair) is escaped in UTF-16 form because Javascript uses UTF-16 internally for Strings but does not handle surrogate pairs automatically.
+
+If in doubt, leave the encoding as default. If you experience any problems raise an issue on GitHub.
 
 ### Setting up the feedback service
 

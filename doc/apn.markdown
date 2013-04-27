@@ -161,7 +161,7 @@ The UNIX timestamp representing when the notification should expire. This does n
 
 ### notification.encoding
 
-The encoding to use when transmitting the notification, defaults to `utf8`. `utf16le` is also possible but will as each character is represented by 2 or 4 bytes will dramatically shrink the possible payload size.
+The encoding to use when transmitting the notification to APNS, defaults to `utf8`. `utf16le` is also possible but as each character is represented by a minimum of 2 bytes, will at least halve the possible payload size. If in doubt leave as default.
 
 ### notification.payload
 
