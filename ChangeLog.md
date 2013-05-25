@@ -1,5 +1,9 @@
 ## Changelog
 
+1.3.4:
+
+* Fixed #101: TypeError: Cannot call method 'resolve' of null
+
 1.3.3:
 
 * Fixed #98: Ensure `Notification#trim` cleanly trims Unicode characters.
