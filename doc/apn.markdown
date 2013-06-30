@@ -119,6 +119,10 @@ If you wish to send notifications containing emoji or other multi-byte character
 
 If in doubt, leave the encoding as default. If you experience any problems post a question in the [node-apn Google Group][googlegroup].
 
+### connection.setCacheLength(newLength)
+
+Used to manually adjust the "cacheLength" property in the options. This is ideal if you choose to use the `cacheTooSmall` event to tweak your environment. It is safe for increasing and reducing cache size.
+
 ### Event: 'error'
 
 `function (error) { }`
