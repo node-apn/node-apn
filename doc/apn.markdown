@@ -2,8 +2,22 @@
 
 node-apn provides a non-blocking, fully managed interface to push notifications to iOS devices using the Apple Push Notification System.
 
-
 To use the APN Module one must `require('apn')`.
+
+If you are not familiar with how the Apple Push Notificaion System (APNS) works, it is recommended that you read the [Local and Push Notification Programming Guide][pg] in particular the section on [A Push Notification and Its Path][pnpath].
+
+
+### Sending a Push Notification
+
+Sending push notifications is as simple as creating a new connection to APNS using the `Connection` class which should be configured, at minimum, with your applications' certificate and private key. The `Connection` class manages underlying sockets automatically. 
+
+Pushing a notification to a device is as simple as creating an instance of `Notification` which you then configure with the payload and call `Connection#pushNotification` with the notification object and the device token you wish to send it to. It is also possible to send the same notification object to multiple devices very efficiently please consult the documentation for `Connection#pushNotification` for more details.
+
+The status of the `Connection` object, including underlying connections, can be observed by the events emitted. It is particularly important that you read the section below on *Handling Errors*.
+
+### Monitoring the Feedback Service.
+
+Apple provides the "Feedback Service" to inform you when devices you have attempted to send notifications to are no longer reachable - usually because the app has been deleted from the users device. The `Feedback` class will handle connecting to the Feedback service periodically and providing the results to your application for processing. More information on the correct usage of the Feedback service is included below.
 
 ## apn.Connection([options])
 
@@ -47,6 +61,8 @@ Options:
 
  - `fastMode` {Boolean} Whether to aggresively empty the notification buffer while connected - if set to true node-apn may enter a tight loop under heavy load while delivering notifications. (Defaults to: `false`)
 
+ **Important:** In a development environment you must set `gateway` to `gateway.sandbox.push.apple.com`.
+
 ## apn.Feedback([options])
 
 Creates a new connection to the Apple Push Notification Feedback Service and if `interval` isn't disabled automatically begins polling the service. Many of the options are the same as `apn.Connection()`
@@ -79,6 +95,8 @@ Attach an event to the `feedback` event to receive output.
 
  - `interval` {Number} How often to automatically poll the feedback service. Set to `0` to disable. (Defaults to: `3600`)
 
+**Important:** In a development environment you must set `address` to `feedback.sandbox.push.apple.com`.
+
 ## apn.Device(deviceToken)
 
 Returns a new `Device` object. `deviceToken` can be a `Buffer` or a `String` containing a "hex" representation of the token.
@@ -95,6 +113,11 @@ This is the business end of the module. Create a `Notification` object and pass 
 
 A "recipient" is either a `Device` object, a `String`, or a `Buffer` containing the device token. `Device` objects are used internally and will be created if necessary. Where applicable, all events will return a `Device` regardless of the type passed to this method.
 
+#### A note on Unicode.
+
+If you wish to send notifications containing emoji or other multi-byte characters you will need to ensure they are encoded correctly within the string. Notifications can be transmitted to Apple in either UTF-8 or UTF-16 and strings passed in for the Alert will be converted accordingly. UTF-8 is recommended for most cases as it can represent exactly the same characters as UTF-16 but is usually more space-efficient. When manually encoding strings as above with `\uD83D\uDCE7` the character (in this case a surrogate pair) is escaped in UTF-16 form because Javascript uses UTF-16 internally for Strings but does not handle surrogate pairs automatically.
+
+If in doubt, leave the encoding as default. If you experience any problems post a question in the [node-apn Google Group][googlegroup].
 
 ### Event: 'error'
 
@@ -227,7 +250,13 @@ Trigger a query of the feedback service. If `interval` is non-zero then this met
 
 `function (error) { }`
 
-Emitted when an error occurs establishing a connection the feedback servers.
+Emitted when an error occurs initialising the module. Usually caused by failing to load the certificates.
+
+### Event: 'feedbackError'
+
+`function (error) { }`
+
+Emitted when an error occurs receiving or processing the feedback and in the case of a socket error occurring. These errors are usually informational and node-apn will automatically recover.
 
 ### Event: 'feedback'
 
@@ -236,6 +265,14 @@ Emitted when an error occurs establishing a connection the feedback servers.
 Emitted when data has been received from the feedback service, typically once per connection. `feedbackData` is an array of objects, each containing the `time` returned by the server (epoch time) and the `device` a `Buffer` containing the device token. 
 
 If `batchFeedback` has been disabled this will be emitted once per item, with two parameters, the `time` and the `device`.
+
+### Using the feedback data:
+
+The documentation on [The Feedback Service][feedback] explains how you should use the data emitted from the 'feedback' event. The most important part is quoted here:
+
+> Query the feedback service daily to get the list of device tokens. Use the timestamp to verify that the device tokens haven’t been reregistered since the feedback entry was generated. For each device that has not been reregistered, stop sending notifications. APNs monitors providers for their diligence in checking the feedback service and refraining from sending push notifications to nonexistent applications on devices.
+
+Typically you should record the timestemp when a device registers with your service along with the token and update it every time your app re-registers the token. When the feedback service returns a token with an associated timestamp which is newer than that stored by you then you should disable, or remove, the token from your system and stop sending notifications to it.
 
 ## Handling Errors
 
@@ -251,5 +288,8 @@ If the cache is too small then node-apn wont be able to return the bad notificat
 
 If you wish to disable the automatic resending functionality please consult the `buffersNotifications` configuration option.
 
-[errors]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
-[pl]: https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW10 "Local and Push Notification Programming Guide: Apple Push Notification Service"
+[pg]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Introduction.html#//apple_ref/doc/uid/TP40008194-CH1-SW1 "Local and Push Notification Programming Guide"
+[pnpath]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW10 "A Push Notification and Its Path"
+[errors]:https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
+[feedback]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "The Feedback Service"
+[pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"

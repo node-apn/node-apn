@@ -30,13 +30,6 @@ This is intended as a brief introduction, please refer to the documentation in `
 
 	var apn = require('apn');
 
-### Exported Objects
-- Connection
-- Notification
-- Device
-- Feedback
-- Errors
-
 ### Connecting
 Create a new connection to the APN gateway server using a dictionary of options. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running, the only thing you'll need to change is the `gateway` if you're in the sandbox environment.
 
@@ -45,15 +38,15 @@ Create a new connection to the APN gateway server using a dictionary of options.
 
 	var apnConnection = new apn.Connection(options);
 ```
-	
-**Important:** In a development environment you must set `gateway` to `gateway.sandbox.push.apple.com`.
+
+Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
 
 ### Sending a notification
 To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string, or alternatively as a `Buffer` object containing the token in binary form.
 
 	var myDevice = new apn.Device(token);
 
-Next, create a notification object and set parameters. See the [payload documentation][pl] for more details.
+Next, create a notification object, set the relevant parameters (See the [payload documentation][pl] for more details.) and use the `pushNotification` method on the connection to send it.
 
 	var note = new apn.Notification();
 	
@@ -64,18 +57,10 @@ Next, create a notification object and set parameters. See the [payload document
 	note.payload = {'messageFrom': 'Caroline'};
 	
 	apnConnection.pushNotification(note, myDevice);
-	
-
 
 The above options will compile the following dictionary to send to the device:
 
 	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
-
-#### A note on Unicode.
-
-If you wish to send notifications containing emoji or other multi-byte characters you will need to ensure they are encoded correctly within the string. Notifications can be transmitted to Apple in either UTF-8 or UTF-16 and strings passed in for the Alert will be converted accordingly. UTF-8 is recommended for most cases as it can represent exactly the same characters as UTF-16 but is usually more space-efficient. When manually encoding strings as above with `\uD83D\uDCE7` the character (in this case a surrogate pair) is escaped in UTF-16 form because Javascript uses UTF-16 internally for Strings but does not handle surrogate pairs automatically.
-
-If in doubt, leave the encoding as default. If you experience any problems raise an issue on GitHub.
 
 ### Setting up the feedback service
 
@@ -99,22 +84,7 @@ Attach a listener to the `feedback` event to receive the output as two arguments
 
 By specifying a time interval (in seconds) `Feedback` will periodically query the service without further intervention.
 
-**Important:** In a development environment you must set `address` to `feedback.sandbox.push.apple.com`.
-
 More information about the feedback service can be found in the [feedback service documentation][fs].
-
-## Converting your APNs Certificate
-
-After requesting the certificate from Apple, export your private key as a .p12 file and download the .cer file from the iOS Provisioning Portal.
-
-Now, in the directory containing cert.cer and key.p12 execute the following commands to generate your .pem files:
-
-	$ openssl x509 -in cert.cer -inform DER -outform PEM -out cert.pem
-	$ openssl pkcs12 -in key.p12 -out key.pem -nodes
-	
-If you are using a development certificate you may wish to name them differently to enable fast switching between development and production. The filenames are configurable within the module options, so feel free to name them something more appropriate.
-
-It is also possible to supply a PFX (PFX/PKCS12) package containing your certificate, key and any relevant CA certificates. The method to accomplish this is left as an exercise to the reader. It should be possible to select the relevant items in "Keychain Access" and use the export option with ".p12" format.
 
 ## Debugging
 
@@ -124,7 +94,11 @@ You will need the `debug` module which can be installed with `npm install debug`
 
 You are encouraged to read the extremely informative [Troubleshooting Push Notifications][tn2265] Tech Note in the first instance, in case your query is answered there.
 
-If you experience any difficulties please create an Issue on GitHub and if possible include a log of the debug output around the time the problem manifests itself. If the problem is reproducible sample code is also extremely helpful.
+## Support
+
+If you have any questions or difficulties working with the module, the [node-apn Google group][googlegroup] should be your first port of call. 
+
+Please include as much detail as possible - especially debug logs, if the problem is reproducible sample code is also extremely helpful. GitHub Issues should only be created for verified problems and enhancements, this will allow them to be tracked more easily.
 
 ## Resources
 
@@ -156,10 +130,12 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[errors]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
-[pl]: https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
-[fs]: https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "Communicating With APS"
+[certificateWiki]:https://github.com/argon/node-apn/wiki/Preparing-Certificates "Preparing Certificates"
+[errors]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
+[pl]: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
+[fs]: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "The Feedback Service"
 [tn2265]: http://developer.apple.com/library/ios/#technotes/tn2265/_index.html "Troubleshooting Push Notifications"
+[googlegroup]:https://groups.google.com/group/node-apn "node-apn Google Group"
 [pacapn]:https://github.com/argon/node-apn/wiki/Projects,-Applications,-and-Companies-Using-Node-apn "List of Projects, Applications and Companies Using Node-apn"
 [andrewnaylor]: http://andrewnaylor.co.uk
 [bnoordhuis]: http://bnoordhuis.nl
