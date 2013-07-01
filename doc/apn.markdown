@@ -208,8 +208,9 @@ The value to specify for `payload.aps.sound`
 The value to specify for `payload.apns.alert` can be either a `String` or an `Object` as outlined by the payload documentation.
 
 ### notification.newsstandAvailable
+### notification.contentAvailable
 
-Setting this property to true will specify "content-available" in the payload when it is compiled.
+Setting either of these properties to true will specify "content-available" in the payload when it is compiled.
 
 ### notification.mdm
 
