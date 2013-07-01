@@ -180,6 +180,8 @@ For further information please read the section below on "Handling Errors".
 
 As of version 1.2.0 it is possible to use a set of methods provided by Notification object (`setAlertText`, `setActionLocKey`, `setLocKey`, `setLocArgs`, `setLaunchImage`) to aid the creation of the alert parameters. For applications which provide Newsstand capability there is a new boolean parameter `note.newsstandAvailable` to specify `content-available` in the payload.
 
+For iOS 7 applications which support Silent Remote Notifications you can use the `note.contentAvailable` property. This is identical in functionality to  `note.newsstandAvailable` without the confusion of the "Newstand" terminology.
+
 A `Notification` enapsulates the data to be compiled down to JSON and pushed to a device. See the [payload documentation][pl] for more details. At present the total length of the payload accepted by Apple is 256 bytes.
 
 ### notification.retryLimit
