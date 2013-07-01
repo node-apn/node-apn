@@ -1,5 +1,15 @@
 ## Changelog
 
+1.3.5:
+
+* Feedback now emits a `feedbackError` instead of `error` for socket errors.
+* Fixed: Incorrect handling of errors when connection fails during TLS handshake.
+* Added `Connection#setCacheLength()` for configuration of cache length during run-time.
+* Notification confguration methods are now chainable.
+* Updated documentation to point to new Apple Documentation URL.
+* Added some more overview documentation.
+* New example code.
+
 1.3.4:
 
 * Fixed #101: TypeError: Cannot call method 'resolve' of null
