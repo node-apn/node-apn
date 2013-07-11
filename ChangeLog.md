@@ -1,5 +1,10 @@
 ## Changelog
 
+1.3.6:
+
+* Resend notification if an error occurs before the socket drains (issue #100)
+* Perform more error checking on device tokens. (issue #90)
+
 1.3.5:
 
 * Feedback now emits a `feedbackError` instead of `error` for socket errors.
