@@ -99,7 +99,7 @@ Attach an event to the `feedback` event to receive output.
 
 ## apn.Device(deviceToken)
 
-Returns a new `Device` object. `deviceToken` can be a `Buffer` or a `String` containing a "hex" representation of the token.
+Returns a new `Device` object. `deviceToken` can be a `Buffer` or a `String` containing a "hex" representation of the token. Throws an error if the deviceToken supplied is invalid.
 
 ## apn.Notification([payload])
 
@@ -171,7 +171,7 @@ Emitted when the connectionTimeout option has been specified and no activity has
 
 `function(errorCode, notification, device) { }`
 
-Emitted when a message has been received from Apple stating that a notification was invalid. If the notification is still in the cache it will be passed as the second argument, otherwise null. 
+Emitted when a message has been received from Apple stating that a notification was invalid. If the notification is still in the cache it will be passed as the second argument, otherwise null. Where possible the associated `Device` object will be passed as a third parameter, however in cases where the token supplied to the module cannot be parsed into a `Buffer` the supplied value will be returned.
 
 For further information please read the section below on "Handling Errors".
 
