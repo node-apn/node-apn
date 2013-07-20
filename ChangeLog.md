@@ -1,5 +1,9 @@
 ## Changelog
 
+1.3.7:
+
+* Fixed: #14 Feedback event should be emitted once per connection, whether there are device tokens or not.
+
 1.3.6:
 
 * Resend notification if an error occurs before the socket drains (issue #100)
