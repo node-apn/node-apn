@@ -182,6 +182,10 @@ As of version 1.2.0 it is possible to use a set of methods provided by Notificat
 
 A `Notification` enapsulates the data to be compiled down to JSON and pushed to a device. See the [payload documentation][pl] for more details. At present the total length of the payload accepted by Apple is 256 bytes.
 
+### notification.retryLimit
+
+The maximum number of retries which should be performed when sending a notification if an error occurs. A value of 0 will only allow one attempt at sending (0 retries). Set to -1 to disable (default).
+
 ### notification.expiry 
 
 The UNIX timestamp representing when the notification should expire. This does not contribute to the 256 byte payload size limit.
