@@ -91,7 +91,7 @@ Attach an event to the `feedback` event to receive output.
 
  - `rejectUnauthorized` {Boolean} Reject Unauthorized property to be passed through to tls.connect() (Defaults to `true`)
 
- - `batchFeedback` {Boolean} Whether to use the enhanced notification format (recommended, defaults to: `true`)
+ - `batchFeedback` {Boolean} Sets the behaviour for triggering the `feedback` event. When `true` the event will be triggered once per connection with an array of timestamp and device token tuples. Otherwise a `feedback` event will be emitted once per token received. (Defaults to: true)
 
  - `interval` {Number} How often to automatically poll the feedback service. Set to `0` to disable. (Defaults to: `3600`)
 
@@ -293,6 +293,7 @@ If the cache is too small then node-apn wont be able to return the bad notificat
 
 If you wish to disable the automatic resending functionality please consult the `buffersNotifications` configuration option.
 
+[googlegroup]:https://groups.google.com/group/node-apn "node-apn Google Group"
 [pg]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Introduction.html#//apple_ref/doc/uid/TP40008194-CH1-SW1 "Local and Push Notification Programming Guide"
 [pnpath]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW10 "A Push Notification and Its Path"
 [errors]:https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
