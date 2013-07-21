@@ -1,5 +1,10 @@
 ## Changelog
 
+1.3.8:
+
+* Notifications now have a configurable number of retries. See `Notification.retryLimit` in docs.
+* Fixed: Error wasn't raised on notifications if the module fails to initialise, they just perpetually lived on the queue.
+
 1.3.7:
 
 * Fixed: #14 Feedback event should be emitted once per connection, whether there are device tokens or not.
