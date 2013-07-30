@@ -16,7 +16,7 @@ service.on('connected', function() {
 });
 
 service.on('transmitted', function(notification, device) {
-    console.log("Notification transmitted to:" + device.token.toString());
+    console.log("Notification transmitted to:" + device.token.toString('hex'));
 });
 
 service.on('transmissionError', function(errCode, notification, device) {
