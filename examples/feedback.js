@@ -12,6 +12,6 @@ function handleFeedback(feedbackData) {
 		time = feedbackData[i].time;
 		device = feedbackData[i].device;
 
-		console.log("Device: " + device.toString() + " has been unreachable, since: " + time);
+		console.log("Device: " + device.toString('hex') + " has been unreachable, since: " + time);
 	}
 }
