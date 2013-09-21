@@ -87,9 +87,9 @@ Attach an event to the `feedback` event to receive output.
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
- - `gateway` {String `feedback.push.apple.com`} The gateway server to connect to.
+ - `address` {String `feedback.push.apple.com`} The feedback server to connect to.
 
- - `port` {Number} Gateway port (Defaults to: `2196`)
+ - `port` {Number} Feedback server port (Defaults to: `2196`)
 
  - `rejectUnauthorized` {Boolean} Reject Unauthorized property to be passed through to tls.connect() (Defaults to `true`)
 
