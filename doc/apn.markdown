@@ -9,7 +9,7 @@ If you are not familiar with how the Apple Push Notificaion System (APNS) works,
 
 ### Sending a Push Notification
 
-Sending push notifications is as simple as creating a new connection to APNS using the `Connection` class which should be configured, at minimum, with your applications' certificate and private key. The `Connection` class manages underlying sockets automatically. 
+Sending push notifications is as simple as creating a new connection to APNS using the `Connection` class which should be configured, at minimum, with your applications' certificate and private key. The `Connection` class manages underlying sockets automatically.
 
 Pushing a notification to a device is as simple as creating an instance of `Notification` which you then configure with the payload and call `Connection#pushNotification` with the notification object and the device token you wish to send it to. It is also possible to send the same notification object to multiple devices very efficiently please consult the documentation for `Connection#pushNotification` for more details.
 
@@ -38,7 +38,7 @@ Options:
  - `pfx` {String} File path for private key, certificate and CA certs in PFX or PKCS12 format. If supplied will be used instead of certificate and key above
 
  - `pfxData` {Buffer|String} PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk.
- 
+
  - `passphrase` {String} The passphrase for the connection key, if required
 
  - `gateway` {String `gateway.push.apple.com`} The gateway server to connect to.
@@ -111,7 +111,7 @@ Returns a new `Notification` object. You can optionally pass in an object repres
 
 ### connection.pushNotification(notification, recipient)
 
-This is the business end of the module. Create a `Notification` object and pass it in, along with a single recipient or an array of them and node-apn will take care of the rest, delivering the notification to each recipient. 
+This is the business end of the module. Create a `Notification` object and pass it in, along with a single recipient or an array of them and node-apn will take care of the rest, delivering the notification to each recipient.
 
 A "recipient" is either a `Device` object, a `String`, or a `Buffer` containing the device token. `Device` objects are used internally and will be created if necessary. Where applicable, all events will return a `Device` regardless of the type passed to this method.
 
@@ -147,7 +147,7 @@ Emitted when a notification has been sent to Apple - not a guarantee that it has
 
 `function (sizeDifference) { }`
 
-Emitted when Apple returns a notification as invalid but the notification has already been expunged from the cache - usually due to high throughput and indicates that notifications will be getting lost. The parameter is an estimate of how many notifications have been lost. You should experiment with increasing the cache size or enabling ```autoAdjustCache``` if you see this frequently. 
+Emitted when Apple returns a notification as invalid but the notification has already been expunged from the cache - usually due to high throughput and indicates that notifications will be getting lost. The parameter is an estimate of how many notifications have been lost. You should experiment with increasing the cache size or enabling ```autoAdjustCache``` if you see this frequently.
 
 **Note**: With ```autoAdjustCache``` enabled this event will still be emitted when an adjustment is triggered.
 
@@ -190,7 +190,7 @@ A `Notification` enapsulates the data to be compiled down to JSON and pushed to 
 
 The maximum number of retries which should be performed when sending a notification if an error occurs. A value of 0 will only allow one attempt at sending (0 retries). Set to -1 to disable (default).
 
-### notification.expiry 
+### notification.expiry
 
 The UNIX timestamp representing when the notification should expire. This does not contribute to the 256 byte payload size limit.
 
@@ -210,7 +210,7 @@ The encoding to use when transmitting the notification to APNS, defaults to `utf
 
 ### notification.payload
 
-This object represents the root JSON object that you can add custom information for your application to. The properties below will only be added to the payload (under `aps`) when the notification is prepared for sending. 
+This object represents the root JSON object that you can add custom information for your application to. The properties below will only be added to the payload (under `aps`) when the notification is prepared for sending.
 
 ### notification.badge
 
@@ -220,7 +220,7 @@ The value to specify for `payload.aps.badge`
 
 The value to specify for `payload.aps.sound`
 
-### notification.alert 
+### notification.alert
 
 The value to specify for `payload.apns.alert` can be either a `String` or an `Object` as outlined by the payload documentation.
 
@@ -284,7 +284,7 @@ Emitted when an error occurs receiving or processing the feedback and in the cas
 
 `function (feedbackData) { }`
 
-Emitted when data has been received from the feedback service, typically once per connection. `feedbackData` is an array of objects, each containing the `time` returned by the server (epoch time) and the `device` a `Buffer` containing the device token. 
+Emitted when data has been received from the feedback service, typically once per connection. `feedbackData` is an array of objects, each containing the `time` returned by the server (epoch time) and the `device` a `Buffer` containing the device token.
 
 If `batchFeedback` has been disabled this will be emitted once per item, with two parameters, the `time` and the `device`.
 
@@ -302,7 +302,7 @@ When an error occurs while pushing a notification and the enhanced interface is 
 
 Apple guarantees that if one notification causes an error none of the following notifications will be processed, so if node-apn can find the correct notification which caused the error in the cache, then it can automatically re-send all the ones afterward.
 
-It's not a good idea to cache notifications indefinitely because after a certain length of time has passed we can be confident that Apple have received the notification without problem so it is implemented as a fixed size FIFO queue internally. Depending on how high-volume your environment is it's possible that many notifications will be successfully sent to Apple before the error response is sent. 
+It's not a good idea to cache notifications indefinitely because after a certain length of time has passed we can be confident that Apple have received the notification without problem so it is implemented as a fixed size FIFO queue internally. Depending on how high-volume your environment is it's possible that many notifications will be successfully sent to Apple before the error response is sent.
 
 The cache size defaults to 100 which will have neglible impact on memory usage and will suit low-volume environments. Testing has shown that an error response can take as long as 200ms, while the module has proven the ability to send over 5000 notifications per second, so it may necessary to increase the size of the cache to ensure node-apn can find the problematic one and resend all the following ones. The `autoAdjustCache` option is designed to address this problem but it risks losing notifications until the size has automatically increased accordingly, for best results manual adjustment according to your requirements is recommended.
 
