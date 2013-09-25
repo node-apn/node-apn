@@ -61,6 +61,8 @@ Options:
 
  - `fastMode` {Boolean} Whether to aggresively empty the notification buffer while connected - if set to true node-apn may enter a tight loop under heavy load while delivering notifications. (Defaults to: `false`)
 
+ - `legacy` {Boolean} WHether to use the pre-iOS 7 protocol format. (Defaults to `false`)
+
  **Important:** In a development environment you must set `gateway` to `gateway.sandbox.push.apple.com`.
 
 ## apn.Feedback([options])
@@ -192,6 +194,16 @@ The maximum number of retries which should be performed when sending a notificat
 
 The UNIX timestamp representing when the notification should expire. This does not contribute to the 256 byte payload size limit.
 
+### notification.priority
+
+From [Apples' Documentation][notificationFormat], Provide one of the following values:
+
+  * 10 - The push message is sent immediately. (Default)
+    > The push notification must trigger an alert, sound, or badge on the device. It is an error use this priority for a push that contains only the content-available key.
+  * 5 - The push message is sent at a time that conserves power on the device receiving it.
+
+This value is not valid when the connection is in legacy mode.
+
 ### notification.encoding
 
 The encoding to use when transmitting the notification to APNS, defaults to `utf8`. `utf16le` is also possible but as each character is represented by a minimum of 2 bytes, will at least halve the possible payload size. If in doubt leave as default.
@@ -199,7 +211,6 @@ The encoding to use when transmitting the notification to APNS, defaults to `utf
 ### notification.payload
 
 This object represents the root JSON object that you can add custom information for your application to. The properties below will only be added to the payload (under `aps`) when the notification is prepared for sending. 
-
 
 ### notification.badge
 
@@ -305,3 +316,4 @@ If you wish to disable the automatic resending functionality please consult the 
 [errors]:https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
 [feedback]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "The Feedback Service"
 [pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
+[notificationFormat]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW9 "The Binary Interface and Notification Format"
