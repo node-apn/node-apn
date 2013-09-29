@@ -173,7 +173,9 @@ Emitted when the connectionTimeout option has been specified and no activity has
 
 `function(errorCode, notification, device) { }`
 
-Emitted when a message has been received from Apple stating that a notification was invalid. If the notification is still in the cache it will be passed as the second argument, otherwise null. Where possible the associated `Device` object will be passed as a third parameter, however in cases where the token supplied to the module cannot be parsed into a `Buffer` the supplied value will be returned.
+Emitted when a message has been received from Apple stating that a notification was invalid or if an internal error occurred before that notification could be pushed to Apple. If the notification is still in the cache it will be passed as the second argument, otherwise null. Where possible the associated `Device` object will be passed as a third parameter, however in cases where the token supplied to the module cannot be parsed into a `Buffer` the supplied value will be returned.
+
+Error codes smaller than 512 correspond to those returned by Apple as per their [docs][errors]. Other errors are applicable to `node-apn` itself. Definitions can be found in `lib/errors.js`.
 
 For further information please read the section below on "Handling Errors".
 
@@ -298,7 +300,7 @@ Typically you should record the timestemp when a device registers with your serv
 
 ## Handling Errors
 
-When an error occurs while pushing a notification and the enhanced interface is enabled Apple sends a message back to node-apn containing the "identifier" of the notification which caused the error and an associated error code (See: [The Binary Interface and Notification Formats][errors]). Apple does not return the entire message so node-apn caches a number of notifications after they are sent, so in the event an error occurs node-apn can find the one with the correct identifier from the cache and trigger the `transmissionError` event with the appropriate `Notification` object and `Device` it should have been delivered to.
+When an error occurs while pushing a notification and the enhanced interface is enabled, Apple sends a message back to node-apn containing the "identifier" of the notification which caused the error and an associated error code (See: [The Binary Interface and Notification Formats][errors]). Apple does not return the entire message so node-apn caches a number of notifications after they are sent, so in the event an error occurs node-apn can find the one with the correct identifier from the cache and trigger the `transmissionError` event with the appropriate `Notification` object and `Device` it should have been delivered to.
 
 Apple guarantees that if one notification causes an error none of the following notifications will be processed, so if node-apn can find the correct notification which caused the error in the cache, then it can automatically re-send all the ones afterward.
 
