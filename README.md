@@ -116,7 +116,7 @@ Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnla
 
 Released under the MIT License
 
-Copyright (c) 2010 Andrew Naylor
+Copyright (c) 2013 Andrew Naylor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
