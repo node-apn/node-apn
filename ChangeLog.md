@@ -1,5 +1,12 @@
 ## Changelog
 
+1.4.0:
+
+* New: Implements protocol launched with iOS 7 which permits specifying a notification priority.
+* New: Ability to truncate notification body to nearest whole word.
+* Fixed: TLS Connection stalled on node-0.11.x
+* Fixed: Documentation defects.
+
 1.3.8:
 
 * Notifications now have a configurable number of retries. See `Notification.retryLimit` in docs.
