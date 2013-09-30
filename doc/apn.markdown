@@ -61,7 +61,7 @@ Options:
 
  - `fastMode` {Boolean} Whether to aggresively empty the notification buffer while connected - if set to true node-apn may enter a tight loop under heavy load while delivering notifications. (Defaults to: `false`)
 
- - `legacy` {Boolean} WHether to use the pre-iOS 7 protocol format. (Defaults to `false`)
+ - `legacy` {Boolean} Whether to use the pre-iOS 7 protocol format. (Defaults to `false`)
 
  **Important:** In a development environment you must set `gateway` to `gateway.sandbox.push.apple.com`.
 
