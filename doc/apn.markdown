@@ -235,6 +235,10 @@ Setting either of these properties to true will specify "content-available" in t
 
 The value to specify for the `mdm` field where applicable.
 
+### notification.truncateAtWordEnd
+
+When this parameter is set and `notification#trim()` is called it will attempt to truncate the string at the nearest space.
+
 ### notification.setAlertText(alert)
 
 Set the `aps.alert` text body. This will use the most space-efficient means.
