@@ -1,6 +1,11 @@
 ## Changelog
 
-1.4.0:
+1.4.2:
+
+* Added support for `url-args` property within the notification payload (Chad Scira, #129)
+* Renamed `gateway` Connection parameter to `address` to avoid confusion with Feedback component.
+
+1.4.0/1.4.1:
 
 * New: Implements protocol launched with iOS 7 which permits specifying a notification priority.
 * New: Ability to truncate notification body to nearest whole word.
