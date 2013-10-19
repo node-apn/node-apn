@@ -224,7 +224,7 @@ The value to specify for `payload.aps.sound`
 
 ### notification.alert
 
-The value to specify for `payload.apns.alert` can be either a `String` or an `Object` as outlined by the payload documentation.
+The value to specify for `payload.aps.alert` can be either a `String` or an `Object` as outlined by the payload documentation.
 
 ### notification.newsstandAvailable
 ### notification.contentAvailable
@@ -234,6 +234,10 @@ Setting either of these properties to true will specify "content-available" in t
 ### notification.mdm
 
 The value to specify for the `mdm` field where applicable.
+
+### notification.urlArgs
+
+The value to specify for `payload.aps['url-args']`. This used for Safari Push NOtifications and should be an array of values in accordance with the [Web Payload Documentation][webpayloaddocs].
 
 ### notification.truncateAtWordEnd
 
@@ -258,6 +262,19 @@ Set the `loc-args` property of the `aps.alert` object.
 ### notification.setLaunchImage(image)
 
 Set the `launch-image` property of the `aps.alert` object.
+
+### notification.setMDM(mdm)
+
+Set the `mdm` property on the payload.
+
+### notification.setNewsstandAvailable(available)
+### notification.setContentAvailable(available)
+
+Set the `content-available` property of the `aps` object.
+
+### notification.setUrlArgs(urlArgs)
+
+Set the `url-args` property of the `aps` object.
 
 ### notification.trim()
 
@@ -323,3 +340,4 @@ If you wish to disable the automatic resending functionality please consult the 
 [feedback]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "The Feedback Service"
 [pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
 [notificationFormat]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW9 "The Binary Interface and Notification Format"
+[webpayloaddocs]:https://developer.apple.com/library/prerelease/mac/documentation/NetworkingInternet/Conceptual/NotificationProgrammingGuideForWebsites/PushNotifications/PushNotifications.html#//apple_ref/doc/uid/TP40013225-CH3-SW12 "Configuring Safari Push Notifications"
