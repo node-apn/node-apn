@@ -41,7 +41,7 @@ Options:
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
- - `gateway` {String `gateway.push.apple.com`} The gateway server to connect to.
+ - `address` {String `gateway.push.apple.com`} The gateway server to connect to.
 
  - `port` {Number} Gateway port (Defaults to: `2195`)
 
@@ -63,7 +63,7 @@ Options:
 
  - `legacy` {Boolean} Whether to use the pre-iOS 7 protocol format. (Defaults to `false`)
 
- **Important:** In a development environment you must set `gateway` to `gateway.sandbox.push.apple.com`.
+ **Important:** In a development environment you must set `address` to `gateway.sandbox.push.apple.com`.
 
 ## apn.Feedback([options])
 
