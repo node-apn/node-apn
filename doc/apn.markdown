@@ -125,6 +125,10 @@ If in doubt, leave the encoding as default. If you experience any problems post 
 
 Used to manually adjust the "cacheLength" property in the options. This is ideal if you choose to use the `cacheTooSmall` event to tweak your environment. It is safe for increasing and reducing cache size.
 
+### connection.shutdown()
+
+Indicate to node-apn that when the queue of pending notifications is fully drained that it should close all open connections. This will mean that if there are no other pending resources (open sockets, running timers, etc.) the application will terminate. If notifications are pushed after the connection has completely shutdown a new connection will be established and, if applicable, `shutdown` will need to be called again.
+
 ### Event: 'error'
 
 `function (error) { }`
