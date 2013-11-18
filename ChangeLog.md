@@ -1,5 +1,10 @@
 ## Changelog
 
+1.4.3:
+
+* Added `shutdown` method to hint to node-apn that all connections should be terminated after notifications have been sent. (#134)
+* Fixed an exception thrown by an incorrect token length. (#133)
+
 1.4.2:
 
 * Added support for `url-args` property within the notification payload (Chad Scira, #129)
