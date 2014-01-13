@@ -95,6 +95,8 @@ Attach an event to the `feedback` event to receive output.
 
  - `batchFeedback` {Boolean} Sets the behaviour for triggering the `feedback` event. When `true` the event will be triggered once per connection with an array of timestamp and device token tuples. Otherwise a `feedback` event will be emitted once per token received. (Defaults to: true)
 
+ - `batchSize` {Number} The maximum number of tokens to pass when emitting the event - a value of 0 will cause all tokens to be passed after connection is reset. After this number of tokens are received the `feedback` event will be emitted. (Only applies when `batchFeedback` is enabled)
+
  - `interval` {Number} How often to automatically poll the feedback service. Set to `0` to disable. (Defaults to: `3600`)
 
 **Important:** In a development environment you must set `address` to `feedback.sandbox.push.apple.com`.
