@@ -200,7 +200,7 @@ The maximum number of retries which should be performed when sending a notificat
 
 ### notification.expiry
 
-The UNIX timestamp representing when the notification should expire. This does not contribute to the 256 byte payload size limit.
+The UNIX timestamp representing when the notification should expire. This does not contribute to the 256 byte payload size limit. An expiry of 0 indicates that the notification expires immediately.
 
 ### notification.priority
 
