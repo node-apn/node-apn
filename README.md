@@ -31,12 +31,18 @@ This is intended as a brief introduction, please refer to the documentation in `
 	var apn = require('apn');
 
 ### Connecting
-Create a new connection to the APN gateway server using a dictionary of options. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running, the only thing you'll need to change is the `gateway` if you're in the sandbox environment.
+Create a new connection to the APN gateway server using a dictionary of options. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running.
 
 ```javascript
-	var options = { "gateway": "gateway.sandbox.push.apple.com" };
+	var apnConnection = new apn.Connection();
+```
 
-	var apnConnection = new apn.Connection(options);
+If the NODE_ENV environment variable is "production", then the library will connect to the official gateway, otherwise it will default to the sandbox gateway. You may also manually set the production option:
+
+```javascript
+    var options = { "production": true };
+
+    var apnConnection = new apn.Connection();
 ```
 
 Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
