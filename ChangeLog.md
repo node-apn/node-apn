@@ -1,5 +1,12 @@
 ## Changelog
 
+1.4.4:
+
+* Added a check when trying to resend notifications from cache (#138/#139)
+* Don't set "aps" key if no well-known properties are present (#141)
+* Fixed the notification `retryLimit` behaviour when set to 0. (#142)
+* Added `batchSize` property for feedback.
+
 1.4.3:
 
 * Added `shutdown` method to hint to node-apn that all connections should be terminated after notifications have been sent. (#134)
