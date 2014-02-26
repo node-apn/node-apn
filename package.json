@@ -29,6 +29,13 @@
   "dependencies": {
     "q": "0.9.x"
   },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "3.x.x"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha -w"
+  },
   "engines": {
     "node": ">= 0.6.6"
   },
