@@ -41,7 +41,7 @@ Options:
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
- - `address` {String `gateway.push.apple.com`} The gateway server to connect to.
+ - `production` {Boolean} Whether this is a production or development server. Development server connects to sandbox. Default depends on `NODE_ENV`.
 
  - `port` {Number} Gateway port (Defaults to: `2195`)
 
