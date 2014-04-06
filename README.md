@@ -31,10 +31,14 @@ This is intended as a brief introduction, please refer to the documentation in `
 	var apn = require('apn');
 
 ### Connecting
-Create a new connection to the APN gateway server using a dictionary of options. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running, the only thing you'll need to change is the `gateway` if you're in the sandbox environment.
+Create a new connection to the APN gateway server using a dictionary of options. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running, you can also especify a route to those files like the example below and change the `gateway` to `gateway.sandbox.push.apple.com` if you're in the sandbox environment.
 
 ```javascript
-	var options = { "gateway": "gateway.sandbox.push.apple.com" };
+	var options = {
+		"gateway": "gateway.sandbox.push.apple.com",
+		"cert": "/route-to-your/cert.pem",
+		"key": "/route-to-your/key.pem"
+	};
 
 	var apnConnection = new apn.Connection(options);
 ```
