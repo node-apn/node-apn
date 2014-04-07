@@ -41,7 +41,7 @@ Options:
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
- - `address` {String `gateway.push.apple.com`} The gateway server to connect to.
+ - `production` {Boolean} Specifies which environment to connect to: Production (if true) or Sandbox - The address will be set automatically. (Defaults to NODE_ENV == "production", i.e. false unless the NODE_ENV environment variable is set accordingly)
 
  - `port` {Number} Gateway port (Defaults to: `2195`)
 
@@ -62,8 +62,6 @@ Options:
  - `fastMode` {Boolean} Whether to aggresively empty the notification buffer while connected - if set to true node-apn may enter a tight loop under heavy load while delivering notifications. (Defaults to: `false`)
 
  - `legacy` {Boolean} Whether to use the pre-iOS 7 protocol format. (Defaults to `false`)
-
- **Important:** In a development environment you must set `address` to `gateway.sandbox.push.apple.com`.
 
 ## apn.Feedback([options])
 
@@ -87,7 +85,7 @@ Attach an event to the `feedback` event to receive output.
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
- - `address` {String `feedback.push.apple.com`} The feedback server to connect to.
+ - `production` {Boolean} Specifies which environment to connect to: Production (if true) or Sandbox - The address will be set automatically. (Defaults to NODE_ENV == "production", i.e. false unless the NODE_ENV environment variable is set accordingly)
 
  - `port` {Number} Feedback server port (Defaults to: `2196`)
 
