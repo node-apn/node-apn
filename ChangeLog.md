@@ -1,5 +1,9 @@
 ## Changelog
 
+1.4.5:
+
+* NOTE: This version introduces a change to default behaviour: node-apn will now connect to the sandbox environment by default. Production mode must be explicitly specified. (Fixes #50, #146)
+
 1.4.4:
 
 * Added a check when trying to resend notifications from cache (#138/#139)
