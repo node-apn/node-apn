@@ -25,19 +25,13 @@ Creates a new connection to the Apple Push Notification Service.
 
 Options:
 
- - `cert` {String} The filename of the connection certificate to load from disk (Defaults to: `cert.pem`)
+ - `cert` {Buffer|String} TThe filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
 
- - `certData` {Buffer|String} The certificate data. If supplied, will be used instead of loading from disk.
+ - `key` {Buffer|String} The filename of the connection key to load from disk, or a Buffer/String containing the key data. (Defaults to: `key.pem`)
 
- - `key` {String} The filename of the connection key to load from disk (Defaults to:  `key.pem`)
+ - `ca` An array of trusted certificates. Each element should contain either a filename to load, or a Buffer/String (in PEM format) to be used directly. If this is omitted several well known "root" CAs will be used. - You may need to use this as some environments don't include the CA used by Apple (entrust_2048).
 
- - `keyData` {Buffer|String} The key data. If supplied will be used instead of loading from disk.
-
- - `ca` An Array of Strings or Buffers of trusted certificates. If this is omitted several well known "root" CAs will be used, like VeriSign. - You may need to use option, this as some environments don't include the CA used by Apple.
-
- - `pfx` {String} File path for private key, certificate and CA certs in PFX or PKCS12 format. If supplied will be used instead of certificate and key above
-
- - `pfxData` {Buffer|String} PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk.
+ - `pfx` {Buffer|String} File path for private key, certificate and CA certs in PFX or PKCS12 format, or a Buffer/String containing the PFX data. If supplied will be used instead of certificate and key above.
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
@@ -69,19 +63,13 @@ Creates a new connection to the Apple Push Notification Feedback Service and if 
 
 Attach an event to the `feedback` event to receive output.
 
-- `cert` {String} The filename of the connection certificate to load from disk (Defaults to: `cert.pem`)
+ - `cert` {Buffer|String} TThe filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
 
- - `certData` {Buffer|String} The certificate data. If supplied, will be used instead of loading from disk.
+ - `key` {Buffer|String} The filename of the connection key to load from disk, or a Buffer/String containing the key data. (Defaults to: `key.pem`)
 
- - `key` {String} The filename of the connection key to load from disk (Defaults to:  `key.pem`)
+ - `ca` An array of trusted certificates. Each element should contain either a filename to load, or a Buffer/String (in PEM format) to be used directly. If this is omitted several well known "root" CAs will be used. - You may need to use this as some environments don't include the CA used by Apple (entrust_2048).
 
- - `keyData` {Buffer|String} The key data. If supplied will be used instead of loading from disk.
-
- - `ca` An Array of Strings or Buffers of trusted certificates. If this is omitted several well known "root" CAs will be used, like VeriSign. - You may need to use option, this as some environments don't include the CA used by Apple.
-
- - `pfx` {String} File path for private key, certificate and CA certs in PFX or PKCS12 format. If supplied will be used instead of certificate and key above
-
- - `pfxData` {Buffer|String} PFX or PKCS12 format data containing the private key, certificate and CA certs. If supplied will be used instead of loading from disk.
+ - `pfx` {Buffer|String} File path for private key, certificate and CA certs in PFX or PKCS12 format, or a Buffer/String containing the PFX data. If supplied will be used instead of certificate and key above.
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
