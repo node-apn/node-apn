@@ -1,6 +1,6 @@
 ## Changelog
 
-1.5.0:
+1.5.0/1.5.1:
 
 * **NOTE**: This version introduces a change to default behaviour: node-apn will now connect to the sandbox environment by default. Production mode must be explicitly specified. (Fixes #50, #146)
 
@@ -11,6 +11,8 @@
 * Fixed #159: Alert Title and Alert Label are necessary for Safari Push Notifications.
 * Fixed #161: Make `#setAlertText` chainable.
 * Starting to create some tests. Lots more required!
+
+This has been release as 1.5.1 due to a mistake with NPM.
 
 1.4.4:
 
