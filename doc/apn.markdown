@@ -35,7 +35,7 @@ Options:
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
- - `production` {Boolean} Specifies which environment to connect to: Production (if true) or Sandbox - The address will be set automatically. (Defaults to NODE_ENV == "production", i.e. false unless the NODE_ENV environment variable is set accordingly)
+ - `production` {Boolean} Specifies which environment to connect to: Production (if true) or Sandbox - The hostname will be set automatically. (Defaults to NODE_ENV == "production", i.e. false unless the NODE_ENV environment variable is set accordingly)
 
  - `port` {Number} Gateway port (Defaults to: `2195`)
 
@@ -73,7 +73,7 @@ Attach an event to the `feedback` event to receive output.
 
  - `passphrase` {String} The passphrase for the connection key, if required
 
- - `production` {Boolean} Specifies which environment to connect to: Production (if true) or Sandbox - The address will be set automatically. (Defaults to NODE_ENV == "production", i.e. false unless the NODE_ENV environment variable is set accordingly)
+ - `production` {Boolean} Specifies which environment to connect to: Production (if true) or Sandbox - The hostname will be set automatically. (Defaults to NODE_ENV == "production", i.e. false unless the NODE_ENV environment variable is set accordingly)
 
  - `port` {Number} Feedback server port (Defaults to: `2196`)
 
@@ -85,7 +85,7 @@ Attach an event to the `feedback` event to receive output.
 
  - `interval` {Number} How often to automatically poll the feedback service. Set to `0` to disable. (Defaults to: `3600`)
 
-**Important:** In a development environment you must set `address` to `feedback.sandbox.push.apple.com`.
+**Important:** In a development environment you must set `production` to `false`.
 
 ## apn.Device(deviceToken)
 
@@ -238,6 +238,14 @@ When this parameter is set and `notification#trim()` is called it will attempt t
 ### notification.setAlertText(alert)
 
 Set the `aps.alert` text body. This will use the most space-efficient means.
+
+### notification.setAlertTitle(alertTitle)
+
+Set the `title` property of the `aps.alert` object - used with Safari Push Notifications
+
+### notification.setAlertAction(alertAction)
+
+Set the `action` property of the `aps.alert` object - used with Safari Push Notifications
 
 ### notification.setActionLocKey(key)
 
