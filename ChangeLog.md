@@ -1,8 +1,16 @@
 ## Changelog
 
-1.4.5:
+1.5.0:
 
-* NOTE: This version introduces a change to default behaviour: node-apn will now connect to the sandbox environment by default. Production mode must be explicitly specified. (Fixes #50, #146)
+* **NOTE**: This version introduces a change to default behaviour: node-apn will now connect to the sandbox environment by default. Production mode must be explicitly specified. (Fixes #50, #146)
+
+* Added option to disable Nagle Algorithm.
+* Fixed #147: Error is not raised correctly when connection cannot be established.
+* Fixed #151: Smarter certificate/key loading and simplified configuration parameters.
+* Fixed #152: Exponential backoff when connect fails.
+* Fixed #159: Alert Title and Alert Label are necessary for Safari Push Notifications.
+* Fixed #161: Make `#setAlertText` chainable.
+* Starting to create some tests. Lots more required!
 
 1.4.4:
 
