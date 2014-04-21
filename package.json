@@ -27,7 +27,7 @@
     "url": "https://github.com/argon/node-apn.git"
   },
   "dependencies": {
-    "q": "0.9.x"
+    "q": "1.x"
   },
   "devDependencies": {
     "mocha": "*",
