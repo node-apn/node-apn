@@ -1,5 +1,10 @@
 ## Changelog
 
+1.5.2:
+
+* Fixed #169, #170: Undesirable behaviour when PFX files are specified
+* Fixes several problems identified after adding further test coverage.
+
 1.5.0/1.5.1:
 
 * **NOTE**: This version introduces a change to default behaviour: node-apn will now connect to the sandbox environment by default. Production mode must be explicitly specified. (Fixes #50, #146)
