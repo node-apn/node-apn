@@ -31,7 +31,8 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "3.x.x"
+    "chai": "*",
+    "chai-as-promised": "*"
   },
   "scripts": {
     "test": "node_modules/.bin/mocha -w"
