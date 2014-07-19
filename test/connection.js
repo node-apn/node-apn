@@ -3,27 +3,33 @@ var fs = require("fs");
 
 describe("Connection", function() {
 	describe('constructor', function () {
+		var originalEnv;
+
+		before(function() {
+			originalEnv = process.env.NODE_ENV;
+		});
+
+		after(function() {
+			process.env.NODE_ENV = originalEnv;
+		})
+
+		beforeEach(function() {
+			process.env.NODE_ENV = "";
+		})
 
 		// Issue #50
 		it("should use gateway.sandbox.push.apple.com as the default connection address", function () {
-			var existingEnv = process.env.NODE_ENV;
-			process.env.NODE_ENV = "";
 			apn.Connection().options.address.should.equal("gateway.sandbox.push.apple.com");
-			process.env.NODE_ENV = existingEnv;
 		});
 
 		it("should use gateway.push.apple.com when NODE_ENV=production", function () {
-			var existingEnv = process.env.NODE_ENV;
 			process.env.NODE_ENV = "production";
 			apn.Connection().options.address.should.equal("gateway.push.apple.com");
-			process.env.NODE_ENV = existingEnv;
 		});
 
 		it("should give precedence to production flag over NODE_ENV=production", function () {
-			var existingEnv = process.env.NODE_ENV;
 			process.env.NODE_ENV = "production";
 			apn.Connection({ production: false }).options.address.should.equal("gateway.sandbox.push.apple.com");
-			process.env.NODE_ENV = existingEnv;
 		});
 
 		it("should use gateway.push.apple.com when production:true", function () {

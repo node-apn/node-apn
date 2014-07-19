@@ -3,30 +3,32 @@ var fs = require("fs");
 
 describe("Feedback", function() {
 	describe('constructor', function () {
-		var requestMethod;
+		var requestMethod, originalEnv;
 
 		before(function() {
 			requestMethod = apn.Feedback.prototype.request;
 			apn.Feedback.prototype.request = function() { };
+
+			originalEnv = process.env.NODE_ENV;
 		});
 
 		after(function() {
 			apn.Feedback.prototype.request = requestMethod;
-		})
+			process.env.NODE_ENV = originalEnv;
+		});
+
+		beforeEach(function() {
+			process.env.NODE_ENV = "";
+		});
 
 		// Issue #50
 		it("should use feedback.sandbox.push.apple.com as the default Feedback address", function () {
-			var existingEnv = process.env.NODE_ENV;
-			process.env.NODE_ENV = "";
 			apn.Feedback().options.address.should.equal("feedback.sandbox.push.apple.com");
-			process.env.NODE_ENV = existingEnv;
 		});
 
 		it("should use feedback.push.apple.com when NODE_ENV=production", function () {
-			var existingEnv = process.env.NODE_ENV;
 			process.env.NODE_ENV = "production";
 			apn.Feedback().options.address.should.equal("feedback.push.apple.com");
-			process.env.NODE_ENV = existingEnv;
 		});
 
 		it("should use feedback.push.apple.com when production:true", function () {
@@ -34,10 +36,8 @@ describe("Feedback", function() {
 		});
 
 		it("should give precedence to production flag over NODE_ENV=production", function () {
-			var existingEnv = process.env.NODE_ENV;
 			process.env.NODE_ENV = "production";
 			apn.Feedback({ production: false }).options.address.should.equal("feedback.sandbox.push.apple.com");
-			process.env.NODE_ENV = existingEnv;
 		});
 
 		it("should use a custom address when passed", function () {
