@@ -57,6 +57,8 @@ Options:
 
  - `legacy` {Boolean} Whether to use the pre-iOS 7 protocol format. (Defaults to `false`)
 
+ - `largePayloads` {Boolean} Whether to raise the notification limit from 256 bytes to 2048 bytes - not yet available in Production, automatically enabled for Sandbox.
+
 ## apn.Feedback([options])
 
 Creates a new connection to the Apple Push Notification Feedback Service and if `interval` isn't disabled automatically begins polling the service. Many of the options are the same as `apn.Connection()`
