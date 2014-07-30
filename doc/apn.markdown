@@ -51,6 +51,8 @@ Options:
 
  - `connectionTimeout` {Number} The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. (Defaults to: `0`)
 
+ - `connectionRetryLimit` {Number} The maximum number of connection failures that will be tolerated before `apn` will "terminate". [See below.](#connectionretrylimit) (Defaults to: 10)
+
  - `buffersNotifications` {Boolean} Whether to buffer notifications and resend them after failure. (Defaults to: `true`)
 
  - `fastMode` {Boolean} Whether to aggresively empty the notification buffer while connected - if set to true node-apn may enter a tight loop under heavy load while delivering notifications. (Defaults to: `false`)
@@ -58,6 +60,12 @@ Options:
  - `legacy` {Boolean} Whether to use the pre-iOS 7 protocol format. (Defaults to `false`)
 
  - `largePayloads` {Boolean} Whether to raise the notification limit from 256 bytes to 2048 bytes - not yet available in Production, automatically enabled for Sandbox.
+
+##### Connection retry limit
+TLS errors such as expired or invalid certificates will cause an error to be emitted, but in this case it is futile for `apn` to continue attempting to connect. There may also be other cases where connectivity issues mean that a process attempting to send notifications may simply become blocked with an ever-increasing queue of notifications. To attempt to combat this a (configurable) retry limit of 10 has been introduced. If ten consecutive connection failures occur then `apn` will emit an `error` event for the connection, then a `transmissionError` event will be emitted for *each* notification in the queue, with the error code `connectionRetryLimitExceeded` (514).
+
+At this point the connection instance will enter a "terminated" state and further attempts to send a notification will immediately emit a `transmissionError` with the code `connectionTerminated` (515). In these cases it may be appropriate for your application to store the notification, to be resent when the connectivity issue is resolved.
+
 
 ## apn.Feedback([options])
 
