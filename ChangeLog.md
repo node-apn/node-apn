@@ -1,5 +1,18 @@
 ## Changelog
 
+1.6.0:
+
+* Fixes #156: Retire a socket from the pool immediately instead of waiting for a "close" event.
+* Fixes #165: Introduced a connection retry limit to emit errors when fatal connection errors occur.
+* Fixes #152: Failure to attach an error handler would prevent exponential backoff from working.
+* Improved error handling for EPIPE write events to maximise chances of reading error info from Apple.
+* Fixed #181: Initial support for larger payloads for iOS 8 testing.
+* Fixed #187: Correctly trim notifications with escaped characters.
+* Merged #190: Always emit a feedback event when batch mode is enabled, even if there are no tokens. 
+* Merged #189: Added support for iOS 8 Notification actions.
+* Display a warning when null parameters are passed during connection creation.
+* Fixed #171: Removed references to the unknown notification identifier.
+
 1.5.2:
 
 * Fixed #169, #170: Undesirable behaviour when PFX files are specified
