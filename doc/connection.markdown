@@ -85,6 +85,12 @@ Emitted when the connection socket experiences an error. This may be useful for 
 
 Emitted when a notification has been sent to Apple - not a guarantee that it has been accepted by Apple, an error relating to it may occur later on. A notification may also be "transmitted" several times if a preceding notification caused an error requiring retransmission.
 
+### Event: 'drain'
+
+`function () {}`
+
+Emitted when all pending notifications have been transmitted to Apple and the pending queue is empty. This may be called more than once if a notification error occurs and notifications must be re-sent.
+
 ### Event: 'cacheTooSmall'
 
 `function (sizeDifference) { }`
