@@ -1,5 +1,15 @@
 ## Changelog
 
+1.6.1:
+
+* Increased default cache length to 1000; Previous value of 100 was overly cautious.
+* Added a delay of 100ms to connection to ensure notifications aren't lost if wrong certificates are used.
+* Fixes #195: Better handling of socket creation
+* Fixes #200: Improved buffer handling code when multiple connections are enabled.
+* Minor optimisation to Notification processing, removing the need for 2 `JSON.stringify` calls
+* Fixes #196: Check cache has contents before trying to access. Also ensure minimum size is "1" to allow "transmitted" events to be emitted.
+* Fixes #199: Emit a "drain" event when no further notifications require sending. Most useful in a batch environment.
+
 1.6.0:
 
 * Fixes #156: Retire a socket from the pool immediately instead of waiting for a "close" event.
