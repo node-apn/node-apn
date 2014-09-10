@@ -1,5 +1,10 @@
 ## Changelog
 
+1.6.2:
+
+* Updated maximum payload size to 2048 bytes. (See #181).
+* Fixed: Feedback wouldn't include error message when emitting `feedbackError`.
+
 1.6.1:
 
 * Increased default cache length to 1000; Previous value of 100 was overly cautious.
