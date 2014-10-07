@@ -50,7 +50,7 @@ Next, create a notification object, set the relevant parameters (See the [payloa
 
 	var note = new apn.Notification();
 	
-	note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+	note.expire = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
 	note.badge = 3;
 	note.sound = "ping.aiff";
 	note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
