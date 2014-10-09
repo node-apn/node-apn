@@ -45,4 +45,10 @@ describe("Notification", function() {
 		note.length().should.be.at.most(256);
 	});
 
+	it("should trim long messages that, upon trimming, end in an escaped trailing backslash", function () {
+		note.alert = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\a';
+		note.trim(256);
+		note.length().should.be.at.most(256);
+	});
+
 });
