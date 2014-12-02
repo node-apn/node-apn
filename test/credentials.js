@@ -10,85 +10,85 @@ describe("Credentials", function() {
 	});
 
 	it("should eventually load a pfx file from disk", function () {
-		return Credentials({ pfx: "test/support/initializeTest.pfx" })
-				  .get(0).post("toString")
-				  .should.eventually.equal(pfx.toString());
+		return expect(Credentials({ pfx: "test/support/initializeTest.pfx" })
+				  .get(0).post("toString"))
+				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually provide pfx data from memory", function () {
-		return Credentials({ pfx: pfx }).get(0).post("toString")
-				  .should.eventually.equal(pfx.toString());
+		return expect(Credentials({ pfx: pfx }).get(0).post("toString"))
+				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually provide pfx data explicitly passed in pfxData parameter", function () {
-		return Credentials({ pfxData: pfx }).get(0).post("toString")
-				  .should.eventually.equal(pfx.toString());
+		return expect(Credentials({ pfxData: pfx }).get(0).post("toString"))
+				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually load a certificate from disk", function () {
-		return Credentials({ cert: "test/support/initializeTest.crt", key: null})
-				  .get(1).post("toString")
-				  .should.eventually.equal(cert.toString());
+		return expect(Credentials({ cert: "test/support/initializeTest.crt", key: null})
+				  .get(1).post("toString"))
+				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a certificate from a Buffer", function () {
-		return Credentials({ cert: cert, key: null})
-				  .get(1).post("toString")
-				  .should.eventually.equal(cert.toString());
+		return expect(Credentials({ cert: cert, key: null})
+				  .get(1).post("toString"))
+				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a certificate from a String", function () {
-		return Credentials({ cert: cert.toString(), key: null})
-				  .get(1)
-				  .should.eventually.equal(cert.toString());
+		return expect(Credentials({ cert: cert.toString(), key: null})
+				  .get(1))
+				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide certificate data explicitly passed in the certData parameter", function () {
-		return Credentials({ certData: cert, key: null})
-				  .get(1).post("toString")
-				  .should.eventually.equal(cert.toString());
+		return expect(Credentials({ certData: cert, key: null})
+				  .get(1).post("toString"))
+				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually load a key from disk", function () {
-		return Credentials({ cert: null, key: "test/support/initializeTest.key"})
-				  .get(2).post("toString")
-				  .should.eventually.equal(key.toString());
+		return expect(Credentials({ cert: null, key: "test/support/initializeTest.key"})
+				  .get(2).post("toString"))
+				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually provide a key from a Buffer", function () {
-		return Credentials({ cert: null, key: key})
-				  .get(2).post("toString")
-				  .should.eventually.equal(key.toString());
+		return expect(Credentials({ cert: null, key: key})
+				  .get(2).post("toString"))
+				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually provide a key from a String", function () {
-		return Credentials({ cert: null, key: key.toString()})
-				  .get(2)
-				  .should.eventually.equal(key.toString());
+		return expect(Credentials({ cert: null, key: key.toString()})
+				  .get(2))
+				  .to.eventually.equal(key.toString());
 	})
 
 	it("should eventually provide key data explicitly passed in the keyData parameter", function () {
-		return Credentials({ cert: null, keyData: key})
-				  .get(2).post("toString")
-				  .should.eventually.equal(key.toString());
+		return expect(Credentials({ cert: null, keyData: key})
+				  .get(2).post("toString"))
+				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually load a single CA certificate from disk", function () {
-		return Credentials({ cert: null, key: null, ca: "test/support/initializeTest.crt" })
-				  .get(3).get(0).post("toString")
-				  .should.eventually.equal(cert.toString());
+		return expect(Credentials({ cert: null, key: null, ca: "test/support/initializeTest.crt" })
+				  .get(3).get(0).post("toString"))
+				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a single CA certificate from a Buffer", function () {
-		return Credentials({ cert: null, key: null, ca: cert })
-				  .get(3).get(0).post("toString")
-				  .should.eventually.equal(cert.toString());
+		return expect(Credentials({ cert: null, key: null, ca: cert })
+				  .get(3).get(0).post("toString"))
+				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a single CA certificate from a String", function () {
-		return Credentials({ cert: null, key: null, ca: cert.toString() })
-				  .get(3).get(0)
-				  .should.eventually.equal(cert.toString());
+		return expect(Credentials({ cert: null, key: null, ca: cert.toString() })
+				  .get(3).get(0))
+				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually load an array of CA certificates", function (done) {
