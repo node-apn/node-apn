@@ -27,6 +27,7 @@
     "url": "https://github.com/argon/node-apn.git"
   },
   "dependencies": {
+    "node-forge": "^0.6.20",
     "q": "1.x"
   },
   "devDependencies": {
