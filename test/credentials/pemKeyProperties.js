@@ -21,29 +21,32 @@ describe("pemKeyProperties", function() {
 	});
 
 	describe("returns object containing error with", function() {
+		it("PKCS#8 key, unsupported format", function() {
+			var key = fs.readFileSync("test/credentials/support/keyPKCS8.pem");
+			expect(pemKeyProperties(key).error)
+				.to.be.an.instanceof(Error);
+		});
+
 		it("encrypted key, wrong password", function() {
 			var key = fs.readFileSync("test/credentials/support/keyEncrypted.pem");
-			expect(function() { 
-				pemKeyProperties(key); 
-			}).to.throw("Could not decrypt key, incorrect passphrase");
+			expect(pemKeyProperties(key).error)
+				.to.be.an.instanceof(Error);
 		});
 		
 		it("PEM certificate", function() {
 			var cert = fs.readFileSync("test/credentials/support/cert.pem");
-			expect(function() {
-				pemKeyProperties(cert);
-			}).to.throw("PEM header type is not");
+			expect(pemKeyProperties(cert).error)
+				.to.be.an.instanceof(Error);
 		});
 		
 		it("PKCS#12 file", function() {
 			var pkcs12 = fs.readFileSync("test/credentials/support/test.p12");
-			expect(function() {
-				pemKeyProperties(pkcs12);
-			}).to.throw("Invalid PEM formatted message");
+			expect(pemKeyProperties(pkcs12).error)
+				.to.be.an.instanceof(Error);
 		});
 		
 		it("null", function() {
-			expect(pemKeyProperties()).to.be.empty;
+			expect(pemKeyProperties()).to.eql({});
 		})
 	});
 });
