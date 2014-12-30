@@ -3,9 +3,9 @@ var fs = require("fs");
 
 describe("pemCertificateProperties", function() {
 	describe("returns metadata for PEM certificate", function() {
-		var cert;
+		var cert, certProperties;
 		before(function() {
-			cert = fs.readFileSync("test/credentials/support/cert.pem")
+			cert = fs.readFileSync("test/credentials/support/cert.pem");
 		});
 
 		beforeEach(function() {
@@ -16,7 +16,7 @@ describe("pemCertificateProperties", function() {
 			expect(certProperties.validity).to.eql({
 				notBefore: new Date("2014-12-16T23:27:18"),
 				notAfter: new Date("2024-12-16T23:27:18")
-			})
+			});
 		});
 
 		it("includes public key fingerprint", function() {
@@ -39,8 +39,12 @@ describe("pemCertificateProperties", function() {
 			});
 
 			describe("production certificate", function() {
+				var productionCert, prodCertProperties;
+				before(function() {
+					productionCert = fs.readFileSync("test/credentials/support/certProduction.pem");
+				});
+				
 				beforeEach(function() {
-					var productionCert = fs.readFileSync("test/credentials/support/certProduction.pem");
 					prodCertProperties = pemCertificateProperties(productionCert);
 				});
 
@@ -61,12 +65,12 @@ describe("pemCertificateProperties", function() {
 		});
 
 		it("for a PKCS#12 file", function() {
-			var pfx = fs.readFileSync("test/credentials/support/test.pfx");
+			var pfx = fs.readFileSync("test/credentials/support/test.p12");
 			expect(pemCertificateProperties(pfx).error).to.be.an.instanceof(Error);
 		});
 
 		it("for null", function() {
 			expect(pemCertificateProperties().error).to.be.an.instanceof(Error);
 		});
-	})
+	});
 });
