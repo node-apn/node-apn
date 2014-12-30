@@ -47,6 +47,6 @@ describe("pemKeyProperties", function() {
 		
 		it("null", function() {
 			expect(pemKeyProperties()).to.eql({});
-		})
+		});
 	});
 });
