@@ -51,7 +51,7 @@ describe("apnKeyFromPem", function() {
 			var cert = fs.readFileSync("test/credentials/support/cert.pem");
 			expect(function() {
 				apnKeyFromPem(cert);
-			}).to.throw("unable to load key, not a private key");
+			}).to.throw("unable to load key, no private key found");
 		});
 		
 		it("PKCS#12 file", function() {
