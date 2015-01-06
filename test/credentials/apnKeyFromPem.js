@@ -18,6 +18,11 @@ describe("apnKeyFromPem", function() {
 			var key = fs.readFileSync("test/credentials/support/keyPKCS8Enc.pem");
 			expect(apnKeyFromPem(key, "apntest")).to.be.an.instanceof(APNKey);
 		});
+
+		it("PEM containing certificates and key", function() {
+			var certAndKey = fs.readFileSync("test/credentials/support/certAndKey.pem");
+			expect(apnKeyFromPem(certAndKey)).to.be.an.instanceof(APNKey);
+		});
 	});
 
 	describe("throws with", function() {
