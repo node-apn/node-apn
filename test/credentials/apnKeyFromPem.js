@@ -4,9 +4,19 @@ var fs = require("fs");
 
 describe("apnKeyFromPem", function() {
 	describe("returns APNKey", function() {
-		it("RSA key", function() {
-			var key = fs.readFileSync("test/credentials/support/key.pem");
-			expect(apnKeyFromPem(key)).to.be.an.instanceof(APNKey);
+		describe("RSA key", function() {
+			beforeEach(function() {
+				var keyData = fs.readFileSync("test/credentials/support/key.pem");
+				key = apnKeyFromPem(keyData);
+			});
+
+			it("correct type", function() {	
+				expect(key).to.be.an.instanceof(APNKey);
+			});
+
+			it("with correct fingerprint", function() {
+				expect(key.fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d")
+			});
 		});
 
 		it("openssl-encrypted RSA key, correct password", function() {
