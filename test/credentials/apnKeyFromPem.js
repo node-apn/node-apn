@@ -25,12 +25,12 @@ describe("apnKeyFromPem", function() {
 		});
 
 		it("PKCS#8 encrypted key, correct password", function() {
-			var key = fs.readFileSync("test/credentials/support/keyPKCS8Enc.pem");
+			var key = fs.readFileSync("test/credentials/support/keyPKCS8Encrypted.pem");
 			expect(apnKeyFromPem(key, "apntest")).to.be.an.instanceof(APNKey);
 		});
 
 		it("PEM containing certificates and key", function() {
-			var certAndKey = fs.readFileSync("test/credentials/support/certAndKey.pem");
+			var certAndKey = fs.readFileSync("test/credentials/support/certKey.pem");
 			expect(apnKeyFromPem(certAndKey)).to.be.an.instanceof(APNKey);
 		});
 	});
@@ -51,7 +51,7 @@ describe("apnKeyFromPem", function() {
 		});
 
 		it("PKCS#8 encrypted key, incorrect passphrase", function() {
-			var key = fs.readFileSync("test/credentials/support/keyPKCS8Enc.pem");
+			var key = fs.readFileSync("test/credentials/support/keyPKCS8Encrypted.pem");
 			expect(function() {
 				apnKeyFromPem(key, "not-the-passphrase");
 			}).to.throw("unable to load key, incorrect passphrase");
