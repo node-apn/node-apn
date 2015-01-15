@@ -63,7 +63,7 @@ describe("apnCertificateFromPem", function() {
 
 	describe("with a PKCS#12 file", function() {
 		it("throws", function() {
-			var pfx = fs.readFileSync("test/credentials/support/test.p12");
+			var pfx = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
 			expect(function() {
 				apnCertificateFromPem(pfx);
 			}).to.throw("unable to load certificate, not a valid PEM file");
