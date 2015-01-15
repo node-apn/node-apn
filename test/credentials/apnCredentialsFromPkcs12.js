@@ -101,6 +101,15 @@ describe("apnCredentialsFromPkcs12", function() {
 		describe("multiple keys", function() {});
 	});
 
+	describe("PEM file", function() {
+		it("throws", function() {
+			pem = fs.readFileSync("test/credentials/support/certKey.pem");
+			expect(function() {
+				apnCredentialsFromPkcs12(pem);
+			}).to.throw("unable to read credentials, not a PFX/P12 file");
+		});
+	});
+
 	it("returns undefined for undefined", function() {
 		expect(apnCredentialsFromPkcs12()).to.be.undefined;
 	});
