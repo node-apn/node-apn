@@ -72,6 +72,15 @@ describe("apnKeyFromPem", function() {
 		});
 	});
 
+	describe("multiple keys", function() {
+		it("throws", function() {
+			var keys = fs.readFileSync("test/credentials/support/multipleKeys.pem");
+			expect(function() {
+				apnKeyFromPem(keys);
+			}).to.throw("multiple keys found in PEM file");
+		});
+	});
+
 	describe("returns null", function() {
 		it("for null", function() {
 			expect(apnKeyFromPem()).to.be.null

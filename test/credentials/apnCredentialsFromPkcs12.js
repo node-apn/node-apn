@@ -98,7 +98,14 @@ describe("apnCredentialsFromPkcs12", function() {
 		// Unclear whether multiple keys in one PKCS#12 file can be distinguished
 		// at present if there's more than one just throw a warning. Should also
 		// do the same thing in apnKeyFromPem
-		describe("multiple keys", function() {});
+		describe("multiple keys", function() {
+			it("throws", function() {
+				p12 = fs.readFileSync("test/credentials/support/multipleKeys.p12");
+				expect(function() {
+					apnCredentialsFromPkcs12(p12);
+				}).to.throw("multiple keys found in PFX/P12 file");
+			});
+		});
 	});
 
 	describe("PEM file", function() {
