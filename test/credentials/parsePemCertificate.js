@@ -1,8 +1,8 @@
-var apnCertificateFromPem = require("../../lib/credentials/apnCertificateFromPem");
+var parsePemCertificate = require("../../lib/credentials/parsePemCertificate");
 var APNCertificate = require("../../lib/credentials/APNCertificate");
 var fs = require("fs");
 
-describe("apnCertificateFromPem", function() {
+describe("parsePemCertificate", function() {
 	describe("with PEM certificate", function() {
 		var cert, certProperties;
 		before(function() {
@@ -10,7 +10,7 @@ describe("apnCertificateFromPem", function() {
 		});
 
 		beforeEach(function() {
-			certProperties = apnCertificateFromPem(cert);
+			certProperties = parsePemCertificate(cert);
 		});
 
 		describe("return value", function() {
@@ -41,7 +41,7 @@ describe("apnCertificateFromPem", function() {
 		});
 
 		beforeEach(function() {
-			certProperties = apnCertificateFromPem(cert);
+			certProperties = parsePemCertificate(cert);
 		});
 
 		it("returns the correct number of certificates", function() {
@@ -65,7 +65,7 @@ describe("apnCertificateFromPem", function() {
 		it("throws", function() {
 			var pfx = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
 			expect(function() {
-				apnCertificateFromPem(pfx);
+				parsePemCertificate(pfx);
 			}).to.throw("unable to load certificate, not a valid PEM file");
 		});
 	});
@@ -73,17 +73,17 @@ describe("apnCertificateFromPem", function() {
 	describe("with a key", function() {
 		it("returns an empty array", function() {
 			var key = fs.readFileSync("test/credentials/support/key.pem");
-			expect(apnCertificateFromPem(key)).to.be.empty;
+			expect(parsePemCertificate(key)).to.be.empty;
 		});
 	});
 	
 	describe("returns null", function() {
 		it("for null", function() {
-			expect(apnCertificateFromPem(null)).to.be.null;
+			expect(parsePemCertificate(null)).to.be.null;
 		});
 
 		it("for undefined", function() {
-			expect(apnCertificateFromPem(undefined)).to.be.null;
+			expect(parsePemCertificate(undefined)).to.be.null;
 		})
 	});
 });

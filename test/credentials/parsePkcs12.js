@@ -1,25 +1,25 @@
-var apnCredentialsFromPkcs12 = require("../../lib/credentials/apnCredentialsFromPkcs12");
+var parsePkcs12 = require("../../lib/credentials/parsePkcs12");
 
 var APNKey = require("../../lib/credentials/APNKey");
 var APNCertificate = require("../../lib/credentials/APNCertificate");
 
 var fs = require("fs");
 
-describe("apnCredentialsFromPkcs12", function() {
+describe("parsePkcs12", function() {
 	describe("with PKCS#12 data", function() {
 		var p12, properties;
 		describe("return value", function() {
-
+			var credentials;
 			before(function() {
 				p12 = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
 			});
 
 			beforeEach(function() {
-				credentials = apnCredentialsFromPkcs12(p12);
+				credentials = parsePkcs12(p12);
 			});
 
 			it("is an object", function() {
-				expect(credentials).to.be.an('object');
+				expect(credentials).to.be.an("object");
 			});
 
 			it("contains a private key", function() {
@@ -28,11 +28,11 @@ describe("apnCredentialsFromPkcs12", function() {
 
 			describe("private key", function() {
 				it("is an instance of APNKey", function() {
-					expect(credentials["key"]).to.be.an.instanceof(APNKey);
+					expect(credentials.key).to.be.an.instanceof(APNKey);
 				});
 
 				it("has the correct fingerprint", function() {
-					expect(credentials["key"].fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d");
+					expect(credentials.key.fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d");
 				});
 			});
 
@@ -42,7 +42,7 @@ describe("apnCredentialsFromPkcs12", function() {
 
 			describe("certificate chain", function() {
 				it("is an array", function() {
-					expect(credentials.certificates).to.be.an('array');
+					expect(credentials.certificates).to.be.an("array");
 				});
 
 				it("contains the correct number of certificates", function() {
@@ -60,7 +60,7 @@ describe("apnCredentialsFromPkcs12", function() {
 					var fingerprints = ["2d594c9861227dd22ba5ae37cc9354e9117a804d", "ccff221d67cb3335649f9b4fbb311948af76f4b2"];
 					var certificates = credentials.certificates;
 					for(var i in certificates) {
-						expect(certificates[i].key().fingerprint()).to.equal(fingerprints[i])
+						expect(certificates[i].key().fingerprint()).to.equal(fingerprints[i]);
 					}
 				});
 			});
@@ -71,7 +71,7 @@ describe("apnCredentialsFromPkcs12", function() {
 			describe("return value", function() {
 				it("has the correct key", function() {
 					p12 = fs.readFileSync("test/credentials/support/certIssuerKeyOpenSSL.p12");
-					properties = apnCredentialsFromPkcs12(p12);
+					properties = parsePkcs12(p12);
 					expect(properties.key.fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d");
 				});
 			});
@@ -81,7 +81,7 @@ describe("apnCredentialsFromPkcs12", function() {
 			describe("return value", function() {
 				it("has the correct key", function() {
 					p12 = fs.readFileSync("test/credentials/support/certIssuerKeyPassphrase.p12");
-					properties = apnCredentialsFromPkcs12(p12, "apntest");
+					properties = parsePkcs12(p12, "apntest");
 					expect(properties.key.fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d");
 				});
 			});
@@ -90,7 +90,7 @@ describe("apnCredentialsFromPkcs12", function() {
 			it("throws", function() {
 				p12 = fs.readFileSync("test/credentials/support/certIssuerKeyPassphrase.p12");
 				expect(function() {
-					apnCredentialsFromPkcs12(p12, "notthepassphrase");
+					parsePkcs12(p12, "notthepassphrase");
 				}).to.throw("unable to read credentials, incorrect passphrase");
 			});
 		});
@@ -102,7 +102,7 @@ describe("apnCredentialsFromPkcs12", function() {
 			it("throws", function() {
 				p12 = fs.readFileSync("test/credentials/support/multipleKeys.p12");
 				expect(function() {
-					apnCredentialsFromPkcs12(p12);
+					parsePkcs12(p12);
 				}).to.throw("multiple keys found in PFX/P12 file");
 			});
 		});
@@ -110,14 +110,14 @@ describe("apnCredentialsFromPkcs12", function() {
 
 	describe("PEM file", function() {
 		it("throws", function() {
-			pem = fs.readFileSync("test/credentials/support/certKey.pem");
+			var pem = fs.readFileSync("test/credentials/support/certKey.pem");
 			expect(function() {
-				apnCredentialsFromPkcs12(pem);
+				parsePkcs12(pem);
 			}).to.throw("unable to read credentials, not a PFX/P12 file");
 		});
 	});
 
 	it("returns undefined for undefined", function() {
-		expect(apnCredentialsFromPkcs12()).to.be.undefined;
+		expect(parsePkcs12()).to.be.undefined;
 	});
 });

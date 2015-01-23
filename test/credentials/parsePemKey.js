@@ -1,13 +1,14 @@
-var apnKeyFromPem = require("../../lib/credentials/apnKeyFromPem");
+var parsePemKey = require("../../lib/credentials/parsePemKey");
 var APNKey = require("../../lib/credentials/APNKey");
 var fs = require("fs");
 
-describe("apnKeyFromPem", function() {
+describe("parsePemKey", function() {
 	describe("returns APNKey", function() {
 		describe("RSA key", function() {
+			var key;
 			beforeEach(function() {
 				var keyData = fs.readFileSync("test/credentials/support/key.pem");
-				key = apnKeyFromPem(keyData);
+				key = parsePemKey(keyData);
 			});
 
 			it("correct type", function() {	
@@ -15,23 +16,23 @@ describe("apnKeyFromPem", function() {
 			});
 
 			it("with correct fingerprint", function() {
-				expect(key.fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d")
+				expect(key.fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d");
 			});
 		});
 
 		it("openssl-encrypted RSA key, correct password", function() {
 			var key = fs.readFileSync("test/credentials/support/keyEncrypted.pem");
-			expect(apnKeyFromPem(key, "apntest")).to.be.an.instanceof(APNKey);
+			expect(parsePemKey(key, "apntest")).to.be.an.instanceof(APNKey);
 		});
 
 		it("PKCS#8 encrypted key, correct password", function() {
 			var key = fs.readFileSync("test/credentials/support/keyPKCS8Encrypted.pem");
-			expect(apnKeyFromPem(key, "apntest")).to.be.an.instanceof(APNKey);
+			expect(parsePemKey(key, "apntest")).to.be.an.instanceof(APNKey);
 		});
 
 		it("PEM containing certificates and key", function() {
 			var certAndKey = fs.readFileSync("test/credentials/support/certKey.pem");
-			expect(apnKeyFromPem(certAndKey)).to.be.an.instanceof(APNKey);
+			expect(parsePemKey(certAndKey)).to.be.an.instanceof(APNKey);
 		});
 	});
 
@@ -39,35 +40,35 @@ describe("apnKeyFromPem", function() {
 		it("PKCS#8 key (unsupported format)", function() {
 			var key = fs.readFileSync("test/credentials/support/keyPKCS8.pem");
 			expect(function() {
-				apnKeyFromPem(key);
+				parsePemKey(key);
 			}).to.throw("unable to load key, unsupported format");
 		});
 
 		it("RSA encrypted key, incorrect passphrase", function() {
 			var key = fs.readFileSync("test/credentials/support/keyEncrypted.pem");
 			expect(function() {
-				apnKeyFromPem(key, "not-the-passphrase");
+				parsePemKey(key, "not-the-passphrase");
 			}).to.throw("unable to load key, incorrect passphrase");
 		});
 
 		it("PKCS#8 encrypted key, incorrect passphrase", function() {
 			var key = fs.readFileSync("test/credentials/support/keyPKCS8Encrypted.pem");
 			expect(function() {
-				apnKeyFromPem(key, "not-the-passphrase");
+				parsePemKey(key, "not-the-passphrase");
 			}).to.throw("unable to load key, incorrect passphrase");
 		});
 		
 		it("PEM certificate", function() {
 			var cert = fs.readFileSync("test/credentials/support/cert.pem");
 			expect(function() {
-				apnKeyFromPem(cert);
+				parsePemKey(cert);
 			}).to.throw("unable to load key, no private key found");
 		});
 		
 		it("PKCS#12 file", function() {
 			var pkcs12 = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
 			expect(function() {
-				apnKeyFromPem(pkcs12);
+				parsePemKey(pkcs12);
 			}).to.throw("unable to load key, not a valid PEM file");
 		});
 	});
@@ -76,18 +77,18 @@ describe("apnKeyFromPem", function() {
 		it("throws", function() {
 			var keys = fs.readFileSync("test/credentials/support/multipleKeys.pem");
 			expect(function() {
-				apnKeyFromPem(keys);
+				parsePemKey(keys);
 			}).to.throw("multiple keys found in PEM file");
 		});
 	});
 
 	describe("returns null", function() {
 		it("for null", function() {
-			expect(apnKeyFromPem()).to.be.null
+			expect(parsePemKey()).to.be.null
 		});
 
 		it("for undefined", function() {
-			expect(apnKeyFromPem()).to.be.null
+			expect(parsePemKey()).to.be.null
 		});
 	});
 });
