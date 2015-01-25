@@ -12,9 +12,6 @@ describe("parsePkcs12", function() {
 			var credentials;
 			before(function() {
 				p12 = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
-			});
-
-			beforeEach(function() {
 				credentials = parsePkcs12(p12);
 			});
 
