@@ -31,9 +31,11 @@
     "q": "1.x"
   },
   "devDependencies": {
-    "mocha": "*",
     "chai": "*",
-    "chai-as-promised": "*"
+    "chai-as-promised": "*",
+    "mocha": "*",
+    "sinon": "^1.12.2",
+    "sinon-chai": "^2.6.0"
   },
   "scripts": {
     "test": "node_modules/.bin/mocha"
