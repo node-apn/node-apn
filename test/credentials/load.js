@@ -105,4 +105,9 @@ describe("loadCredentials", function() {
 		  	}
 		  }, done);
 	});
+
+	it("should inclue the passphrase in the resolved value", function() {
+		return expect(loadCredentials({ passphrase: "apntest" }).get("passphrase"))
+			.to.eventually.equal("apntest");
+	});
 });
