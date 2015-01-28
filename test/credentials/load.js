@@ -11,89 +11,89 @@ describe("loadCredentials", function() {
 
 	it("should eventually load a pfx file from disk", function () {
 		return expect(loadCredentials({ pfx: "test/support/initializeTest.pfx" })
-				  .get(0).post("toString"))
+				  .get("pfx").post("toString"))
 				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually provide pfx data from memory", function () {
-		return expect(loadCredentials({ pfx: pfx }).get(0).post("toString"))
+		return expect(loadCredentials({ pfx: pfx }).get("pfx").post("toString"))
 				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually provide pfx data explicitly passed in pfxData parameter", function () {
-		return expect(loadCredentials({ pfxData: pfx }).get(0).post("toString"))
+		return expect(loadCredentials({ pfxData: pfx }).get("pfx").post("toString"))
 				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually load a certificate from disk", function () {
 		return expect(loadCredentials({ cert: "test/support/initializeTest.crt", key: null})
-				  .get(1).post("toString"))
+				  .get("cert").post("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a certificate from a Buffer", function () {
 		return expect(loadCredentials({ cert: cert, key: null})
-				  .get(1).post("toString"))
+				  .get("cert").post("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a certificate from a String", function () {
 		return expect(loadCredentials({ cert: cert.toString(), key: null})
-				  .get(1))
+				  .get("cert"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide certificate data explicitly passed in the certData parameter", function () {
 		return expect(loadCredentials({ certData: cert, key: null})
-				  .get(1).post("toString"))
+				  .get("cert").post("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually load a key from disk", function () {
 		return expect(loadCredentials({ cert: null, key: "test/support/initializeTest.key"})
-				  .get(2).post("toString"))
+				  .get("key").post("toString"))
 				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually provide a key from a Buffer", function () {
 		return expect(loadCredentials({ cert: null, key: key})
-				  .get(2).post("toString"))
+				  .get("key").post("toString"))
 				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually provide a key from a String", function () {
 		return expect(loadCredentials({ cert: null, key: key.toString()})
-				  .get(2))
+				  .get("key"))
 				  .to.eventually.equal(key.toString());
 	})
 
 	it("should eventually provide key data explicitly passed in the keyData parameter", function () {
 		return expect(loadCredentials({ cert: null, keyData: key})
-				  .get(2).post("toString"))
+				  .get("key").post("toString"))
 				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually load a single CA certificate from disk", function () {
 		return expect(loadCredentials({ cert: null, key: null, ca: "test/support/initializeTest.crt" })
-				  .get(3).get(0).post("toString"))
+				  .get("ca").get(0).post("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a single CA certificate from a Buffer", function () {
 		return expect(loadCredentials({ cert: null, key: null, ca: cert })
-				  .get(3).get(0).post("toString"))
+				  .get("ca").get(0).post("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a single CA certificate from a String", function () {
 		return expect(loadCredentials({ cert: null, key: null, ca: cert.toString() })
-				  .get(3).get(0))
+				  .get("ca").get(0))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually load an array of CA certificates", function (done) {
 		loadCredentials({ cert: null, key: null, ca: ["test/support/initializeTest.crt", cert, cert.toString()] })
-		  .get(3).spread(function(cert1, cert2, cert3) {
+		  .get("ca").spread(function(cert1, cert2, cert3) {
 		  	var certString = cert.toString();
 		  	if (cert1.toString() == certString && 
 		  		cert2.toString() == certString &&
