@@ -53,6 +53,16 @@ describe("Connection", function() {
 			it("should be fulfilled", function () {
 				return expect(initialization).to.be.fulfilled;
 			});
+
+			describe("resolution value", function() {
+				it("contains the PFX data", function() {
+					return expect(initialization.get("pfx")).to.eventually.have.length(3517);
+				});
+
+				it("includes passphrase", function() {
+					return expect(initialization.get("passphrase")).to.eventually.equal("apntest");
+				});
+			});
 		});
 	});
 
@@ -94,6 +104,53 @@ describe("Connection", function() {
 				return expect(connection.connect()).to.be.fulfilled;
 			});
 
+			describe("the call to create socket", function() {
+				var connect;
+				beforeEach(function() {
+					connect = Connection({ 
+						pfx: "test/credentials/support/certIssuerKey.p12",
+						passphrase: "apntest",
+						cert: "test/credentials/support/cert.pem",
+						key: "test/credentials/support/key.pem",
+						ca: [ "test/credentials/support/issuerCert.pem" ]
+					}).connect();
+				});
+
+				it("passes PFX data", function() {
+					return connect.then(function() {
+						var socketOptions = socketStub.args[0][1];
+						expect(socketOptions.pfx).to.have.length(3767);
+					});
+				});
+
+				it("passes the passphrase", function() {
+					return connect.then(function() {
+						var socketOptions = socketStub.args[0][1];
+						expect(socketOptions.passphrase).to.equal("apntest");
+					});
+				});
+
+				it("passes the cert", function() {
+					return connect.then(function() {
+						var socketOptions = socketStub.args[0][1];
+						expect(socketOptions.cert).to.have.length(1355);
+					});
+				});
+
+				it("passes the key", function() {
+					return connect.then(function() {
+						var socketOptions = socketStub.args[0][1];
+						expect(socketOptions.key).to.have.length(1680);
+					});
+				});
+
+				it("passes the ca certificates", function() {
+					return connect.then(function() {
+						var socketOptions = socketStub.args[0][1];
+						expect(socketOptions.ca[0]).to.have.length(1285);
+					});
+				});
+			});
 		});
 
 		describe("intialization failure", function() {
