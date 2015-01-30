@@ -1,7 +1,7 @@
 var rewire = require("rewire");
 var Connection = rewire("../lib/connection");
 
-var fs = require("fs");
+var sinon = require("sinon");
 
 describe("Connection", function() {
 	describe('constructor', function () {
@@ -44,9 +44,63 @@ describe("Connection", function() {
 	});
 
 	describe('#initialize', function () {
-		it("should be fulfilled", function () {
-			return expect(Connection({ pfx: "test/support/initializeTest.pfx" })
-					  .initialize()).to.be.fulfilled;
+		describe("with valid credentials", function() {
+			var initialization;
+			before(function() {
+				initialization = Connection({ pfx: "test/credentials/support/certIssuerKeyPassphrase.p12", passphrase: "apntest" }).initialize();
+			});
+
+			it("should be fulfilled", function () {
+				return expect(initialization).to.be.fulfilled;
+			});
+		});
+	});
+
+	describe("connect", function() {
+		var socketStub, removeStub;
+		before(function() {
+			socketStub = sinon.stub();
+			removeStub = Connection.__set__("createSocket", socketStub);
+		});
+
+		after(function() {
+			removeStub();
+		});
+
+		afterEach(function() {
+			socketStub.reset();
+		});
+
+		it("initializes the module", function(done) {
+			socketStub.callsArg(2);
+	 		socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+
+			var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
+			sinon.spy(connection, "initialize");
+			connection.connect().finally(function() {
+				expect(connection.initialize).to.have.been.calledOnce;
+				done();
+			});
+		});
+
+		describe("with valid credentials", function() {
+			beforeEach(function() {
+				socketStub.callsArg(2);
+				socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+			});
+
+			it("resolves", function() {
+				var connection = Connection({ pfx: "test/credentials/support/certIssuerKeyPassphrase.p12", passphrase: "apntest" });
+				return expect(connection.connect()).to.be.fulfilled;
+			});
+
+		});
+
+		describe("intialization failure", function() {
+			it("is rejected", function() {
+				var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
+				return expect(connection.connect()).to.be.rejected;
+			});
 		});
 	});
 });

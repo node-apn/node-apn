@@ -88,6 +88,18 @@ describe("Feedback", function() {
 			});
 		});
 
+		describe("with valid credentials", function() {
+			beforeEach(function() {
+				socketStub.callsArg(2);
+				socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+			});
+
+			it("resolves", function() {
+				var feedback = Feedback({ pfx: "test/credentials/support/certIssuerKeyPassphrase.p12", passphrase: "apntest", interval: 0 });
+				return expect(feedback.connect()).to.be.fulfilled;
+			});
+		});
+
 		describe("intialization failure", function() {
 			it("is rejected", function() {
 				var feedback = Feedback({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx", interval: 0 });
