@@ -1,6 +1,7 @@
 var rewire = require("rewire");
 var Feedback = rewire("../lib/feedback");
 
+var sinon = require("sinon");
 
 describe("Feedback", function() {
 	var startMethod;
@@ -57,6 +58,45 @@ describe("Feedback", function() {
 		it("should be fulfilled", function () {
 			return expect(Feedback({ pfx: "test/support/initializeTest.pfx" })
 					  .initialize()).to.be.fulfilled;
+		});
+	});
+
+	describe("connect", function() {
+		var socketStub, removeStub;
+		before(function() {
+			socketStub = sinon.stub();
+			removeStub = Feedback.__set__("createSocket", socketStub);
+		});
+
+		after(function() {
+			removeStub();
+		});
+
+		afterEach(function() {
+			socketStub.reset();
+		});
+
+		it("initializes the module", function(done) {
+			socketStub.callsArg(2);
+	 		socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+
+			var feedback = Feedback({ pfx: "test/credentials/support/certIssuerKey.p12", interval: 0 });
+			sinon.spy(feedback, "initialize");
+			feedback.connect().finally(function() {
+				expect(feedback.initialize).to.have.been.calledOnce;
+				done();
+			});
+		});
+
+		describe("intialization failure", function() {
+			it("is rejected", function() {
+				var feedback = Feedback({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx", interval: 0 });
+				feedback.on("error", function() {});
+				socketStub.callsArg(2);
+		 		socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+
+				return expect(feedback.connect()).to.be.rejected;
+			});
 		});
 	});
 });
