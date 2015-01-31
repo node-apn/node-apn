@@ -12,19 +12,19 @@ describe("validateCredentials", function() {
 
 	describe("with mismatched key and certificate", function() {
 		it("throws", function() {
-			sinon.stub(fakeCredentials.cert._key, "fingerprint").returns("fingerprint2");
+			sinon.stub(fakeCredentials.certificates[0]._key, "fingerprint").returns("fingerprint2");
 			
 			expect(function() {
 				validateCredentials(fakeCredentials);
 			}).to.throw(/certificate and key do not match/);
 
-			fakeCredentials.cert._key.fingerprint.restore();
+			fakeCredentials.certificates[0]._key.fingerprint.restore();
 		});
 	});
 
 	describe("with expired certificate", function() {
 		it("throws", function() {
-			sinon.stub(fakeCredentials.cert, "validity")
+			sinon.stub(fakeCredentials.certificates[0], "validity")
 				.returns({
 					notBefore: new Date(Date.now() - 100000),
 					notAfter: new Date(Date.now() - 10000)
@@ -34,17 +34,17 @@ describe("validateCredentials", function() {
 				validateCredentials(fakeCredentials);
 			}).to.throw(/certificate has expired/);
 
-			fakeCredentials.cert.validity.restore();
+			fakeCredentials.certificates[0].validity.restore();
 		});
 	});
 
 	describe("with incorrect environment", function() {
 		afterEach(function() {
-			fakeCredentials.cert.environment.restore();
+			fakeCredentials.certificates[0].environment.restore();
 		});
 
 		it("throws with sandbox cert in production", function() {
-			sinon.stub(fakeCredentials.cert, "environment")
+			sinon.stub(fakeCredentials.certificates[0], "environment")
 				.returns({
 					production: false,
 					sandbox: true
@@ -56,7 +56,7 @@ describe("validateCredentials", function() {
 		});
 
 		it("throws with production cert in sandbox", function() {
-			sinon.stub(fakeCredentials.cert, "environment")
+			sinon.stub(fakeCredentials.certificates[0], "environment")
 				.returns({
 					production: true,
 					sandbox: false
@@ -72,8 +72,12 @@ describe("validateCredentials", function() {
 	});
 
 	describe("with certificate supporting both environments", function() {
+		afterEach(function() {
+			fakeCredentials.certificates[0].environment.restore();
+		});
+		
 		it("does not throw", function() {
-			sinon.stub(fakeCredentials.cert, "environment")
+			sinon.stub(fakeCredentials.certificates[0], "environment")
 				.returns({
 					production: true,
 					sandbox: true
@@ -94,7 +98,7 @@ var fakeCredentials = {
 		_fingerprint: "fingerprint1",
 		fingerprint: function() { return this._fingerprint; },
 	},
-	cert: {
+	certificates: [{
 		_key: {
 			_fingerprint: "fingerprint1",
 			fingerprint: function() { return this._fingerprint; },
@@ -110,6 +114,6 @@ var fakeCredentials = {
 		environment: function() {
 			return { production: true, sandbox: false };
 		}
-	},
+	}],
 	production: true
 };
