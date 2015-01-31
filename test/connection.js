@@ -64,6 +64,13 @@ describe("Connection", function() {
 				});
 			});
 		});
+
+		describe("with sandbox certificate in production", function() {
+			it("should be rejected", function() {
+				var connection = Connection({ cert: "test/credentials/support/cert.pem", key: "test/credentials/support/key.pem", production: true });
+				return expect(connection.initialize()).to.be.rejected;
+			});
+		}); 
 	});
 
 	describe("connect", function() {
