@@ -47,7 +47,7 @@ describe("Connection", function() {
 		describe("with valid credentials", function() {
 			var initialization;
 			before(function() {
-				initialization = Connection({ pfx: "test/credentials/support/certIssuerKeyPassphrase.p12", passphrase: "apntest" }).initialize();
+				initialization = Connection({ cert: "test/credentials/support/cert.pem", key: "test/credentials/support/key.pem", passphrase: "apntest" }).initialize();
 			});
 
 			it("should be fulfilled", function () {
@@ -55,8 +55,8 @@ describe("Connection", function() {
 			});
 
 			describe("resolution value", function() {
-				it("contains the PFX data", function() {
-					return expect(initialization.get("pfx")).to.eventually.have.length(3517);
+				it("contains the key data", function() {
+					return expect(initialization.get("key")).to.eventually.have.length(1680);
 				});
 
 				it("includes passphrase", function() {
@@ -100,30 +100,33 @@ describe("Connection", function() {
 			});
 
 			it("resolves", function() {
-				var connection = Connection({ pfx: "test/credentials/support/certIssuerKeyPassphrase.p12", passphrase: "apntest" });
+				var connection = Connection({
+					cert: "test/credentials/support/cert.pem",
+					key: "test/credentials/support/key.pem"
+				});
 				return expect(connection.connect()).to.be.fulfilled;
 			});
 
 			describe("the call to create socket", function() {
 				var connect;
-				beforeEach(function() {
-					connect = Connection({ 
-						pfx: "test/credentials/support/certIssuerKey.p12",
-						passphrase: "apntest",
-						cert: "test/credentials/support/cert.pem",
-						key: "test/credentials/support/key.pem",
-						ca: [ "test/credentials/support/issuerCert.pem" ]
-					}).connect();
-				});
 
 				it("passes PFX data", function() {
+					connect = Connection({
+						pfx: "test/credentials/support/certIssuerKeyPassphrase.p12",
+						passphrase: "apntest"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.pfx).to.have.length(3767);
+						expect(socketOptions.pfx).to.have.length(3517);
 					});
 				});
 
 				it("passes the passphrase", function() {
+					connect = Connection({
+						passphrase: "apntest",
+						cert: "test/credentials/support/cert.pem",
+						key: "test/credentials/support/key.pem"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.passphrase).to.equal("apntest");
@@ -131,6 +134,10 @@ describe("Connection", function() {
 				});
 
 				it("passes the cert", function() {
+					connect = Connection({
+						cert: "test/credentials/support/cert.pem",
+						key: "test/credentials/support/key.pem"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.cert).to.have.length(1355);
@@ -138,6 +145,10 @@ describe("Connection", function() {
 				});
 
 				it("passes the key", function() {
+					connect = Connection({
+						cert: "test/credentials/support/cert.pem",
+						key: "test/credentials/support/key.pem"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.key).to.have.length(1680);
@@ -145,6 +156,11 @@ describe("Connection", function() {
 				});
 
 				it("passes the ca certificates", function() {
+					connect = Connection({
+						cert: "test/credentials/support/cert.pem",
+						key: "test/credentials/support/key.pem",
+						ca: [ "test/credentials/support/issuerCert.pem" ]
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.ca[0]).to.have.length(1285);
