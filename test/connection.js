@@ -71,6 +71,38 @@ describe("Connection", function() {
 				return expect(connection.initialize()).to.be.rejected;
 			});
 		}); 
+
+		describe("with unreadable file", function() {
+			it("should be fulfilled", function() {
+				var connection = Connection({ pfx: "test/credentials/support/cert.pem" });
+				return expect(connection.initialize()).to.eventually.be.fulfilled;
+			});
+
+			var reset;
+			beforeEach(function() {
+				reset = Connection.__set__("debug", sinon.spy());
+			});
+
+			afterEach(function() {
+				reset();
+			});
+
+			it("should log an error", function() {
+				var connection = Connection({ pfx: "test/credentials/support/cert.pem" });
+				return connection.initialize().finally(function() {
+					expect(Connection.__get__("debug")).to.be.calledWith(sinon.match(function(err) {
+						return err.message ? err.message.match(/unable to read credentials/) : false;
+					}, "\"unable to read credentials\""));
+				});
+			});
+		});
+
+		describe("with invalid file path", function() {
+			it("should be rejected", function() {
+				var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
+				return expect(connection.initialize()).to.eventually.be.rejected;
+			});
+		});
 	});
 
 	describe("connect", function() {
@@ -92,10 +124,11 @@ describe("Connection", function() {
 			socketStub.callsArg(2);
 	 		socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
 
-			var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
+			var connection = Connection({ pfx: "myCredentials.pfx" });
 			sinon.spy(connection, "initialize");
 			connection.connect().finally(function() {
 				expect(connection.initialize).to.have.been.calledOnce;
+				connection.initialize.restore();
 				done();
 			});
 		});
