@@ -2,6 +2,7 @@ var rewire = require("rewire");
 var Connection = rewire("../lib/connection");
 
 var sinon = require("sinon");
+var Q = require("q");
 
 describe("Connection", function() {
 	describe('constructor', function () {
@@ -106,43 +107,43 @@ describe("Connection", function() {
 	});
 
 	describe("connect", function() {
-		var socketStub, removeStub;
-		before(function() {
-			socketStub = sinon.stub();
-			removeStub = Connection.__set__("createSocket", socketStub);
-		});
+		var socketStub, removeSocketStub;
 
-		after(function() {
-			removeStub();
+		before(function() {
+			var initializeStub = sinon.stub(Connection.prototype, "initialize");
+			initializeStub.returns(Q({ 
+				pfx: "pfxData",
+				key: "keyData",
+				cert: "certData",
+				ca: ["caData1", "caData2"],
+				passphrase: "apntest" }));
+		});
+		
+		beforeEach(function() {
+			socketStub = sinon.stub();
+			socketStub.callsArg(2);
+			socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+
+			removeSocketStub = Connection.__set__("createSocket", socketStub);
 		});
 
 		afterEach(function() {
-			socketStub.reset();
+			removeSocketStub();
 		});
 
 		it("initializes the module", function(done) {
-			socketStub.callsArg(2);
-	 		socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
-
 			var connection = Connection({ pfx: "myCredentials.pfx" });
-			sinon.spy(connection, "initialize");
-			connection.connect().finally(function() {
+			return connection.connect().finally(function() {
 				expect(connection.initialize).to.have.been.calledOnce;
-				connection.initialize.restore();
 				done();
 			});
 		});
 
 		describe("with valid credentials", function() {
-			beforeEach(function() {
-				socketStub.callsArg(2);
-				socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
-			});
-
 			it("resolves", function() {
 				var connection = Connection({
-					cert: "test/credentials/support/cert.pem",
-					key: "test/credentials/support/key.pem"
+					cert: "myCert.pem",
+					key: "myKey.pem"
 				});
 				return expect(connection.connect()).to.be.fulfilled;
 			});
@@ -152,20 +153,20 @@ describe("Connection", function() {
 
 				it("passes PFX data", function() {
 					connect = Connection({
-						pfx: "test/credentials/support/certIssuerKeyPassphrase.p12",
+						pfx: "myCredentials.pfx",
 						passphrase: "apntest"
 					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.pfx).to.have.length(3517);
+						expect(socketOptions.pfx).to.equal("pfxData");
 					});
 				});
 
 				it("passes the passphrase", function() {
 					connect = Connection({
 						passphrase: "apntest",
-						cert: "test/credentials/support/cert.pem",
-						key: "test/credentials/support/key.pem"
+						cert: "myCert.pem",
+						key: "myKey.pem"
 					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
@@ -175,12 +176,12 @@ describe("Connection", function() {
 
 				it("passes the cert", function() {
 					connect = Connection({
-						cert: "test/credentials/support/cert.pem",
-						key: "test/credentials/support/key.pem"
+						cert: "myCert.pem",
+						key: "myKey.pem"
 					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.cert).to.have.length(1355);
+						expect(socketOptions.cert).to.equal("certData");
 					});
 				});
 
@@ -191,7 +192,7 @@ describe("Connection", function() {
 					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.key).to.have.length(1680);
+						expect(socketOptions.key).to.equal("keyData");
 					});
 				});
 
@@ -203,7 +204,7 @@ describe("Connection", function() {
 					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.ca[0]).to.have.length(1285);
+						expect(socketOptions.ca[0]).to.equal("caData1");
 					});
 				});
 			});
@@ -212,7 +213,9 @@ describe("Connection", function() {
 		describe("intialization failure", function() {
 			it("is rejected", function() {
 				var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
-				return expect(connection.connect()).to.be.rejected;
+				connection.initialize.returns(Q.reject(new Error("initialize failed")));
+
+				return expect(connection.connect()).to.be.rejectedWith("initialize failed");
 			});
 		});
 	});
