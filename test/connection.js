@@ -62,7 +62,14 @@ describe("Connection", function() {
 			removeStubs();
 		});
 
-		it("should only initialize once");
+		it("should only loads credentials once", function() {
+			loadStub.returns(Q({}));
+
+			var connection = Connection();
+			connection.initialize();
+			connection.initialize();
+			expect(loadStub).to.be.calledOnce;
+		});
 
 		describe("with valid credentials", function() {
 			var initialization;
