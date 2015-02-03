@@ -45,19 +45,53 @@ describe("Connection", function() {
 	});
 
 	describe('#initialize', function () {
+		var loadStub, parseStub, validateStub, removeStubs;
+		beforeEach(function() {
+			loadStub = sinon.stub();
+			parseStub = sinon.stub();
+			validateStub = sinon.stub();
+
+			removeStubs = Connection.__set__({
+				"loadCredentials": loadStub,
+				"parseCredentials": parseStub,
+				"validateCredentials": validateStub,
+			});
+		});
+
+		afterEach(function() {
+			removeStubs();
+		});
+
+		it("should only initialize once");
+
 		describe("with valid credentials", function() {
 			var initialization;
-			before(function() {
-				initialization = Connection({ cert: "test/credentials/support/cert.pem", key: "test/credentials/support/key.pem", passphrase: "apntest" }).initialize();
+			var testOptions = { cert: "myCert.pem", key: "myKey.pem", ca: "myCa.pem", passphrase: "apntest" };
+
+			beforeEach(function() {
+				loadStub.withArgs(sinon.match(function(v) {
+					return v.cert == "myCert.pem" && v.key == "myKey.pem" && v.ca == "myCa.pem" && v.passphrase == "apntest";
+				})).returns(Q({ cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
+
+				initialization = Connection(testOptions).initialize();
 			});
 
 			it("should be fulfilled", function () {
+				var initialization = Connection(testOptions).initialize();
 				return expect(initialization).to.be.fulfilled;
 			});
 
 			describe("resolution value", function() {
 				it("contains the key data", function() {
-					return expect(initialization.get("key")).to.eventually.have.length(1680);
+					return expect(initialization.get("key")).to.eventually.equal("myKeyData");
+				});
+
+				it("contains the certificate data", function() {
+					return expect(initialization.get("cert")).to.eventually.equal("myCertData");
+				});
+
+				it("contains the CA data", function() {
+					return expect(initialization.get("cert")).to.eventually.equal("myCertData");
 				});
 
 				it("includes passphrase", function() {
@@ -66,42 +100,48 @@ describe("Connection", function() {
 			});
 		});
 
-		describe("with sandbox certificate in production", function() {
-			it("should be rejected", function() {
-				var connection = Connection({ cert: "test/credentials/support/cert.pem", key: "test/credentials/support/key.pem", production: true });
-				return expect(connection.initialize()).to.be.rejected;
-			});
-		}); 
-
-		describe("with unreadable file", function() {
-			it("should be fulfilled", function() {
-				var connection = Connection({ pfx: "test/credentials/support/cert.pem" });
-				return expect(connection.initialize()).to.eventually.be.fulfilled;
-			});
-
-			var reset;
+		describe("credential file cannot be parsed", function() {
 			beforeEach(function() {
-				reset = Connection.__set__("debug", sinon.spy());
+				loadStub.returns(Q({ cert: "myCertData", key: "myKeyData" }));
+				parseStub.throws(new Error("unable to parse key"));
 			});
 
-			afterEach(function() {
-				reset();
+			it("should be fulfilled", function() {
+				var initialization = Connection({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+				return expect(initialization).to.eventually.be.fulfilled;
 			});
 
 			it("should log an error", function() {
-				var connection = Connection({ pfx: "test/credentials/support/cert.pem" });
-				return connection.initialize().finally(function() {
-					expect(Connection.__get__("debug")).to.be.calledWith(sinon.match(function(err) {
-						return err.message ? err.message.match(/unable to read credentials/) : false;
-					}, "\"unable to read credentials\""));
+				var debug = sinon.spy();
+				var reset = Connection.__set__("debug", debug);
+				var initialization = Connection({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+
+				return initialization.finally(function() {
+					reset();
+					expect(debug).to.be.calledWith(sinon.match(function(err) {
+						return err.message ? err.message.match(/unable to parse key/) : false;
+					}, "\"unable to parse key\""));
 				});
 			});
 		});
 
-		describe("with invalid file path", function() {
+		describe("credential validation fails", function() {
 			it("should be rejected", function() {
-				var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
-				return expect(connection.initialize()).to.eventually.be.rejected;
+				loadStub.returns(Q({ cert: "myCertData", key: "myMismatchedKeyData" }));
+				parseStub.returnsArg(0);
+				validateStub.throws(new Error("certificate and key do not match"));
+
+				var initialization = Connection({ cert: "myCert.pem", key: "myMistmatchedKey.pem" }).initialize();
+				return expect(initialization).to.eventually.be.rejectedWith(/certificate and key do not match/);
+			});
+		});
+
+		describe("credential file cannot be loaded", function() {
+			it("should be rejected", function() {
+				loadStub.returns(Q.reject(new Error("ENOENT, no such file or directory")));
+
+				var initialization = Connection({ cert: "noSuchFile.pem", key: "myKey.pem" }).initialize();
+				return expect(initialization).to.eventually.be.rejectedWith("ENOENT, no such file or directory");
 			});
 		});
 	});
