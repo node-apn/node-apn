@@ -88,7 +88,7 @@ describe("parsePkcs12", function() {
 				p12 = fs.readFileSync("test/credentials/support/certIssuerKeyPassphrase.p12");
 				expect(function() {
 					parsePkcs12(p12, "notthepassphrase");
-				}).to.throw("unable to read credentials, incorrect passphrase");
+				}).to.throw("unable to parse credentials, incorrect passphrase");
 			});
 		});
 
@@ -110,7 +110,7 @@ describe("parsePkcs12", function() {
 			var pem = fs.readFileSync("test/credentials/support/certKey.pem");
 			expect(function() {
 				parsePkcs12(pem);
-			}).to.throw("unable to read credentials, not a PFX/P12 file");
+			}).to.throw("unable to parse credentials, not a PFX/P12 file");
 		});
 	});
 

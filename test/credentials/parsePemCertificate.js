@@ -66,7 +66,7 @@ describe("parsePemCertificate", function() {
 			var pfx = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
 			expect(function() {
 				parsePemCertificate(pfx);
-			}).to.throw("unable to load certificate, not a valid PEM file");
+			}).to.throw("unable to parse certificate, not a valid PEM file");
 		});
 	});
 

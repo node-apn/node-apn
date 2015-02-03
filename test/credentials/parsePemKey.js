@@ -41,35 +41,35 @@ describe("parsePemKey", function() {
 			var key = fs.readFileSync("test/credentials/support/keyPKCS8.pem");
 			expect(function() {
 				parsePemKey(key);
-			}).to.throw("unable to load key, unsupported format");
+			}).to.throw("unable to parse key, unsupported format");
 		});
 
 		it("RSA encrypted key, incorrect passphrase", function() {
 			var key = fs.readFileSync("test/credentials/support/keyEncrypted.pem");
 			expect(function() {
 				parsePemKey(key, "not-the-passphrase");
-			}).to.throw("unable to load key, incorrect passphrase");
+			}).to.throw("unable to parse key, incorrect passphrase");
 		});
 
 		it("PKCS#8 encrypted key, incorrect passphrase", function() {
 			var key = fs.readFileSync("test/credentials/support/keyPKCS8Encrypted.pem");
 			expect(function() {
 				parsePemKey(key, "not-the-passphrase");
-			}).to.throw("unable to load key, incorrect passphrase");
+			}).to.throw("unable to parse key, incorrect passphrase");
 		});
 		
 		it("PEM certificate", function() {
 			var cert = fs.readFileSync("test/credentials/support/cert.pem");
 			expect(function() {
 				parsePemKey(cert);
-			}).to.throw("unable to load key, no private key found");
+			}).to.throw("unable to parse key, no private key found");
 		});
 		
 		it("PKCS#12 file", function() {
 			var pkcs12 = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
 			expect(function() {
 				parsePemKey(pkcs12);
-			}).to.throw("unable to load key, not a valid PEM file");
+			}).to.throw("unable to parse key, not a valid PEM file");
 		});
 	});
 
