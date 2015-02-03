@@ -32,7 +32,7 @@ describe("resolve", function() {
 				.post("toString")).to.eventually.equal(key.toString());
 		});
 
-		it("is eventually rejected with invalid path", function() {
+		it("is eventually rejected for invalid path", function() {
 			return expect(resolve("test/support/fail/initializeTest.key"))
 				.to.eventually.be.rejected;
 		});
