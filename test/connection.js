@@ -135,6 +135,13 @@ describe("Connection", function() {
 					}, "\"unable to parse key\""));
 				});
 			});
+
+			it("should not attempt to validate", function() {
+				var initialization = Connection({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+				return initialization.finally(function() {
+					expect(validateStub).to.not.be.called;
+				});
+			});
 		});
 
 		describe("credential validation fails", function() {
