@@ -117,9 +117,9 @@ describe("Connection", function() {
 				parseStub.throws(new Error("unable to parse key"));
 			});
 
-			it("should be fulfilled", function() {
+			it("should resolve with the credentials", function() {
 				var initialization = Connection({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
-				return expect(initialization).to.eventually.be.fulfilled;
+				return expect(initialization).to.become({ cert: "myCertData", key: "myKeyData" });
 			});
 
 			it("should log an error", function() {
