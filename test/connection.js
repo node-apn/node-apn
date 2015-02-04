@@ -67,7 +67,7 @@ describe("Connection", function() {
 			removeStubs();
 		});
 
-		it("should only loads credentials once", function() {
+		it("only loads credentials once", function() {
 			loadStub.returns(Q({}));
 
 			var connection = Connection();
