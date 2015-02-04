@@ -89,6 +89,8 @@ describe("Connection", function() {
 						v.ca == "myCa.pem" && v.passphrase == "apntest";
 				})).returns(Q({ pfx: "myPfxData", cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
 
+				parseStub.returnsArg(0);
+
 				initialization = Connection(testOptions).initialize();
 			});
 
@@ -97,8 +99,42 @@ describe("Connection", function() {
 			});
 
 			describe("the validation stage", function() {
+				it("is called once", function() {
+					return initialization.finally(function() {
+						expect(validateStub).to.be.calledOnce;
+					});
+				});
+
 				it("is passed the production flag", function() {
-					expect(validateStub.getCall(0).args[0]).to.have.property("production", true);
+					return initialization.finally(function() {
+						expect(validateStub.getCall(0).args[0]).to.have.property("production", true);
+					});
+				});
+
+				describe("passed credentials", function() {
+					it("contains the PFX data", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("pfx", "myPfxData");
+						});
+					});
+
+					it("contains the key data", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("key", "myKeyData");
+						});
+					});
+
+					it("contains the certificate data", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("cert", "myCertData");
+						});
+					});
+
+					it("includes passphrase", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("passphrase", "apntest");
+						});
+					});
 				});
 			});
 
