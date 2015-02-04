@@ -89,7 +89,6 @@ describe("Connection", function() {
 			});
 
 			it("should be fulfilled", function () {
-				var initialization = Connection(testOptions).initialize();
 				return expect(initialization).to.be.fulfilled;
 			});
 
