@@ -92,6 +92,12 @@ describe("Connection", function() {
 				return expect(initialization).to.be.fulfilled;
 			});
 
+			describe("the validation stage", function() {
+				it("is passed the production flag", function() {
+					expect(validateStub.getCall(0).args[0]).to.have.property("production", true);
+				});
+			});
+
 			describe("resolution value", function() {
 				it("contains the key data", function() {
 					return expect(initialization.get("key")).to.eventually.equal("myKeyData");

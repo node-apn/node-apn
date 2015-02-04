@@ -117,11 +117,6 @@ describe("parseCredentials", function() {
 		});
 	});
 
-	it("passes production flag through", function() {
-		var parsed = parseCredentials({ production: true });
-		expect(parsed.production).to.eql(true);
-	});
-
 	describe("both PEM and PFX data is supplied", function() {
 		it("it prefers PFX to PEM", function() {
 			pkcs12Spy.withArgs("pfxData").returns({ key: pfxKey, certificates: [pfxCert] });
