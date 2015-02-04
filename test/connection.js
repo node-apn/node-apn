@@ -48,8 +48,13 @@ describe("Connection", function() {
 		var loadStub, parseStub, validateStub, removeStubs;
 		beforeEach(function() {
 			loadStub = sinon.stub();
+			loadStub.displayName = "loadCredentials";
+
 			parseStub = sinon.stub();
+			parseStub.displayName = "parseCredentials";
+			
 			validateStub = sinon.stub();
+			validateStub.displayName = "validateCredentials";
 
 			removeStubs = Connection.__set__({
 				"loadCredentials": loadStub,
