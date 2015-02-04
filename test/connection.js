@@ -100,19 +100,19 @@ describe("Connection", function() {
 
 			describe("resolution value", function() {
 				it("contains the key data", function() {
-					return expect(initialization.get("key")).to.eventually.equal("myKeyData");
+					return expect(initialization).to.eventually.have.property("key", "myKeyData");
 				});
 
 				it("contains the certificate data", function() {
-					return expect(initialization.get("cert")).to.eventually.equal("myCertData");
+					return expect(initialization).to.eventually.have.property("cert", "myCertData");
 				});
 
 				it("contains the CA data", function() {
-					return expect(initialization.get("cert")).to.eventually.equal("myCertData");
+					return expect(initialization).to.eventually.have.deep.property("ca[0]", "myCaData");
 				});
 
 				it("includes passphrase", function() {
-					return expect(initialization.get("passphrase")).to.eventually.equal("apntest");
+					return expect(initialization).to.eventually.have.property("passphrase", "apntest");
 				});
 			});
 		});
