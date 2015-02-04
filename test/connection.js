@@ -78,12 +78,16 @@ describe("Connection", function() {
 
 		describe("with valid credentials", function() {
 			var initialization;
-			var testOptions = { cert: "myCert.pem", key: "myKey.pem", ca: "myCa.pem", passphrase: "apntest" };
+			var testOptions = { 
+				pfx: "myCredentials.pfx", cert: "myCert.pem", key: "myKey.pem", ca: "myCa.pem",
+				passphrase: "apntest", production: true
+			};
 
 			beforeEach(function() {
 				loadStub.withArgs(sinon.match(function(v) {
-					return v.cert == "myCert.pem" && v.key == "myKey.pem" && v.ca == "myCa.pem" && v.passphrase == "apntest";
-				})).returns(Q({ cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
+					return v.pfx == "myCredentials.pfx" && v.cert == "myCert.pem" && v.key == "myKey.pem" && 
+						v.ca == "myCa.pem" && v.passphrase == "apntest";
+				})).returns(Q({ pfx: "myPfxData", cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
 
 				initialization = Connection(testOptions).initialize();
 			});
@@ -99,6 +103,10 @@ describe("Connection", function() {
 			});
 
 			describe("resolution value", function() {
+				it("contains the PFX data", function() {
+					return expect(initialization).to.eventually.have.property("pfx", "myPfxData");
+				});
+
 				it("contains the key data", function() {
 					return expect(initialization).to.eventually.have.property("key", "myKeyData");
 				});
