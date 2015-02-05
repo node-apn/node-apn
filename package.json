@@ -40,6 +40,10 @@
   "scripts": {
     "test": "node_modules/.bin/mocha"
   },
+  "jshintConfig": {
+    "node": true,
+    "strict": false
+  },
   "engines": {
     "node": ">= 0.6.14"
   },
