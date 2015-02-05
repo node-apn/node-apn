@@ -53,6 +53,17 @@ describe("Feedback", function() {
 		it("should use a custom address when passed", function () {
 			expect(Feedback({address: "testaddress"}).options.address).to.equal("testaddress");
 		});
+
+		describe("address is passed", function() {
+			it("sets production to true when using production address", function() {
+				expect(Feedback({address: "feedback.push.apple.com"}).options.production).to.be.true;
+			});
+
+			it("sets production to false when using sandbox address", function() {
+				process.env.NODE_ENV = "production";
+				expect(Feedback({address: "feedback.sandbox.push.apple.com"}).options.production).to.be.false;
+			});
+		});
 	});
 
 	describe('#initialize', function () {

@@ -42,6 +42,17 @@ describe("Connection", function() {
 		it("should use a custom address when passed", function () {
 			expect(Connection({address: "testaddress"}).options.address).to.equal("testaddress");
 		});
+		
+		describe("address is passed", function() {
+			it("sets production to true when using production address", function() {
+				expect(Connection({address: "gateway.push.apple.com"}).options.production).to.be.true;
+			});
+
+			it("sets production to false when using sandbox address", function() {
+				process.env.NODE_ENV = "production";
+				expect(Connection({address: "gateway.sandbox.push.apple.com"}).options.production).to.be.false;
+			});
+		});
 	});
 
 	describe('#initialize', function () {
