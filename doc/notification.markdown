@@ -38,6 +38,7 @@ The encoding to use when transmitting the notification to APNS, defaults to `utf
 ### notification.payload
 
 This object represents the root JSON object that you can add custom information for your application to. The properties below will only be added to the payload (under `aps`) when the notification is prepared for sending.
+payload is a data sets you can customize data.
 
 ### notification.badge
 
