@@ -1,5 +1,11 @@
 ## Changelog
 
+1.7.1:
+
+* Fixed: #224, always passing a CA value even if no certificates were specified. In this case the TLS library will not use the built in root certificates and will always fail to trust the server certificate.
+* Changed: Socket timeout default has changed for disabled to 1 hour.
+* Documentation fixes
+
 1.7.0:
 
 * Added: Credential validator to catch common configuration errors.
