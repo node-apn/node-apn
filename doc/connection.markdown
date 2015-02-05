@@ -24,7 +24,7 @@ Options:
 
  - `cacheLength` {Number} Number of notifications to cache for error purposes (See "Handling Errors" below, (Defaults to: 1000)
 
- - `autoAdjustCache` {Boolean} Whether the cache should grow in response to messages being lost after errors. (Will still emit a 'cacheTooSmall' event) (Defaults to: `false`)
+ - `autoAdjustCache` {Boolean} Whether the cache should grow in response to messages being lost after errors. (Will still emit a 'cacheTooSmall' event) (Defaults to: `true`)
 
  - `maxConnections` {Number} The maximum number of connections to create for sending messages. (Defaults to: `1`)
 
