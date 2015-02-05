@@ -30,7 +30,7 @@ Options:
 
  - `connectTimeout` {Number} The duration of time the module should wait, in milliseconds, when trying to establish a connection to Apple before failing. 0 = Disabled. {Defaults to: `10000`}
 
- - `connectionTimeout` {Number} The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. (Defaults to: `0`)
+ - `connectionTimeout` {Number} The duration the socket should stay alive with no activity in milliseconds. 0 = Disabled. (Defaults to: `3600000` - 1h)
 
   - `connectionRetryLimit` {Number} The maximum number of connection failures that will be tolerated before `apn` will "terminate". [See below.](#connectionretrylimit) (Defaults to: 10)
 
