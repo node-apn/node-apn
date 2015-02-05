@@ -1,5 +1,10 @@
 ## Changelog
 
+1.7.0:
+
+* Added: Credential validator to catch common configuration errors.
+* Fixed: Documentation errors.
+
 1.6.2:
 
 * Updated maximum payload size to 2048 bytes. (See #181).
