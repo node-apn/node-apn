@@ -2,6 +2,7 @@ var rewire = require("rewire");
 var Feedback = rewire("../lib/feedback");
 
 var sinon = require("sinon");
+var Q = require("q");
 
 describe("Feedback", function() {
 	var startMethod;
@@ -55,87 +56,237 @@ describe("Feedback", function() {
 	});
 
 	describe('#initialize', function () {
+		var loadStub, parseStub, validateStub, removeStubs;
+		beforeEach(function() {
+			loadStub = sinon.stub();
+			loadStub.displayName = "loadCredentials";
+
+			parseStub = sinon.stub();
+			parseStub.displayName = "parseCredentials";
+			
+			validateStub = sinon.stub();
+			validateStub.displayName = "validateCredentials";
+
+			removeStubs = Feedback.__set__({
+				"loadCredentials": loadStub,
+				"parseCredentials": parseStub,
+				"validateCredentials": validateStub,
+			});
+		});
+
+		afterEach(function() {
+			removeStubs();
+		});
+
+		it("only loads credentials once", function() {
+			loadStub.returns(Q({}));
+
+			var feedback = Feedback();
+			feedback.initialize();
+			feedback.initialize();
+			expect(loadStub).to.be.calledOnce;
+		});
+
 		describe("with valid credentials", function() {
 			var initialization;
-			before(function() {
-				initialization = Feedback({ pfx: "test/credentials/support/certIssuerKeyPassphrase.p12", passphrase: "apntest" }).initialize();
+			var testOptions = { 
+				pfx: "myCredentials.pfx", cert: "myCert.pem", key: "myKey.pem", ca: "myCa.pem",
+				passphrase: "apntest", production: true
+			};
+
+			beforeEach(function() {
+				loadStub.withArgs(sinon.match(function(v) {
+					return v.pfx == "myCredentials.pfx" && v.cert == "myCert.pem" && v.key == "myKey.pem" && 
+						v.ca == "myCa.pem" && v.passphrase == "apntest";
+				})).returns(Q({ pfx: "myPfxData", cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
+
+				parseStub.returnsArg(0);
+
+				initialization = Feedback(testOptions).initialize();
 			});
 
 			it("should be fulfilled", function () {
 				return expect(initialization).to.be.fulfilled;
 			});
 
+			describe("the validation stage", function() {
+				it("is called once", function() {
+					return initialization.finally(function() {
+						expect(validateStub).to.be.calledOnce;
+					});
+				});
+
+				it("is passed the production flag", function() {
+					return initialization.finally(function() {
+						expect(validateStub.getCall(0).args[0]).to.have.property("production", true);
+					});
+				});
+
+				describe("passed credentials", function() {
+					it("contains the PFX data", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("pfx", "myPfxData");
+						});
+					});
+
+					it("contains the key data", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("key", "myKeyData");
+						});
+					});
+
+					it("contains the certificate data", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("cert", "myCertData");
+						});
+					});
+
+					it("includes passphrase", function() {
+						return initialization.finally(function() {
+							expect(validateStub.getCall(0).args[0]).to.have.property("passphrase", "apntest");
+						});
+					});
+				});
+			});
+
 			describe("resolution value", function() {
 				it("contains the PFX data", function() {
-					return expect(initialization.get("pfx")).to.eventually.have.length(3517);
+					return expect(initialization).to.eventually.have.property("pfx", "myPfxData");
+				});
+
+				it("contains the key data", function() {
+					return expect(initialization).to.eventually.have.property("key", "myKeyData");
+				});
+
+				it("contains the certificate data", function() {
+					return expect(initialization).to.eventually.have.property("cert", "myCertData");
+				});
+
+				it("contains the CA data", function() {
+					return expect(initialization).to.eventually.have.deep.property("ca[0]", "myCaData");
 				});
 
 				it("includes passphrase", function() {
-					return expect(initialization.get("passphrase")).to.eventually.equal("apntest");
+					return expect(initialization).to.eventually.have.property("passphrase", "apntest");
 				});
+			});
+		});
+
+		describe("credential file cannot be parsed", function() {
+			beforeEach(function() {
+				loadStub.returns(Q({ cert: "myCertData", key: "myKeyData" }));
+				parseStub.throws(new Error("unable to parse key"));
+			});
+
+			it("should resolve with the credentials", function() {
+				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+				return expect(initialization).to.become({ cert: "myCertData", key: "myKeyData" });
+			});
+
+			it("should log an error", function() {
+				var debug = sinon.spy();
+				var reset = Feedback.__set__("debug", debug);
+				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+
+				return initialization.finally(function() {
+					reset();
+					expect(debug).to.be.calledWith(sinon.match(function(err) {
+						return err.message ? err.message.match(/unable to parse key/) : false;
+					}, "\"unable to parse key\""));
+				});
+			});
+
+			it("should not attempt to validate", function() {
+				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+				return initialization.finally(function() {
+					expect(validateStub).to.not.be.called;
+				});
+			});
+		});
+
+		describe("credential validation fails", function() {
+			it("should be rejected", function() {
+				loadStub.returns(Q({ cert: "myCertData", key: "myMismatchedKeyData" }));
+				parseStub.returnsArg(0);
+				validateStub.throws(new Error("certificate and key do not match"));
+
+				var initialization = Feedback({ cert: "myCert.pem", key: "myMistmatchedKey.pem" }).initialize();
+				return expect(initialization).to.eventually.be.rejectedWith(/certificate and key do not match/);
+			});
+		});
+
+		describe("credential file cannot be loaded", function() {
+			it("should be rejected", function() {
+				loadStub.returns(Q.reject(new Error("ENOENT, no such file or directory")));
+
+				var initialization = Feedback({ cert: "noSuchFile.pem", key: "myKey.pem" }).initialize();
+				return expect(initialization).to.eventually.be.rejectedWith("ENOENT, no such file or directory");
 			});
 		});
 	});
 
 	describe("connect", function() {
-		var socketStub, removeStub;
-		before(function() {
-			socketStub = sinon.stub();
-			removeStub = Feedback.__set__("createSocket", socketStub);
-		});
+		var socketStub, removeSocketStub;
 
-		after(function() {
-			removeStub();
+		before(function() {
+			var initializeStub = sinon.stub(Feedback.prototype, "initialize");
+			initializeStub.returns(Q({ 
+				pfx: "pfxData",
+				key: "keyData",
+				cert: "certData",
+				ca: ["caData1", "caData2"],
+				passphrase: "apntest" }));
+		});
+		
+		beforeEach(function() {
+			socketStub = sinon.stub();
+			socketStub.callsArg(2);
+			socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+
+			removeSocketStub = Feedback.__set__("createSocket", socketStub);
 		});
 
 		afterEach(function() {
-			socketStub.reset();
+			removeSocketStub();
 		});
 
 		it("initializes the module", function(done) {
-			socketStub.callsArg(2);
-	 		socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
-
-			var feedback = Feedback({ pfx: "test/credentials/support/certIssuerKey.p12", interval: 0 });
-			sinon.spy(feedback, "initialize");
-			feedback.connect().finally(function() {
+			var feedback = Feedback({ pfx: "myCredentials.pfx" });
+			return feedback.connect().finally(function() {
 				expect(feedback.initialize).to.have.been.calledOnce;
 				done();
 			});
 		});
 
 		describe("with valid credentials", function() {
-			beforeEach(function() {
-				socketStub.callsArg(2);
-				socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
-			});
-
 			it("resolves", function() {
-				var feedback = Feedback({ pfx: "test/credentials/support/certIssuerKeyPassphrase.p12", passphrase: "apntest", interval: 0 });
+				var feedback = Feedback({
+					cert: "myCert.pem",
+					key: "myKey.pem"
+				});
 				return expect(feedback.connect()).to.be.fulfilled;
 			});
 
 			describe("the call to create socket", function() {
 				var connect;
-				beforeEach(function() {
-					connect = Feedback({ 
-						pfx: "test/credentials/support/certIssuerKey.p12",
-						passphrase: "apntest",
-						cert: "test/credentials/support/cert.pem",
-						key: "test/credentials/support/key.pem",
-						ca: [ "test/credentials/support/issuerCert.pem" ],
-						interval: 0
-					}).connect();
-				});
 
 				it("passes PFX data", function() {
+					connect = Feedback({
+						pfx: "myCredentials.pfx",
+						passphrase: "apntest"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.pfx).to.have.length(3767);
+						expect(socketOptions.pfx).to.equal("pfxData");
 					});
 				});
 
 				it("passes the passphrase", function() {
+					connect = Feedback({
+						passphrase: "apntest",
+						cert: "myCert.pem",
+						key: "myKey.pem"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.passphrase).to.equal("apntest");
@@ -143,23 +294,36 @@ describe("Feedback", function() {
 				});
 
 				it("passes the cert", function() {
+					connect = Feedback({
+						cert: "myCert.pem",
+						key: "myKey.pem"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.cert).to.have.length(1355);
+						expect(socketOptions.cert).to.equal("certData");
 					});
 				});
 
 				it("passes the key", function() {
+					connect = Feedback({
+						cert: "test/credentials/support/cert.pem",
+						key: "test/credentials/support/key.pem"
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.key).to.have.length(1680);
+						expect(socketOptions.key).to.equal("keyData");
 					});
 				});
 
 				it("passes the ca certificates", function() {
+					connect = Feedback({
+						cert: "test/credentials/support/cert.pem",
+						key: "test/credentials/support/key.pem",
+						ca: [ "test/credentials/support/issuerCert.pem" ]
+					}).connect();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.ca[0]).to.have.length(1285);
+						expect(socketOptions.ca[0]).to.equal("caData1");
 					});
 				});
 			});
@@ -167,12 +331,11 @@ describe("Feedback", function() {
 
 		describe("intialization failure", function() {
 			it("is rejected", function() {
-				var feedback = Feedback({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx", interval: 0 });
-				feedback.on("error", function() {});
-				socketStub.callsArg(2);
-		 		socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+				var feedback = Feedback({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
+				feedback.on('error', function() {});
+				feedback.initialize.returns(Q.reject(new Error("initialize failed")));
 
-				return expect(feedback.connect()).to.be.rejected;
+				return expect(feedback.connect()).to.be.rejectedWith("initialize failed");
 			});
 		});
 	});
