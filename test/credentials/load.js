@@ -106,6 +106,10 @@ describe("loadCredentials", function() {
 		  }, done);
 	});
 
+	it("returns undefined if no CA values are specified", function() {
+		return expect(loadCredentials({ cert: null, key: null, ca: null}).get("ca")).to.eventually.be.undefined;
+	});
+	
 	it("should inclue the passphrase in the resolved value", function() {
 		return expect(loadCredentials({ passphrase: "apntest" }).get("passphrase"))
 			.to.eventually.equal("apntest");
