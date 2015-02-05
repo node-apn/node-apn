@@ -63,7 +63,21 @@ describe("validateCredentials", function() {
 			expect(function() {
 				validateCredentials(credentials);
 			}).to.throw("certificate does not support configured environment, production: false");
+		});
+	});
 
+	describe("with missing production flag", function() {
+		it("does not throw", function() {
+			sinon.stub(credentials.certificates[0], "environment")
+				.returns({
+					production: true,
+					sandbox: false
+				});
+			credentials.production = undefined;
+
+			expect(function() {
+				validateCredentials(credentials);
+			}).to.not.throw();
 		});
 	});
 
