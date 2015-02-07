@@ -1,6 +1,7 @@
 var rewire = require("rewire");
 var Connection = rewire("../lib/connection");
 
+var events = require("events");
 var sinon = require("sinon");
 var Q = require("q");
 
@@ -226,7 +227,7 @@ describe("Connection", function() {
 	});
 
 	describe("connect", function() {
-		var socketStub, removeSocketStub;
+		var socketDouble, socketStub, removeSocketStub;
 
 		before(function() {
 			var initializeStub = sinon.stub(Connection.prototype, "initialize");
@@ -239,14 +240,16 @@ describe("Connection", function() {
 		});
 		
 		beforeEach(function() {
+			socketDouble = new events.EventEmitter();
 			socketStub = sinon.stub();
 			socketStub.callsArg(2);
-			socketStub.returns({ on: function() {}, once: function() {}, end: function() {} });
+			socketStub.returns(socketDouble);
 
 			removeSocketStub = Connection.__set__("createSocket", socketStub);
 		});
 
 		afterEach(function() {
+			socketDouble.removeAllListeners();
 			removeSocketStub();
 		});
 
@@ -337,6 +340,12 @@ describe("Connection", function() {
 
 				return expect(connection.connect()).to.be.rejectedWith("initialize failed");
 			});
+		});
+
+		describe("connect timeout option", function() {
+			it("ends the socket when connection takes too long");
+			it("does not end the socket when the connnection succeeds");
+			it("does not end the socket when the connection fails");
 		});
 	});
 });
