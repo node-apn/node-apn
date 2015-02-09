@@ -241,6 +241,8 @@ describe("Connection", function() {
 		
 		beforeEach(function() {
 			socketDouble = new events.EventEmitter();
+			socketDouble.end = sinon.spy();
+
 			socketStub = sinon.stub();
 			socketStub.callsArg(2);
 			socketStub.returns(socketDouble);
@@ -345,8 +347,26 @@ describe("Connection", function() {
 		});
 
 		describe("connect timeout option", function() {
-			it("ends the socket when connection takes too long");
-			it("does not end the socket when the connnection succeeds");
+			// Fake timers aren't working :(
+
+			it("ends the socket when connection takes too long", function() {
+				var connection = Connection({connectTimeout: 1}).connect();
+				socketStub.onCall(0).returns(socketDouble);
+
+				return connection.then(function() {
+					throw "connection did not time out";
+				}, function() {
+					expect(socketDouble.end).to.have.been.called;
+				});
+			});
+
+			it("does not end the socket when the connnection succeeds", function() {
+				var connection = Connection({connectTimeout: 1}).connect();
+				return connection.then(function() {
+					expect(socketDouble.end).to.not.have.been.called;
+				});
+			});
+
 			it("does not end the socket when the connection fails");
 		});
 	});
