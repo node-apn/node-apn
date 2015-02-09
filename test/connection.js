@@ -336,6 +336,8 @@ describe("Connection", function() {
 			it("is rejected", function() {
 				var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
 				connection.on("error", function() {});
+				connection.initialize = sinon.stub();
+
 				connection.initialize.returns(Q.reject(new Error("initialize failed")));
 
 				return expect(connection.connect()).to.be.rejectedWith("initialize failed");
