@@ -346,7 +346,7 @@ describe("Connection", function() {
 			});
 		});
 
-		describe("connect timeout option", function() {
+		describe("timeout option", function() {
 			var clock, clockRestore;
 			beforeEach(function() {
 				clock = sinon.useFakeTimers();
