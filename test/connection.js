@@ -400,6 +400,22 @@ describe("Connection", function() {
 					expect(socketDouble.end).to.not.have.been.called;
 				});
 			});
+
+			it("disabled", function() {
+				var connection = Connection({connectTimeout: 0}).connect();
+				socketStub.onCall(0).returns(socketDouble);
+
+				clock._setTimeout(function() {
+					clock.tick(100000);
+					socketDouble.emit("close");
+				}, 1);
+
+				return connection.then(function() {
+					throw "connection should have failed";
+				}, function() {
+					expect(socketDouble.end).to.not.have.been.called;
+				});
+			});
 		});
 	});
 });
