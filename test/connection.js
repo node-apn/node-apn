@@ -347,11 +347,27 @@ describe("Connection", function() {
 		});
 
 		describe("connect timeout option", function() {
-			// Fake timers aren't working :(
+			var clock, clockRestore;
+			beforeEach(function() {
+				clock = sinon.useFakeTimers();
+				clockRestore = Connection.__set__({
+					"setTimeout": clock.setTimeout,
+					"clearTimeout": clock.clearTimeout
+				});
+			});
+
+			afterEach(function() {
+				clockRestore();
+				clock.restore();
+			});
 
 			it("ends the socket when connection takes too long", function() {
-				var connection = Connection({connectTimeout: 1}).connect();
+				var connection = Connection({connectTimeout: 3000}).connect();
 				socketStub.onCall(0).returns(socketDouble);
+				
+				process.nextTick(function(){
+					clock.tick(5000);
+				});
 
 				return connection.then(function() {
 					throw "connection did not time out";
