@@ -385,7 +385,21 @@ describe("Connection", function() {
 				});
 			});
 
-			it("does not end the socket when the connection fails");
+			it("does not end the socket when the connection fails", function() {
+				var connection = Connection({connectTimeout: 3000}).connect();
+				socketStub.onCall(0).returns(socketDouble);
+				
+				process.nextTick(function() {
+					socketDouble.emit("close");
+				});
+
+				return connection.then(function() {
+					throw "connection should have failed";
+				}, function() {
+					clock.tick(5000);
+					expect(socketDouble.end).to.not.have.been.called;
+				});
+			});
 		});
 	});
 });
