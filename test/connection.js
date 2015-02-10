@@ -365,9 +365,9 @@ describe("Connection", function() {
 				var connection = Connection({connectTimeout: 3000}).connect();
 				socketStub.onCall(0).returns(socketDouble);
 				
-				process.nextTick(function(){
+				clock._setTimeout(function() {
 					clock.tick(5000);
-				});
+				}, 1);
 
 				return connection.then(function() {
 					throw "connection did not time out";
@@ -389,9 +389,9 @@ describe("Connection", function() {
 				var connection = Connection({connectTimeout: 3000}).connect();
 				socketStub.onCall(0).returns(socketDouble);
 				
-				process.nextTick(function() {
+				clock._setTimeout(function() {
 					socketDouble.emit("close");
-				});
+				}, 1);
 
 				return connection.then(function() {
 					throw "connection should have failed";
