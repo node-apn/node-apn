@@ -347,17 +347,17 @@ describe("Connection", function() {
 		});
 
 		describe("timeout option", function() {
-			var clock, clockRestore;
+			var clock, timeoutRestore;
 			beforeEach(function() {
 				clock = sinon.useFakeTimers();
-				clockRestore = Connection.__set__({
+				timeoutRestore = Connection.__set__({
 					"setTimeout": clock.setTimeout,
 					"clearTimeout": clock.clearTimeout
 				});
 			});
 
 			afterEach(function() {
-				clockRestore();
+				timeoutRestore();
 				clock.restore();
 			});
 
