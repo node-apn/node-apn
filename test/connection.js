@@ -377,8 +377,10 @@ describe("Connection", function() {
 			});
 
 			it("does not end the socket when the connnection succeeds", function() {
-				var connection = Connection({connectTimeout: 1}).connect();
+				var connection = Connection({connectTimeout: 3000}).connect();
+
 				return connection.then(function() {
+					clock.tick(5000);
 					expect(socketDouble.end).to.not.have.been.called;
 				});
 			});
