@@ -5,3 +5,10 @@ node_js:
  - "0.8"
  - "0.6"
  - iojs
+
+ after_script: 
+ - npm install -g istanbul
+ - istanbul _mocha
+ - npm install coveralls
+ - (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js) || true
+ - rm -rf ./coverage
