@@ -6,7 +6,7 @@ node_js:
  - "0.6"
  - iojs
 
-after_script: 
+after_success: 
  - npm install -g istanbul
  - istanbul cover _mocha
  - npm install coveralls
