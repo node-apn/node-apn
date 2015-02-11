@@ -31,7 +31,7 @@
     "q": "1.1.x"
   },
   "devDependencies": {
-    "chai": "*",
+    "chai": "1.x",
     "chai-as-promised": "*",
     "mocha": "*",
     "rewire": "2.2.x",
