@@ -8,7 +8,7 @@ node_js:
 
 after_script: 
  - npm install -g istanbul
- - istanbul _mocha
+ - istanbul cover _mocha
  - npm install coveralls
  - (cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js) || true
  - rm -rf ./coverage
