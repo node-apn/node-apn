@@ -95,9 +95,9 @@ describe("loadCredentials", function() {
 		loadCredentials({ cert: null, key: null, ca: ["test/support/initializeTest.crt", cert, cert.toString()] })
 		  .get("ca").spread(function(cert1, cert2, cert3) {
 		  	var certString = cert.toString();
-		  	if (cert1.toString() == certString && 
-		  		cert2.toString() == certString &&
-		  		cert3.toString() == certString) {
+		  	if (cert1.toString() === certString && 
+		  		cert2.toString() === certString &&
+		  		cert3.toString() === certString) {
 		  		done();
 		  	}
 		  	else {
