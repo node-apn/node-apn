@@ -2,7 +2,7 @@ var loadCredentials = require("../../lib/credentials/load");
 var fs = require("fs");
 
 describe("loadCredentials", function() {
-	var pfx, cert, key, ca;
+	var pfx, cert, key;
 	before(function () {
 		pfx = fs.readFileSync("test/support/initializeTest.pfx");
 		cert = fs.readFileSync("test/support/initializeTest.crt");
