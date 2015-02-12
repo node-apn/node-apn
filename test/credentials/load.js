@@ -65,7 +65,7 @@ describe("loadCredentials", function() {
 		return expect(loadCredentials({ cert: null, key: key.toString()})
 				  .get("key"))
 				  .to.eventually.equal(key.toString());
-	})
+	});
 
 	it("should eventually provide key data explicitly passed in the keyData parameter", function () {
 		return expect(loadCredentials({ cert: null, keyData: key})
