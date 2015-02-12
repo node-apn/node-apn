@@ -1,14 +1,13 @@
 language: node_js
 node_js:
- - "0.12"
- - "0.10"
- - "0.8"
- - "0.6"
- - iojs
-
-after_success: 
- - npm install -g istanbul
- - npm install coveralls
- - istanbul cover node_modules/.bin/_mocha --report lcovonly -- -R spec
- - ./node_modules/.bin/coveralls < ./coverage/lcov.info
- - rm -rf ./coverage
+- '0.12'
+- '0.10'
+- '0.8'
+- '0.6'
+- iojs
+after_success:
+- npm install -g istanbul
+- npm install coveralls
+- istanbul cover node_modules/.bin/_mocha --report lcovonly -- -R spec
+- ./node_modules/.bin/coveralls < ./coverage/lcov.info
+- rm -rf ./coverage
