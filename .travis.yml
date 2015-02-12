@@ -11,3 +11,10 @@ after_success:
 - istanbul cover node_modules/.bin/_mocha --report lcovonly -- -R spec
 - ./node_modules/.bin/coveralls < ./coverage/lcov.info
 - rm -rf ./coverage
+deploy:
+  provider: npm
+  email: argon@mkbot.net
+  api_key:
+    secure: W4yhYfQUhyhOOG/nUwYXr2DgIv8Kp/pzyUMtWc2garnHLPMvaMY+w/0NzKC06/UmApiJdRalWDNNDqNJAl2G22Hs/eHVpAelHejzQw3BY26QW71tTCPQR3Cv7r6gDBUN2o9rxjlJt+vpbJR1wEoFRnwn3d6298zDw+fzjlM+Wvo=
+  on:
+    tags: true
