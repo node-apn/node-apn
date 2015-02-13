@@ -42,8 +42,7 @@
     "test": "node_modules/.bin/mocha"
   },
   "jshintConfig": {
-    "node": true,
-    "strict": false
+    "node": true
   },
   "engines": {
     "node": ">= 0.6.14"
