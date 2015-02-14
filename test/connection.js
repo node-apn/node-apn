@@ -405,10 +405,10 @@ describe("Connection", function() {
 				var connection = Connection({connectTimeout: 0}).connect();
 				socketStub.onCall(0).returns(socketDouble);
 
-				clock._setTimeout(function() {
+				process.nextTick(function() {
 					clock.tick(100000);
 					socketDouble.emit("close");
-				}, 1);
+				});
 
 				return connection.then(function() {
 					throw "connection should have failed";
