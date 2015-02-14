@@ -97,8 +97,8 @@ describe("Connection", function() {
 
 			beforeEach(function() {
 				loadStub.withArgs(sinon.match(function(v) {
-					return v.pfx == "myCredentials.pfx" && v.cert == "myCert.pem" && v.key == "myKey.pem" && 
-						v.ca == "myCa.pem" && v.passphrase == "apntest";
+					return v.pfx === "myCredentials.pfx" && v.cert === "myCert.pem" && v.key === "myKey.pem" && 
+						v.ca === "myCa.pem" && v.passphrase === "apntest";
 				})).returns(Q({ pfx: "myPfxData", cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
 
 				parseStub.returnsArg(0);

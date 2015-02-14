@@ -2,7 +2,7 @@ var apn = require ("../index.js");
 
 var tokens = ["<insert token here>", "<insert token here>"];
 
-if(tokens[0] == "<insert token here>") {
+if(tokens[0] === "<insert token here>") {
 	console.log("Please set token to a valid device token for the push notification service");
 	process.exit();
 }
