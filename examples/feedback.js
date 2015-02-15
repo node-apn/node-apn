@@ -1,13 +1,11 @@
+"use strict";
+
 var apn = require ("../index.js");
 
 function handleFeedback(feedbackData) {
-	var time, device;
-	for(var i in feedbackData) {
-		time = feedbackData[i].time;
-		device = feedbackData[i].device;
-
-		console.log("Device: " + device.toString("hex") + " has been unreachable, since: " + time);
-	}
+	feedbackData.forEach(function(feedbackItem) {
+		console.log("Device: " + feedbackItem.device.toString("hex") + " has been unreachable, since: " + feedbackItem.time);
+	});
 }
 
 // Setup a connection to the feedback service using a custom interval (10 seconds)
