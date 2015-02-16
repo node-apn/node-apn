@@ -1,5 +1,12 @@
 ## Changelog
 
+1.7.2:
+
+* Fixed: #238, only emit `error` when the problem is unrecoverable. Any use of `node-apn` should have an `error` listener attached to prevent uncaught exceptions.
+* Various coding style improvements.
+* CI.
+* Removed legacy protocol support. I don't see any reason to keep it around, let me know if this causes you any problems.
+
 1.7.1:
 
 * Fixed: #224, always passing a CA value even if no certificates were specified. In this case the TLS library will not use the built in root certificates and will always fail to trust the server certificate.
