@@ -48,17 +48,17 @@ describe("parsePkcs12", function() {
 
 				it("contains APNCertificate objects", function() {
 					var certificates = credentials.certificates;
-					for(var i in certificates) {
-						expect(certificates[i]).to.be.an.instanceof(APNCertificate);
-					}
+					certificates.forEach(function(certificate) {
+						expect(certificate).to.be.an.instanceof(APNCertificate);
+					});
 				});
 
 				it("contains certificates with the correct fingerprints", function() {
 					var fingerprints = ["2d594c9861227dd22ba5ae37cc9354e9117a804d", "ccff221d67cb3335649f9b4fbb311948af76f4b2"];
 					var certificates = credentials.certificates;
-					for(var i in certificates) {
-						expect(certificates[i].key().fingerprint()).to.equal(fingerprints[i]);
-					}
+					certificates.forEach(function(certificate, index) {
+						expect(certificate.key().fingerprint()).to.equal(fingerprints[index]);
+					});
 				});
 			});
 		});
