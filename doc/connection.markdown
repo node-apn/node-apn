@@ -38,8 +38,6 @@ Options:
 
  - `fastMode` {Boolean} Whether to aggresively empty the notification buffer while connected - if set to true node-apn may enter a tight loop under heavy load while delivering notifications. (Defaults to: `false`)
 
- - `legacy` {Boolean} Whether to use the pre-iOS 7 protocol format. (Defaults to `false`)
-
  - `largePayloads` {Boolean} Whether to raise the notification limit from 256 bytes to 2048 bytes - not yet available in Production, automatically enabled for Sandbox.
 
 ##### Connection retry limit

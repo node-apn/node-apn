@@ -29,8 +29,6 @@ From [Apples' Documentation][notificationFormat], Provide one of the following v
     > The push notification must trigger an alert, sound, or badge on the device. It is an error use this priority for a push that contains only the content-available key.
   * 5 - The push message is sent at a time that conserves power on the device receiving it.
 
-This value is not valid when the connection is in legacy mode.
-
 ### notification.encoding
 
 The encoding to use when transmitting the notification to APNS, defaults to `utf8`. `utf16le` is also possible but as each character is represented by a minimum of 2 bytes, will at least halve the possible payload size. If in doubt leave as default.
