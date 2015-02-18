@@ -20,8 +20,6 @@ Options:
 
  - `rejectUnauthorized` {Boolean} Reject Unauthorized property to be passed through to tls.connect() (Defaults to `true`)
 
- - `enhanced` {Boolean} Whether to use the enhanced notification format (recommended, defaults to: `true`)
-
  - `cacheLength` {Number} Number of notifications to cache for error purposes (See "Handling Errors" below, (Defaults to: 1000)
 
  - `autoAdjustCache` {Boolean} Whether the cache should grow in response to messages being lost after errors. (Will still emit a 'cacheTooSmall' event) (Defaults to: `true`)

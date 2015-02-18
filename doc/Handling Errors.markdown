@@ -1,7 +1,7 @@
 
 ## Handling Errors
 
-When an error occurs while pushing a notification and the enhanced interface is enabled, Apple sends a message back to node-apn containing the "identifier" of the notification (a value managed internally within node-apn) which caused the error and an associated error code (See: [The Binary Interface and Notification Formats][errors]). Apple does not return the entire message so node-apn caches a number of notifications after they are sent, so in the event an error occurs node-apn can find the one with the correct identifier from the cache and trigger the `transmissionError` event with the appropriate `Notification` object and `Device` it should have been delivered to.
+When an error occurs while pushing a notification Apple sends a message back to node-apn. The message contains the "identifier" of the notification (a value managed internally within node-apn) which caused the error and an associated error code (See: [The Binary Interface and Notification Formats][errors]). Apple does not return the entire message so node-apn caches a number of notifications after they are sent. In the event an error occurs, node-apn will identify the notification with the correct identifier from the cache and emit a `transmissionError` event with the appropriate `Notification` object and `Device` it should have been delivered to.
 
 Apple guarantees that if one notification causes an error none of the following notifications will be processed, so if node-apn can find the correct notification which caused the error in the cache, then it can automatically re-send all the ones afterward.
 
