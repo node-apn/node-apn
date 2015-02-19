@@ -9,7 +9,7 @@ if(tokens[0] === "<insert token here>") {
 
 // Create a connection to the service using mostly default parameters.
 
-var service = new apn.connection({ gateway:"gateway.sandbox.push.apple.com" });
+var service = new apn.connection({ production: false });
 
 service.on("connected", function() {
     console.log("Connected");

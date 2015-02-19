@@ -9,7 +9,7 @@ function handleFeedback(feedbackData) {
 }
 
 // Setup a connection to the feedback service using a custom interval (10 seconds)
-var feedback = new apn.feedback({ address:"feedback.sandbox.push.apple.com", interval: 10 });
+var feedback = new apn.feedback({ production: false, interval: 10 });
 
 feedback.on("feedback", handleFeedback);
 feedback.on("feedbackError", console.error);
