@@ -31,10 +31,10 @@
     "q": "1.1.x"
   },
   "devDependencies": {
-    "chai": "1.x",
+    "chai": "2.x",
     "chai-as-promised": "*",
     "mocha": "*",
-    "rewire": "2.2.x",
+    "rewire": "2.3.x",
     "sinon": "1.x",
     "sinon-chai": "2.x"
   },
