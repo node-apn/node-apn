@@ -8,7 +8,7 @@ describe("Notification", function() {
 	});
 
 	describe("aps payload", function() {
-		describe("alert text", function() {
+		describe("getAlertText", function() {
 			describe("plain alert string", function() {
 				it("gets the alert text", function() {
 					note.alert = "hello";
