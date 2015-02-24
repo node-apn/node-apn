@@ -72,8 +72,16 @@ describe("Notification", function() {
 				expect(note.length()).to.be.at.most(256);
 			});
 
-			it("removes trailing UTF-8 REPLACEMENT CHARACTER's");
 			it("removes orphaned lead surrogates");
+			describe("with UTF-8 encoding", function() {
+				it("removes trailing `REPLACEMENT CHARACTER` 0xFFFD", function() {
+					note.alert = Buffer([0xF0, 0x9F, 0x98, 0x83, 0xF0, 0x9F, 0x98, 0x9E]).toString("utf8");
+					note.trim(baseLength + 1);
+
+					var length = note.alert.length;
+					expect(note.alert.charCodeAt(length - 1)).to.not.equal(0xFFFD);
+				});
+			});
 
 			describe("escape sequences", function() {
 				it("removes sequence without digits", function() {
