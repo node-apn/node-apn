@@ -27,6 +27,13 @@ describe("Notification", function() {
 		});
 	});
 
+	describe("length", function() {
+		it("returns the correct payload length", function() {
+			note.alert = "length";
+			expect(note.length()).to.equal(26);
+		});
+	});
+
 	describe("trim", function() {
 		var baseLength;
 
