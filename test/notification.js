@@ -1,4 +1,5 @@
 var apn = require("../");
+var sinon = require("sinon");
 
 describe("Notification", function() {
 
@@ -43,6 +44,34 @@ describe("Notification", function() {
 				note.alert = "longer";
 				expect(note.length()).to.equal(26);
 			});
+		});
+	});
+
+	describe("compile", function() {
+		var stub;
+		beforeEach(function() {
+			stub = sinon.stub(note, "toJSON");
+		});
+
+		it("compiles the JSON payload", function() {
+			stub.returns("payload");
+
+			expect(note.compile()).to.equal("\"payload\"");
+		});
+
+		it("returns the JSON payload", function() {
+			stub.returns({});
+
+			expect(note.compile()).to.equal("{}");
+		});
+
+		it("caches the JSON payload", function() {
+			stub.returns("payload1");
+			note.compile();
+
+			stub.returns("payload2");
+
+			expect(note.compile()).to.equal("\"payload1\"");
 		});
 	});
 
