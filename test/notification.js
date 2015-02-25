@@ -65,7 +65,7 @@ describe("Notification", function() {
 			expect(note.compile()).to.equal("{}");
 		});
 
-		it("caches the JSON payload", function() {
+		it("memoizes the JSON payload", function() {
 			stub.returns("payload1");
 			note.compile();
 
