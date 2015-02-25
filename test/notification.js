@@ -95,6 +95,19 @@ describe("Notification", function() {
 				});
 			});
 
+			describe("with UTF-16LE encoding", function() {
+				it("removes orphaned lead surrogates", function() {
+					note.encoding = "utf16le";
+
+					note.alert = Buffer([0x3D, 0xD8, 0x03, 0xDE, 0x3D, 0xD8, 0x1E, 0xDE]).toString(note.encoding);
+					var trimLength = note.length() - 2;
+					note.trim(trimLength);
+
+					var length = note.alert.length;
+					expect(note.alert.charCodeAt(length - 1)).to.not.be.within(0xD800, 0xD8FF);
+				});
+			});
+
 			describe("escape sequences", function() {
 				it("removes sequence without digits", function() {
 					note.alert = '\u0006\u0007';
