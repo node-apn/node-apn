@@ -73,6 +73,16 @@ describe("Notification", function() {
 
 			expect(note.compile()).to.equal("\"payload1\"");
 		});
+
+		it("re-compiles the JSON payload when `note.compiled` = false", function() {
+			stub.returns("payload1");
+			note.compile();
+
+			stub.returns("payload2");
+			note.compiled = false;
+
+			expect(note.compile()).to.equal("\"payload2\"");
+		});
 	});
 
 	describe("trim", function() {
