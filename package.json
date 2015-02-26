@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "node-forge": "0.6.x",
-    "q": "1.1.x"
+    "q": ">1.1.0 < 2.0.0"
   },
   "devDependencies": {
     "chai": "2.x",
