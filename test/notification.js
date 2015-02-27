@@ -103,6 +103,22 @@ describe("Notification", function() {
 			});
 		});
 
+		describe("with specified length", function() {
+			it("trims correctly", function() {
+				note.alert = "12345";
+				var trimLength = note.length() - 2;
+				note.trim(trimLength);
+				expect(note.length()).to.equal(trimLength);
+			});
+
+			it("trims to length longer than default", function() {
+				note.alert = longText + longText;
+				var trimLength = 4096;
+				note.trim(trimLength);
+				expect(note.length()).to.equal(4096);
+			});
+		})
+
 		describe("alert with escape sequences", function() {
 			it("strips correctly", function () {
 				note.alert = "\n\n\n";
