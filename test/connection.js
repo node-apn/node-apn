@@ -418,4 +418,30 @@ describe("Connection", function() {
 			});
 		});
 	});
+
+	describe("validNotification", function() {
+		describe("notification is shorter than max allowed", function() {
+			it("returns true", function() {
+				var connection = Connection();
+				var notification = { length: function() { return 128; }};
+				expect(connection.validNotification(notification)).to.equal(true);
+			});
+		});
+
+		describe("notification is the maximum length", function() {
+			it("returns true", function() {
+				var connection = Connection();
+				var notification = { length: function() { return 2048; }};
+				expect(connection.validNotification(notification)).to.equal(true);
+			});
+		});
+
+		describe("notification too long", function() {
+			it("returns false", function() {
+				var connection = Connection();
+				var notification = { length: function() { return 2176; }};
+				expect(connection.validNotification(notification)).to.equal(false);
+			});
+		});
+	});
 });
