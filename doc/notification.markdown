@@ -9,9 +9,7 @@ As of version 1.2.0 it is possible to use a set of methods provided by Notificat
 
 For iOS 7 applications which support Silent Remote Notifications you can use the `note.contentAvailable` property. This is identical in functionality to  `note.newsstandAvailable` without the confusion of the "Newstand" terminology.
 
-A `Notification` enapsulates the data to be compiled down to JSON and pushed to a device. See the [payload documentation][pl] for more details. At present the total length of the payload accepted by Apple is 256 bytes. 
-
-*Note*: The maximum payload size will be increased to 2048 bytes when iOS 8 is released, these larger payloads are available for testing in the sandbox environment. `apn` is will automatically configure for larger payloads when connecting to the sandbox.
+A `Notification` enapsulates the data to be compiled down to JSON and pushed to a device. See the [payload documentation][pl] for more details. At present the total length of the payload accepted by Apple is 2048 bytes. 
 
 ### notification.retryLimit
 
@@ -19,7 +17,7 @@ The maximum number of retries which should be performed when sending a notificat
 
 ### notification.expiry
 
-The UNIX timestamp representing when the notification should expire. This does not contribute to the 256 byte payload size limit. An expiry of 0 indicates that the notification expires immediately.
+The UNIX timestamp representing when the notification should expire. This does not contribute to the 2048 byte payload size limit. An expiry of 0 indicates that the notification expires immediately.
 
 ### notification.priority
 
@@ -109,7 +107,7 @@ Set the `url-args` property of the `aps` object.
 
 ### notification.trim()
 
-Attempt to automatically trim the notification alert text body to meet the payload size limit of 256 bytes.
+Attempt to automatically trim the notification alert text body to meet the payload size limit of 2048 bytes.
 
 [pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
 [notificationFormat]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW9 "The Binary Interface and Notification Format"
