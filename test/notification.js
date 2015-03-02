@@ -156,6 +156,14 @@ describe("Notification", function() {
 			});
 
 			describe("with UTF-16LE encoding", function() {
+				it("trims to correct byte length", function() {
+					note.encoding = "utf16le";
+					note.alert = "test message";
+					note.trim(48);
+
+					expect(note.length()).to.equal(48);
+				});
+				
 				it("correctly empties the string", function() {
 					note.encoding = "utf16le";
 					note.alert = Buffer([0x3D, 0xD8, 0x03, 0xDE, 0x3D, 0xD8, 0x1E, 0xDE]).toString(note.encoding);
