@@ -128,12 +128,8 @@ describe("Notification", function() {
 			});
 
 			it("strips trailing escape characters", function () {
-				note.alert = "\n\n\n";
-				var trimLength = note.length() - 1;
-				note.trim(trimLength);
-
-				var lastChar = note.alert[note.alert.length - 1];
-				expect(lastChar).to.not.equal("\\");
+				note.alert = "test\\ message";
+				expect(note.trim(26)).to.equal(8);
 			});
 		});
 
