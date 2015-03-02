@@ -156,8 +156,11 @@ describe("Notification", function() {
 			});
 
 			describe("with UTF-16LE encoding", function() {
-				it("trims to correct byte length", function() {
+				beforeEach(function() {
 					note.encoding = "utf16le";
+				});
+
+				it("trims to correct byte length", function() {
 					note.alert = "test message";
 					note.trim(48);
 
@@ -165,7 +168,6 @@ describe("Notification", function() {
 				});
 				
 				it("correctly empties the string", function() {
-					note.encoding = "utf16le";
 					note.alert = Buffer([0x3D, 0xD8, 0x03, 0xDE, 0x3D, 0xD8, 0x1E, 0xDE]).toString(note.encoding);
 					var trimLength = note.length() - 8;
 					note.trim(trimLength);
@@ -174,8 +176,6 @@ describe("Notification", function() {
 				});
 
 				it("removes orphaned lead surrogates", function() {
-					note.encoding = "utf16le";
-
 					note.alert = Buffer([0x3D, 0xD8, 0x03, 0xDE, 0x3D, 0xD8, 0x1E, 0xDE]).toString(note.encoding);
 					var trimLength = note.length() - 2;
 					note.trim(trimLength);
