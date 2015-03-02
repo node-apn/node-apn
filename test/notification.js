@@ -117,7 +117,7 @@ describe("Notification", function() {
 				note.trim(trimLength);
 				expect(note.length()).to.equal(4096);
 			});
-		})
+		});
 
 		describe("alert with escape sequences", function() {
 			it("strips correctly", function () {
