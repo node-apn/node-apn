@@ -61,13 +61,17 @@ This is intended as a brief introduction, please refer to the documentation in `
 	var apn = require('apn');
 
 ### Connecting
-Create a new connection to the APN gateway server, passing a dictionary of options to the constructor. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running. By default the module will connect to the sandbox environment unless the environment variable `NODE_ENV=production` is set. For more information consult the documentation (in doc/apn.markdown).
+Create a new connection to the APN gateway server, passing a dictionary of options to the constructor. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running.
 
 ```javascript
 	var options = { };
 
 	var apnConnection = new apn.Connection(options);
 ```
+
+By default, if the environment variable `NODE_ENV=production` is set, the module will connect to the production gateway. Otherwise it will connect to the sandbox. This along with many other settings can be overriden with the options object.
+
+For more information about configuration options consult the [documentation](doc/connection.markdown).
 
 Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
 
