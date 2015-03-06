@@ -154,6 +154,13 @@ describe("Notification", function() {
 				note.alert = "Test\ud83d\udca3";
 				expect(note.trim(25)).to.equal(4);
 			});
+
+			describe("even without alert text", function() {
+				it("returns the number of bytes too long", function() {
+					note.payload.largePayload = "this is a very long payload";
+					expect(note.trim(40)).to.equal(-6);
+				});
+			});
 		});
 
 		describe("unicode text", function() {
