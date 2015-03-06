@@ -149,6 +149,11 @@ describe("Notification", function() {
 					expect(note.alert).to.equal("test");
 				});
 			});
+
+			it("returns the number of bytes removed from the alert text", function() {
+				note.alert = "Test\ud83d\udca3";
+				expect(note.trim(25)).to.equal(4);
+			});
 		});
 
 		describe("unicode text", function() {
