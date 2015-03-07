@@ -142,10 +142,16 @@ describe("Notification", function() {
 					note.trim(trimLength);
 					expect(note.alert).to.equal("\n\n");
 				});
+				
+				it("leaves escaped escape character intact", function() {
+					note.alert = "test\\ message";
+					note.trim(26);
+					expect(note.alert).to.equal("test\\");
+				});
 
 				it("strips orphaned escape character", function () {
 					note.alert = "test\\ message";
-					note.trim(26);
+					note.trim(25);
 					expect(note.alert).to.equal("test");
 				});
 			});
