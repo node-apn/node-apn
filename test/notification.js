@@ -167,6 +167,14 @@ describe("Notification", function() {
 					expect(note.trim(40)).to.equal(-6);
 				});
 			});
+
+			describe("when alert text is shorter than the length that needs to be removed", function() {
+				it("returns the number of bytes too long", function() {
+					note.payload.largePayload = "this is a very long payload";
+					note.alert = "alert";
+					expect(note.trim(40)).to.equal(-25);
+				});
+			});
 		});
 
 		describe("unicode text", function() {
