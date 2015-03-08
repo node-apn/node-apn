@@ -161,7 +161,7 @@ describe("Notification", function() {
 				expect(note.trim(25)).to.equal(4);
 			});
 
-			describe("even without alert text", function() {
+			describe("with no alert text", function() {
 				it("returns the number of bytes too long", function() {
 					note.payload.largePayload = "this is a very long payload";
 					expect(note.trim(40)).to.equal(-6);
