@@ -154,6 +154,12 @@ describe("Notification", function() {
 					note.trim(25);
 					expect(note.alert).to.equal("test");
 				});
+
+				it("leaves an even number of escape characters", function() {
+					note.alert = "test\\\\\n";
+					note.trim(29);
+					expect(note.alert).to.equal("test\\\\");
+				});
 			});
 
 			it("returns the number of bytes removed from the alert text", function() {
