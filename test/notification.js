@@ -258,4 +258,17 @@ describe("Notification", function() {
 			});
 		});
 	});
+
+	describe("toJSON", function() {
+		it("returns an Object", function() {
+			expect(note.toJSON()).to.be.an('object');
+		});
+
+		describe("aps payload", function() {
+			it("includes alert text", function() {
+				note.alert = "Test Message";
+				expect(note.toJSON().aps.alert).to.equal("Test Message");
+			});
+		});
+	});
 });
