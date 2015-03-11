@@ -1,3 +1,5 @@
+"use strict";
+
 var apn = require ("../index.js");
 
 var tokens = ["<insert token here>", "<insert token here>"];
