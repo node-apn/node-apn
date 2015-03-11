@@ -261,7 +261,7 @@ describe("Notification", function() {
 
 	describe("toJSON", function() {
 		it("returns an Object", function() {
-			expect(note.toJSON()).to.be.an('object');
+			expect(note.toJSON()).to.be.an("object");
 		});
 
 		describe("aps payload", function() {
