@@ -55,13 +55,13 @@ pushNotificationToMany();
 // If you have a list of devices for which you want to send a customised notification you can create one and send it to and individual device.
 function pushSomeNotifications() {
     console.log("Sending a tailored notification to %d devices", tokens.length);
-    for (var i in tokens) {
+    tokens.forEach(function(token, i) {
         var note = new apn.notification();
         note.setAlertText("Hello, from node-apn! You are number: " + i);
         note.badge = i;
 
-        service.pushNotification(note, tokens[i]);
-    }
+        service.pushNotification(note, token);
+    });
 }
 
 pushSomeNotifications();
