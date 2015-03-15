@@ -1,5 +1,6 @@
 var sinon = require("sinon");
 var validateCredentials = require("../../lib/credentials/validate");
+var fakeCredentials;
 
 describe("validateCredentials", function() {
 	var credentials;
@@ -97,7 +98,7 @@ describe("validateCredentials", function() {
 	});
 });
 
-var fakeCredentials = function() {
+fakeCredentials = function() {
 	return {
 		key: {
 			_fingerprint: "fingerprint1",
