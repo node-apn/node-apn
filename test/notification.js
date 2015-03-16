@@ -265,6 +265,12 @@ describe("Notification", function() {
 		});
 
 		describe("aps payload", function() {
+			describe("when no aps properties are set", function() {
+				it("is not present", function() {
+					expect(note.toJSON().aps).to.be.undefined;
+				});
+			});
+
 			it("includes alert text", function() {
 				note.alert = "Test Message";
 				expect(note.toJSON().aps.alert).to.equal("Test Message");
