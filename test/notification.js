@@ -275,6 +275,15 @@ describe("Notification", function() {
 				note.alert = "Test Message";
 				expect(note.toJSON().aps.alert).to.equal("Test Message");
 			});
+
+			it("includes alert", function() {
+				var alert = {
+					body: "Test Message"
+				};
+				note.alert = alert;
+
+				expect(note.toJSON().aps.alert).to.eql(alert);
+			});
 		});
 	});
 });
