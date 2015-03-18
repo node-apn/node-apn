@@ -135,6 +135,16 @@ describe("Notification", function() {
 				});
 			});
 
+			describe("with truncateAtWordEnd flag", function() {
+				it("removes partially trimmed words", function() {
+					note.alert = "this is a test payload";
+					note.truncateAtWordEnd = true;
+
+					note.trim(note.length() - 3);
+					expect(note.alert).to.equal("this is a test");
+				});
+			});
+
 			describe("alert contains escape sequences at trim point", function() {
 				it("strips them", function () {
 					note.alert = "\n\n\n";
