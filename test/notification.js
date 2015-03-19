@@ -143,6 +143,14 @@ describe("Notification", function() {
 					note.trim(note.length() - 3);
 					expect(note.alert).to.equal("this is a test");
 				});
+
+				it("does not truncate when boundary is at end of word", function() {
+					note.alert = "this is a test payload";
+					note.truncateAtWordEnd = true;
+
+					note.trim(note.length() - 8);
+					expect(note.alert).to.equal("this is a test");
+				});
 			});
 
 			describe("alert contains escape sequences at trim point", function() {
