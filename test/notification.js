@@ -151,6 +151,14 @@ describe("Notification", function() {
 					note.trim(note.length() - 8);
 					expect(note.alert).to.equal("this is a test");
 				});
+
+				it("leaves alert intact when there are no other spaces in the string", function() {
+					note.alert = "this_is_a_test_payload";
+					note.truncateAtWordEnd = true;
+
+					note.trim(note.length() - 8);
+					expect(note.alert).to.equal("this_is_a_test");
+				});
 			});
 
 			describe("alert contains escape sequences at trim point", function() {
