@@ -11,7 +11,7 @@ describe("resolve", function() {
 
 	it("returns PEM string as supplied", function() {
 		expect(resolve(cert.toString()))
-			.to.be.a('string')
+			.to.be.a("string")
 			.and.to.equal(cert.toString());
 	});
 

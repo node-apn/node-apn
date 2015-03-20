@@ -259,7 +259,7 @@ describe("Notification", function() {
 
 			describe("escape sequences", function() {
 				it("removes sequence without digits", function() {
-					note.alert = '\u0006\u0007';
+					note.alert = "\u0006\u0007";
 					var trimLength = note.length() - 4;
 					note.trim(trimLength);
 
@@ -267,7 +267,7 @@ describe("Notification", function() {
 				});
 
 				it("removes sequence with fewer than 4 digits", function() {
-					note.alert = '\u0006\u0007';
+					note.alert = "\u0006\u0007";
 					var trimLength = note.length() - 3;
 					note.trim(trimLength);
 
@@ -275,7 +275,7 @@ describe("Notification", function() {
 				});
 
 				it("does not remove a complete sequence", function() {
-					note.alert = '\u0006\u0007 ';
+					note.alert = "\u0006\u0007 ";
 					var trimLength = note.length() - 1;
 					note.trim(trimLength);
 

@@ -1,7 +1,7 @@
 var apn = require("../");
 
 describe("Device", function() {
-	describe('constructor', function () {
+	describe("constructor", function () {
 
 		// Issue #149
 		it("should error when given a device string which contains no hex characters and results in 0 length token", function () {

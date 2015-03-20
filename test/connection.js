@@ -6,7 +6,7 @@ var sinon = require("sinon");
 var Q = require("q");
 
 describe("Connection", function() {
-	describe('constructor', function () {
+	describe("constructor", function () {
 		var originalEnv;
 
 		before(function() {
@@ -56,7 +56,7 @@ describe("Connection", function() {
 		});
 	});
 
-	describe('#initialize', function () {
+	describe("#initialize", function () {
 		var loadStub, parseStub, validateStub, removeStubs;
 		beforeEach(function() {
 			loadStub = sinon.stub();

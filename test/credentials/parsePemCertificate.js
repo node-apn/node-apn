@@ -15,7 +15,7 @@ describe("parsePemCertificate", function() {
 
 		describe("return value", function() {
 			it("is an array", function() {
-				expect(certProperties).to.be.an('array');
+				expect(certProperties).to.be.an("array");
 			});
 
 			it("contains one element", function() {

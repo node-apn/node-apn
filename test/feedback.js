@@ -16,7 +16,7 @@ describe("Feedback", function() {
 		Feedback.prototype.start = startMethod;
 	});
 
-	describe('constructor', function () {
+	describe("constructor", function () {
 		var originalEnv;
 
 		before(function() {
@@ -66,7 +66,7 @@ describe("Feedback", function() {
 		});
 	});
 
-	describe('#initialize', function () {
+	describe("#initialize", function () {
 		var loadStub, parseStub, validateStub, removeStubs;
 		beforeEach(function() {
 			loadStub = sinon.stub();
@@ -343,7 +343,7 @@ describe("Feedback", function() {
 		describe("intialization failure", function() {
 			it("is rejected", function() {
 				var feedback = Feedback({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
-				feedback.on('error', function() {});
+				feedback.on("error", function() {});
 				feedback.initialize.returns(Q.reject(new Error("initialize failed")));
 
 				return expect(feedback.connect()).to.be.rejectedWith("initialize failed");
