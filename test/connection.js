@@ -15,11 +15,11 @@ describe("Connection", function() {
 
 		after(function() {
 			process.env.NODE_ENV = originalEnv;
-		})
+		});
 
 		beforeEach(function() {
 			process.env.NODE_ENV = "";
-		})
+		});
 
 		// Issue #50
 		it("should use gateway.sandbox.push.apple.com as the default connection address", function () {

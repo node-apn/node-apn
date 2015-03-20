@@ -84,11 +84,11 @@ describe("parsePemKey", function() {
 
 	describe("returns null", function() {
 		it("for null", function() {
-			expect(parsePemKey()).to.be.null
+			expect(parsePemKey()).to.be.null;
 		});
 
 		it("for undefined", function() {
-			expect(parsePemKey()).to.be.null
+			expect(parsePemKey()).to.be.null;
 		});
 	});
 });

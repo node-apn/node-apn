@@ -84,6 +84,6 @@ describe("parsePemCertificate", function() {
 
 		it("for undefined", function() {
 			expect(parsePemCertificate(undefined)).to.be.null;
-		})
+		});
 	});
 });
