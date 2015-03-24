@@ -310,6 +310,12 @@ describe("Notification", function() {
 
 				expect(note.toJSON().aps.alert).to.eql(alert);
 			});
+
+			it("includes badge value", function() {
+				note.badge = 3;
+
+				expect(note.toJSON().aps.badge).to.eql(3);
+			});
 		});
 	});
 });
