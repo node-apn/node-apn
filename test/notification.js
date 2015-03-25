@@ -302,7 +302,7 @@ describe("Notification", function() {
 				expect(note.toJSON().aps.alert).to.equal("Test Message");
 			});
 
-			it("includes alert", function() {
+			it("includes alert object", function() {
 				var alert = {
 					body: "Test Message"
 				};
