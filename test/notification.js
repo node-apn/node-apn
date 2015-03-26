@@ -316,6 +316,12 @@ describe("Notification", function() {
 
 				expect(note.toJSON().aps.badge).to.eql(3);
 			});
+
+			it("includes sound value", function() {
+				note.sound = "awesome.caf";
+
+				expect(note.toJSON().aps.sound).to.eql("awesome.caf");
+			});
 		});
 	});
 });
