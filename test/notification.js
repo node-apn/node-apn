@@ -290,6 +290,15 @@ describe("Notification", function() {
 			expect(note.toJSON()).to.be.an("object");
 		});
 
+		describe("payload", function() {
+			describe("when no aps properties are set", function() {
+				it("contains all original payload properties", function() {
+					note.payload = {"foo": "bar", "baz": 1};
+					expect(note.toJSON()).to.eql(note.payload);
+				});
+			});
+		});
+
 		describe("aps payload", function() {
 			describe("when no aps properties are set", function() {
 				it("is not present", function() {
