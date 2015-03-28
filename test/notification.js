@@ -331,8 +331,6 @@ describe("Notification", function() {
 
 				expect(note.toJSON().aps.sound).to.eql("awesome.caf");
 			});
-
-			});
 		});
 	});
 });
