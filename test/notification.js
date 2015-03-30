@@ -331,6 +331,14 @@ describe("Notification", function() {
 
 				expect(note.toJSON().aps.sound).to.eql("awesome.caf");
 			});
+
+			describe("with contentAvailable property", function() {
+				it("sets the 'content-available' flag", function() {
+					note.contentAvailable = true;
+					
+					expect(note.toJSON().aps["content-available"]).to.eql(1);
+				});
+			});
 		});
 	});
 });
