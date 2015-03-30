@@ -27,16 +27,16 @@
     "url": "https://github.com/argon/node-apn.git"
   },
   "dependencies": {
-    "node-forge": "0.6.x",
-    "q": ">1.1.0 < 2.0.0"
+    "node-forge": "^0.6.20",
+    "q": "^1.1.0"
   },
   "devDependencies": {
     "chai": "2.x",
     "chai-as-promised": "*",
     "mocha": "*",
-    "rewire": "2.3.x",
-    "sinon": "1.x",
-    "sinon-chai": "2.x"
+    "rewire": "^2.3.0",
+    "sinon": "^1.12.2",
+    "sinon-chai": "^2.6.0"
   },
   "scripts": {
     "test": "node_modules/.bin/mocha"
