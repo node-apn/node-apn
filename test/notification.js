@@ -339,6 +339,14 @@ describe("Notification", function() {
 					expect(note.toJSON().aps["content-available"]).to.eql(1);
 				});
 			});
+
+			describe("with newsstandAvailable property", function() {
+				it("sets the 'content-available' flag", function() {
+					note.contentAvailable = true;
+					
+					expect(note.toJSON().aps["content-available"]).to.eql(1);
+				});
+			});
 		});
 	});
 });
