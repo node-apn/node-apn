@@ -347,6 +347,12 @@ describe("Notification", function() {
 					expect(note.toJSON().aps["content-available"]).to.eql(1);
 				});
 			});
+
+			it("includes the urlArgs property", function() {
+				note.urlArgs = ["arguments", "for", "url"];
+
+				expect(note.toJSON().aps["url-args"]).to.eql(["arguments", "for", "url"]);
+			});
 		});
 	});
 });
