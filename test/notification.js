@@ -353,6 +353,12 @@ describe("Notification", function() {
 
 				expect(note.toJSON().aps["url-args"]).to.eql(["arguments", "for", "url"]);
 			});
+
+			it("includes the category value", function() {
+				note.category = "mouse";
+
+				expect(note.toJSON().aps.category).to.eql("mouse");
+			});
 		});
 	});
 });
