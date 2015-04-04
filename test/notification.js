@@ -313,6 +313,15 @@ describe("Notification", function() {
 				});
 			});
 
+			describe("when manual `aps` properties are set on `payload`", function() {
+				it("retains them", function() {
+					note.payload.aps = {};
+					note.payload.aps.custom = "custom property";
+
+					expect(note.toJSON().aps.custom).to.equal("custom property");
+				});
+			});
+
 			it("includes alert text", function() {
 				note.alert = "Test Message";
 				expect(note.toJSON().aps.alert).to.equal("Test Message");
