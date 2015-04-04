@@ -297,6 +297,13 @@ describe("Notification", function() {
 					expect(note.toJSON()).to.eql(note.payload);
 				});
 			});
+
+			describe("when aps payload is present", function() {
+				it("contains all original payload properties", function() {
+					note.payload = {"foo": "bar", "baz": 1};
+					expect(note.toJSON()).to.contain.all.keys(["foo", "baz"]);
+				});
+			});
 		});
 
 		describe("aps payload", function() {
