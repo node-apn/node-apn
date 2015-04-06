@@ -320,6 +320,15 @@ describe("Notification", function() {
 
 					expect(note.toJSON().aps.custom).to.equal("custom property");
 				});
+
+				it("adds the alert property", function() {
+					note.payload.aps = {};
+					note.payload.aps.custom = "custom property";
+					note.alert = "test alert";
+
+					expect(note.toJSON().aps.custom).to.equal("custom property");
+					expect(note.toJSON().aps.alert).to.equal("test alert");
+				});
 			});
 
 			it("includes alert text", function() {
