@@ -4,7 +4,7 @@ Creates a new connection to the Apple Push Notification Service.
 
 Options:
 
- - `cert` {Buffer|String} TThe filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
+ - `cert` {Buffer|String} The filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
 
  - `key` {Buffer|String} The filename of the connection key to load from disk, or a Buffer/String containing the key data. (Defaults to: `key.pem`)
 
