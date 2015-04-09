@@ -306,6 +306,20 @@ describe("Notification", function() {
 			});
 		});
 
+		describe("mdm payload", function() {
+			it("is included in the notification", function() {
+				note.mdm = "mdm payload";
+				expect(note.toJSON().mdm).to.equal("mdm payload");
+			});
+
+			it("does not include the aps payload", function() {
+				note.mdm = "mdm payload";
+				note.badge = 5;
+
+				expect(note.toJSON()).to.not.have.any.keys("aps");
+			});
+		});
+
 		describe("aps payload", function() {
 			describe("when no aps properties are set", function() {
 				it("is not present", function() {
