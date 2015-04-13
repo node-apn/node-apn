@@ -9,20 +9,23 @@ describe("Notification", function() {
 	});
 
 	describe("aps payload", function() {
-		describe("getAlertText", function() {
-			describe("plain alert string", function() {
-				it("gets the alert text", function() {
-					note.alert = "hello";
+		describe("alert property", function() {
 
-					expect(note.getAlertText()).to.equal("hello");
+			describe("getAlertText", function() {
+				describe("plain alert string", function() {
+					it("gets the alert text", function() {
+						note.alert = "hello";
+
+						expect(note.getAlertText()).to.equal("hello");
+					});
 				});
-			});
 
-			describe("alert object", function() {
-				it("gets the alert text", function() {
-					note.alert = { "body": "hello" };
+				describe("alert object", function() {
+					it("gets the alert text", function() {
+						note.alert = { "body": "hello" };
 
-					expect(note.getAlertText()).to.equal("hello");
+						expect(note.getAlertText()).to.equal("hello");
+					});
 				});
 			});
 		});
