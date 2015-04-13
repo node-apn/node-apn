@@ -10,6 +10,20 @@ describe("Notification", function() {
 
 	describe("aps payload", function() {
 		describe("alert property", function() {
+			it("can be set to a string", function() {
+				note.alert = "hello";
+				expect(note.alert).to.equal("hello");
+			});
+
+			it("can be set to an object", function() {
+				note.alert = {"body": "hello"};
+				expect(note.alert).to.eql({"body": "hello"});
+			});
+
+			it("cannot be set to a number", function() {
+				note.alert = 5;
+				expect(note.alert).to.be.undefined;
+			});
 
 			describe("getAlertText", function() {
 				describe("plain alert string", function() {
