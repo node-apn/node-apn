@@ -43,6 +43,18 @@ describe("Notification", function() {
 				});
 			});
 		});
+
+		describe("badge property", function() {
+			it("can be set to a number", function() {
+				note.badge = 5;
+				expect(typeof note.badge).to.equal("number");
+			});
+
+			it("cannot be set to a string", function() {
+				note.badge = "hello";
+				expect(note.badge).to.be.undefined;
+			});
+		});
 	});
 
 	describe("length", function() {
