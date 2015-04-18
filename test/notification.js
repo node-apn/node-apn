@@ -56,6 +56,12 @@ describe("Notification", function() {
 				expect(typeof note.badge).to.equal("number");
 			});
 
+			it("can be set to undefined", function() {
+				note.badge = 5;
+				note.badge = undefined;
+				expect(note.badge).to.be.undefined;
+			});
+
 			it("cannot be set to a string", function() {
 				note.badge = "hello";
 				expect(note.badge).to.be.undefined;
