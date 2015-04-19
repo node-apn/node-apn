@@ -67,6 +67,25 @@ describe("Notification", function() {
 				expect(note.badge).to.be.undefined;
 			});
 		});
+
+		describe("sound property", function() {
+			it("can be set to a string", function() {
+				note.sound = "sound.caf";
+				expect(typeof note.sound).to.equal("string");
+			});
+
+			it("can be set to undefined", function() {
+				note.sound = "sound.caf";
+				note.sound = undefined;
+				expect(note.sound).to.be.undefined;
+			});
+
+			it("cannot be set to a number", function() {
+				note.sound = 5;
+				expect(note.sound).to.be.undefined;
+			});
+		});
+
 	});
 
 	describe("length", function() {
