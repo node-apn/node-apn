@@ -86,6 +86,23 @@ describe("Notification", function() {
 			});
 		});
 
+		describe("content-available property", function() {
+			it("can be set to a boolean value", function() {
+				note.contentAvailable = true;
+				expect(typeof note.contentAvailable).to.equal("boolean");
+			});
+
+			it("can be set to undefined", function() {
+				note.contentAvailable = true;
+				note.contentAvailable = undefined;
+				expect(note.contentAvailable).to.be.undefined;
+			});
+
+			it("cannot be set to a string", function() {
+				note.contentAvailable = "true";
+				expect(note.contentAvailable).to.be.undefined;
+			});
+		});
 	});
 
 	describe("length", function() {
