@@ -77,6 +77,10 @@ describe("Notification", function() {
 		});
 
 		describe("sound property", function() {
+			it("defaults to undefined", function() {
+				expect(note.sound).to.be.undefined;
+			});
+
 			it("can be set to a string", function() {
 				note.sound = "sound.caf";
 				expect(typeof note.sound).to.equal("string");
