@@ -55,6 +55,10 @@ describe("Notification", function() {
 		});
 
 		describe("badge property", function() {
+			it("defaults to undefined", function() {
+				expect(note.badge).to.be.undefined;
+			});
+
 			it("can be set to a number", function() {
 				note.badge = 5;
 				expect(typeof note.badge).to.equal("number");
