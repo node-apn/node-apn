@@ -99,6 +99,10 @@ describe("Notification", function() {
 		});
 
 		describe("content-available property", function() {
+			it("defaults to undefined", function() {
+				expect(note.contentAvailable).to.be.undefined;
+			});
+
 			it("can be set to a boolean value", function() {
 				note.contentAvailable = true;
 				expect(typeof note.contentAvailable).to.equal("boolean");
