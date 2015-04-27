@@ -118,6 +118,18 @@ describe("Notification", function() {
 				note.contentAvailable = "true";
 				expect(note.contentAvailable).to.be.undefined;
 			});
+
+			describe("newsstand-available property", function() {
+				it("sets the content available flag", function() {
+					note.newsstandAvailable = true;
+					expect(note.contentAvailable).to.equal(true);
+				});
+
+				it("returns the content-available flag", function() {
+					note.contentAvailable = false;
+					expect(note.newsstandAvailable).to.equal(false);
+				});
+			});
 		});
 	});
 
