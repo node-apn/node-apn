@@ -131,6 +131,23 @@ describe("Notification", function() {
 				});
 			});
 		});
+
+		describe("mdm property", function() {
+			it("defaults to undefined", function() {
+				expect(note.mdm).to.be.undefined;
+			});
+
+			it("can be set to a string", function() {
+				note.mdm = "mdm payload";
+				expect(typeof note.mdm).to.equal("string");
+			});
+
+			it("can be set to undefined", function() {
+				note.mdm = "mdm payload";
+				note.mdm = undefined;
+				expect(note.mdm).to.be.undefined;
+			});
+		});
 	});
 
 	describe("length", function() {
