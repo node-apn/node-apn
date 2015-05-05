@@ -148,6 +148,23 @@ describe("Notification", function() {
 				expect(note.mdm).to.be.undefined;
 			});
 		});
+
+		describe("urlArgs property", function() {
+			it("defaults to undefined", function() {
+				expect(note.urlArgs).to.be.undefined;
+			});
+
+			it("can be set to an array", function() {
+				note.urlArgs = ["arg1", "arg2"];
+				expect(note.urlArgs).to.eql(["arg1", "arg2"]);
+			});
+
+			it("can be set to undefined", function() {
+				note.urlArgs = ["arg1", "arg2"];
+				note.urlArgs = undefined;
+				expect(note.urlArgs).to.be.undefined;
+			});
+		});
 	});
 
 	describe("length", function() {
