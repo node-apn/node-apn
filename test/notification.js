@@ -165,6 +165,23 @@ describe("Notification", function() {
 				expect(note.urlArgs).to.be.undefined;
 			});
 		});
+
+		describe("category property", function() {
+			it("defaults to undefined", function() {
+				expect(note.category).to.be.undefined;
+			});
+
+			it("can be set to an array", function() {
+				note.category = "the-category";
+				expect(note.category).to.eql("the-category");
+			});
+
+			it("can be set to undefined", function() {
+				note.category = "the-category";
+				note.category = undefined;
+				expect(note.category).to.be.undefined;
+			});
+		});
 	});
 
 	describe("length", function() {
