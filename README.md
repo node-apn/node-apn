@@ -124,8 +124,6 @@ More information about the feedback service can be found in the [feedback servic
 
 If you experience difficulties sending notifications or using the feedback service you can enable debug messages within the library by running your application with `DEBUG=apn` or `DEBUG=apnfb` set as an environment variable.
 
-You will need the `debug` module which can be installed with `npm install debug`.
-
 You are encouraged to read the extremely informative [Troubleshooting Push Notifications][tn2265] Tech Note in the first instance, in case your query is answered there.
 
 ## Support
