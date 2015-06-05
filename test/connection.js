@@ -401,7 +401,7 @@ describe("Connection", function() {
 				});
 			});
 
-			it("disabled", function() {
+			it("does not fire when disabled", function() {
 				var connection = Connection({connectTimeout: 0}).connect();
 				socketStub.onCall(0).returns(socketDouble);
 
