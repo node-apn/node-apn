@@ -420,6 +420,22 @@ describe("Connection", function() {
 					expect(socketDouble.end).to.not.have.been.called;
 				});
 			});
+
+			context("after timeout fires", function() {
+				it("does not throw if socket connects", function() {
+					var connection = Connection({connectTimeout: 100});
+					socketStub.onCall(0).returns(socketDouble);
+
+					connection.initialize().then(function() {
+						clock.tick(500);
+					});
+
+					return connection.connect().then(null, function() {
+						connection.deferredConnection = null;
+						expect(socketStub.getCall(0).args[2]).to.not.throw(TypeError);
+					});
+				});
+			});
 		});
 	});
 
