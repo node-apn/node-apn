@@ -421,6 +421,16 @@ describe("Connection", function() {
 				});
 			});
 
+			context("timeout fires before socket is created", function() {
+				it("does not throw", function() {
+					var connection = Connection({connectTimeout: 100});
+					connection.initializationPromise = Q.defer();
+
+					connection.connect();
+					expect(function() { clock.tick(500); }).to.not.throw(TypeError);
+				});
+			});
+
 			context("after timeout fires", function() {
 				it("does not throw if socket connects", function() {
 					var connection = Connection({connectTimeout: 100});
