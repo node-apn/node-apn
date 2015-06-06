@@ -239,6 +239,10 @@ describe("Connection", function() {
 				ca: ["caData1", "caData2"],
 				passphrase: "apntest" }));
 		});
+
+		after(function() {
+			Connection.prototype.initialize.restore();
+		})
 		
 		beforeEach(function() {
 			socketDouble = new events.EventEmitter();
