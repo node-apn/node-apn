@@ -3,6 +3,7 @@ var Connection = rewire("../lib/connection");
 
 var events = require("events");
 var sinon = require("sinon");
+var lolex = require("lolex");
 var Q = require("q");
 
 describe("Connection", function() {
@@ -349,7 +350,7 @@ describe("Connection", function() {
 		describe("timeout option", function() {
 			var clock, timeoutRestore;
 			beforeEach(function() {
-				clock = sinon.useFakeTimers();
+				clock = lolex.createClock();
 				timeoutRestore = Connection.__set__({
 					"setTimeout": clock.setTimeout,
 					"clearTimeout": clock.clearTimeout
@@ -358,7 +359,6 @@ describe("Connection", function() {
 
 			afterEach(function() {
 				timeoutRestore();
-				clock.restore();
 			});
 
 			it("ends the socket when connection takes too long", function() {
