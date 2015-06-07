@@ -242,7 +242,7 @@ describe("Connection", function() {
 
 		after(function() {
 			Connection.prototype.loadCredentials.restore();
-		})
+		});
 		
 		beforeEach(function() {
 			socketDouble = new events.EventEmitter();
