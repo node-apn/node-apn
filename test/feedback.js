@@ -236,7 +236,7 @@ describe("Feedback", function() {
 		});
 	});
 
-	describe("connect", function() {
+	describe("createSocket", function() {
 		var socketStub, removeSocketStub;
 
 		before(function() {
@@ -263,7 +263,7 @@ describe("Feedback", function() {
 
 		it("loads credentials", function(done) {
 			var feedback = Feedback({ pfx: "myCredentials.pfx" });
-			return feedback.connect().finally(function() {
+			return feedback.createSocket().finally(function() {
 				expect(feedback.loadCredentials).to.have.been.calledOnce;
 				done();
 			});
@@ -275,64 +275,64 @@ describe("Feedback", function() {
 					cert: "myCert.pem",
 					key: "myKey.pem"
 				});
-				return expect(feedback.connect()).to.be.fulfilled;
+				return expect(feedback.createSocket()).to.be.fulfilled;
 			});
 
 			describe("the call to create socket", function() {
-				var connect;
+				var createSocket;
 
 				it("passes PFX data", function() {
-					connect = Feedback({
+					createSocket = Feedback({
 						pfx: "myCredentials.pfx",
 						passphrase: "apntest"
-					}).connect();
-					return connect.then(function() {
+					}).createSocket();
+					return createSocket.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.pfx).to.equal("pfxData");
 					});
 				});
 
 				it("passes the passphrase", function() {
-					connect = Feedback({
+					createSocket = Feedback({
 						passphrase: "apntest",
 						cert: "myCert.pem",
 						key: "myKey.pem"
-					}).connect();
-					return connect.then(function() {
+					}).createSocket();
+					return createSocket.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.passphrase).to.equal("apntest");
 					});
 				});
 
 				it("passes the cert", function() {
-					connect = Feedback({
+					createSocket = Feedback({
 						cert: "myCert.pem",
 						key: "myKey.pem"
-					}).connect();
-					return connect.then(function() {
+					}).createSocket();
+					return createSocket.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.cert).to.equal("certData");
 					});
 				});
 
 				it("passes the key", function() {
-					connect = Feedback({
+					createSocket = Feedback({
 						cert: "test/credentials/support/cert.pem",
 						key: "test/credentials/support/key.pem"
-					}).connect();
-					return connect.then(function() {
+					}).createSocket();
+					return createSocket.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.key).to.equal("keyData");
 					});
 				});
 
 				it("passes the ca certificates", function() {
-					connect = Feedback({
+					createSocket = Feedback({
 						cert: "test/credentials/support/cert.pem",
 						key: "test/credentials/support/key.pem",
 						ca: [ "test/credentials/support/issuerCert.pem" ]
-					}).connect();
-					return connect.then(function() {
+					}).createSocket();
+					return createSocket.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.ca[0]).to.equal("caData1");
 					});
@@ -346,7 +346,7 @@ describe("Feedback", function() {
 				feedback.on("error", function() {});
 				feedback.loadCredentials.returns(Q.reject(new Error("loadCredentials failed")));
 
-				return expect(feedback.connect()).to.be.rejectedWith("initialize failed");
+				return expect(feedback.createSocket()).to.be.rejectedWith("loadCredentials failed");
 			});
 		});
 	});
