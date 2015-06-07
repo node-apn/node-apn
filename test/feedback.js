@@ -66,7 +66,7 @@ describe("Feedback", function() {
 		});
 	});
 
-	describe("#initialize", function () {
+	describe("#loadCredentials", function () {
 		var loadStub, parseStub, validateStub, removeStubs;
 		beforeEach(function() {
 			loadStub = sinon.stub();
@@ -93,8 +93,8 @@ describe("Feedback", function() {
 			loadStub.returns(Q({}));
 
 			var feedback = Feedback();
-			feedback.initialize();
-			feedback.initialize();
+			feedback.loadCredentials();
+			feedback.loadCredentials();
 			expect(loadStub).to.be.calledOnce;
 		});
 
@@ -113,7 +113,7 @@ describe("Feedback", function() {
 
 				parseStub.returnsArg(0);
 
-				initialization = Feedback(testOptions).initialize();
+				initialization = Feedback(testOptions).loadCredentials();
 			});
 
 			it("should be fulfilled", function () {
@@ -190,14 +190,14 @@ describe("Feedback", function() {
 			});
 
 			it("should resolve with the credentials", function() {
-				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).loadCredentials();
 				return expect(initialization).to.become({ cert: "myCertData", key: "myKeyData" });
 			});
 
 			it("should log an error", function() {
 				var debug = sinon.spy();
 				var reset = Feedback.__set__("debug", debug);
-				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).loadCredentials();
 
 				return initialization.finally(function() {
 					reset();
@@ -208,7 +208,7 @@ describe("Feedback", function() {
 			});
 
 			it("should not attempt to validate", function() {
-				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).initialize();
+				var initialization = Feedback({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).loadCredentials();
 				return initialization.finally(function() {
 					expect(validateStub).to.not.be.called;
 				});
@@ -221,7 +221,7 @@ describe("Feedback", function() {
 				parseStub.returnsArg(0);
 				validateStub.throws(new Error("certificate and key do not match"));
 
-				var initialization = Feedback({ cert: "myCert.pem", key: "myMistmatchedKey.pem" }).initialize();
+				var initialization = Feedback({ cert: "myCert.pem", key: "myMistmatchedKey.pem" }).loadCredentials();
 				return expect(initialization).to.eventually.be.rejectedWith(/certificate and key do not match/);
 			});
 		});
@@ -230,7 +230,7 @@ describe("Feedback", function() {
 			it("should be rejected", function() {
 				loadStub.returns(Q.reject(new Error("ENOENT, no such file or directory")));
 
-				var initialization = Feedback({ cert: "noSuchFile.pem", key: "myKey.pem" }).initialize();
+				var initialization = Feedback({ cert: "noSuchFile.pem", key: "myKey.pem" }).loadCredentials();
 				return expect(initialization).to.eventually.be.rejectedWith("ENOENT, no such file or directory");
 			});
 		});
@@ -240,8 +240,8 @@ describe("Feedback", function() {
 		var socketStub, removeSocketStub;
 
 		before(function() {
-			var initializeStub = sinon.stub(Feedback.prototype, "initialize");
-			initializeStub.returns(Q({ 
+			var loadCredentialsStub = sinon.stub(Feedback.prototype, "loadCredentials");
+			loadCredentialsStub.returns(Q({ 
 				pfx: "pfxData",
 				key: "keyData",
 				cert: "certData",
@@ -261,10 +261,10 @@ describe("Feedback", function() {
 			removeSocketStub();
 		});
 
-		it("initializes the module", function(done) {
+		it("loads credentials", function(done) {
 			var feedback = Feedback({ pfx: "myCredentials.pfx" });
 			return feedback.connect().finally(function() {
-				expect(feedback.initialize).to.have.been.calledOnce;
+				expect(feedback.loadCredentials).to.have.been.calledOnce;
 				done();
 			});
 		});
@@ -344,7 +344,7 @@ describe("Feedback", function() {
 			it("is rejected", function() {
 				var feedback = Feedback({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
 				feedback.on("error", function() {});
-				feedback.initialize.returns(Q.reject(new Error("initialize failed")));
+				feedback.loadCredentials.returns(Q.reject(new Error("loadCredentials failed")));
 
 				return expect(feedback.connect()).to.be.rejectedWith("initialize failed");
 			});
