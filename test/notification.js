@@ -171,7 +171,7 @@ describe("Notification", function() {
 				expect(note.category).to.be.undefined;
 			});
 
-			it("can be set to an array", function() {
+			it("can be set to a string", function() {
 				note.category = "the-category";
 				expect(note.category).to.eql("the-category");
 			});
