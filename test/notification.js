@@ -164,6 +164,16 @@ describe("Notification", function() {
 				note.urlArgs = undefined;
 				expect(note.urlArgs).to.be.undefined;
 			});
+
+			it("cannot be set to an object", function() {
+				note.urlArgs = {};
+				expect(note.urlArgs).to.be.undefined;
+			});
+
+			it("cannot be set to a string", function() {
+				note.urlArgs = "arg1";
+				expect(note.urlArgs).to.be.undefined;
+			});
 		});
 
 		describe("category property", function() {
