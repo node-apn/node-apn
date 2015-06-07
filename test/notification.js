@@ -186,6 +186,11 @@ describe("Notification", function() {
 				expect(note.category).to.eql("the-category");
 			});
 
+			it("cannot be set to an object", function() {
+				note.category = {};
+				expect(note.category).to.be.undefined;
+			});
+
 			it("can be set to undefined", function() {
 				note.category = "the-category";
 				note.category = undefined;
