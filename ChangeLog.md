@@ -1,5 +1,11 @@
 ## Changelog
 
+1.7.4:
+
+* Notification trim fixes. (#220)
+* Notification refactoring
+* `debug` package is now a dependency (#267)
+
 1.7.3:
 
 * Added support for increased payload length for VoIP applications (Closes #207)
