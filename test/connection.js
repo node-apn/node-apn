@@ -227,7 +227,7 @@ describe("Connection", function() {
 		});
 	});
 
-	describe("connect", function() {
+	describe("createSocket", function() {
 		var socketDouble, socketStub, removeSocketStub;
 
 		before(function() {
@@ -262,7 +262,7 @@ describe("Connection", function() {
 
 		it("initializes the module", function(done) {
 			var connection = Connection({ pfx: "myCredentials.pfx" });
-			return connection.connect().finally(function() {
+			return connection.createSocket().finally(function() {
 				expect(connection.initialize).to.have.been.calledOnce;
 				done();
 			});
@@ -274,7 +274,7 @@ describe("Connection", function() {
 					cert: "myCert.pem",
 					key: "myKey.pem"
 				});
-				return expect(connection.connect()).to.be.fulfilled;
+				return expect(connection.createSocket()).to.be.fulfilled;
 			});
 
 			describe("the call to create socket", function() {
@@ -284,7 +284,7 @@ describe("Connection", function() {
 					connect = Connection({
 						pfx: "myCredentials.pfx",
 						passphrase: "apntest"
-					}).connect();
+					}).createSocket();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.pfx).to.equal("pfxData");
@@ -296,7 +296,7 @@ describe("Connection", function() {
 						passphrase: "apntest",
 						cert: "myCert.pem",
 						key: "myKey.pem"
-					}).connect();
+					}).createSocket();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.passphrase).to.equal("apntest");
@@ -307,7 +307,7 @@ describe("Connection", function() {
 					connect = Connection({
 						cert: "myCert.pem",
 						key: "myKey.pem"
-					}).connect();
+					}).createSocket();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.cert).to.equal("certData");
@@ -318,7 +318,7 @@ describe("Connection", function() {
 					connect = Connection({
 						cert: "test/credentials/support/cert.pem",
 						key: "test/credentials/support/key.pem"
-					}).connect();
+					}).createSocket();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.key).to.equal("keyData");
@@ -330,7 +330,7 @@ describe("Connection", function() {
 						cert: "test/credentials/support/cert.pem",
 						key: "test/credentials/support/key.pem",
 						ca: [ "test/credentials/support/issuerCert.pem" ]
-					}).connect();
+					}).createSocket();
 					return connect.then(function() {
 						var socketOptions = socketStub.args[0][1];
 						expect(socketOptions.ca[0]).to.equal("caData1");
@@ -347,7 +347,7 @@ describe("Connection", function() {
 
 				connection.initialize.returns(Q.reject(new Error("initialize failed")));
 
-				return expect(connection.connect()).to.be.rejectedWith("initialize failed");
+				return expect(connection.createSocket()).to.be.rejectedWith("initialize failed");
 			});
 		});
 
@@ -366,7 +366,7 @@ describe("Connection", function() {
 			});
 
 			it("ends the socket when connection takes too long", function() {
-				var connection = Connection({connectTimeout: 3000}).connect();
+				var connection = Connection({connectTimeout: 3000}).createSocket();
 				socketStub.onCall(0).returns(socketDouble);
 				
 				process.nextTick(function(){
@@ -381,7 +381,7 @@ describe("Connection", function() {
 			});
 
 			it("does not end the socket when the connnection succeeds", function() {
-				var connection = Connection({connectTimeout: 3000}).connect();
+				var connection = Connection({connectTimeout: 3000}).createSocket();
 
 				return connection.then(function() {
 					clock.tick(5000);
@@ -390,7 +390,7 @@ describe("Connection", function() {
 			});
 
 			it("does not end the socket when the connection fails", function() {
-				var connection = Connection({connectTimeout: 3000}).connect();
+				var connection = Connection({connectTimeout: 3000}).createSocket();
 				socketStub.onCall(0).returns(socketDouble);
 				
 				process.nextTick(function() {
@@ -406,7 +406,7 @@ describe("Connection", function() {
 			});
 
 			it("does not fire when disabled", function() {
-				var connection = Connection({connectTimeout: 0}).connect();
+				var connection = Connection({connectTimeout: 0}).createSocket();
 				socketStub.onCall(0).returns(socketDouble);
 
 				process.nextTick(function() {
@@ -426,7 +426,7 @@ describe("Connection", function() {
 					var connection = Connection({connectTimeout: 100});
 					connection.initializationPromise = Q.defer();
 
-					connection.connect();
+					connection.createSocket();
 					expect(function() { clock.tick(500); }).to.not.throw(TypeError);
 				});
 			});
@@ -440,7 +440,7 @@ describe("Connection", function() {
 						clock.tick(500);
 					});
 
-					return connection.connect().then(null, function() {
+					return connection.createSocket().then(null, function() {
 						connection.deferredConnection = null;
 						expect(socketStub.getCall(0).args[2]).to.not.throw(TypeError);
 					});
