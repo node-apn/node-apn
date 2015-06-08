@@ -100,7 +100,7 @@ The above options will compile the following dictionary to send to the device:
 
 Apple recommends checking the feedback service periodically for a list of devices for which there were failed delivery attempts.
 
-Using the `Feedback` object it is possible to periodically query the server for the list. Many of the options are similar to that of `Connection`, including the authentication configuration.
+Using the `Feedback` object it is possible to periodically query the server for the list. Many of the options are similar to that of `Connection`, including the authentication configuration. It is recomended that you share the same configuration object between Connection and Feedback instances to ensure they stay in sync.
 
 Attach a listener to the `feedback` event to receive the output as two arguments, the `time` returned by the server (epoch time) and a `Buffer` object containing the device token - this event will be emitted for each device separately. Alternatively you can enable the `batchFeedback` option and the `feedback` event will provide an array of objects containing `time` and `device` properties.
 
