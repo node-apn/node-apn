@@ -44,6 +44,12 @@ describe("Connection", function() {
 		it("should use a custom address when passed", function () {
 			expect(Connection({address: "testaddress"}).options.address).to.equal("testaddress");
 		});
+
+		describe("gateway option", function() {
+			it("uses the legacy gateway option when supplied", function() {
+				expect(Connection({gateway: "testaddress"}).options.address).to.equal("testaddress");
+			});
+		});
 		
 		describe("address is passed", function() {
 			it("sets production to true when using production address", function() {
