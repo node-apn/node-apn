@@ -233,7 +233,7 @@ describe("Connection", function() {
 		});
 	});
 
-	describe("createSocket", function() {
+	xdescribe("createSocket", function() {
 		var socketDouble, socketStub, removeSocketStub;
 
 		before(function() {
