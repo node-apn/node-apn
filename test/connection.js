@@ -50,7 +50,7 @@ describe("Connection", function() {
 				expect(Connection({gateway: "testaddress"}).options.address).to.equal("testaddress");
 			});
 		});
-		
+
 		describe("address is passed", function() {
 			it("sets production to true when using production address", function() {
 				expect(Connection({address: "gateway.push.apple.com"}).options.production).to.be.true;
@@ -71,7 +71,7 @@ describe("Connection", function() {
 
 			parseStub = sinon.stub();
 			parseStub.displayName = "parseCredentials";
-			
+
 			validateStub = sinon.stub();
 			validateStub.displayName = "validateCredentials";
 
@@ -97,14 +97,14 @@ describe("Connection", function() {
 
 		describe("with valid credentials", function() {
 			var credentials;
-			var testOptions = { 
+			var testOptions = {
 				pfx: "myCredentials.pfx", cert: "myCert.pem", key: "myKey.pem", ca: "myCa.pem",
 				passphrase: "apntest", production: true
 			};
 
 			beforeEach(function() {
 				loadStub.withArgs(sinon.match(function(v) {
-					return v.pfx === "myCredentials.pfx" && v.cert === "myCert.pem" && v.key === "myKey.pem" && 
+					return v.pfx === "myCredentials.pfx" && v.cert === "myCert.pem" && v.key === "myKey.pem" &&
 						v.ca === "myCa.pem" && v.passphrase === "apntest";
 				})).returns(Q({ pfx: "myPfxData", cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
 
@@ -238,7 +238,7 @@ describe("Connection", function() {
 
 		before(function() {
 			var loadCredentialsStub = sinon.stub(Connection.prototype, "loadCredentials");
-			loadCredentialsStub.returns(Q({ 
+			loadCredentialsStub.returns(Q({
 				pfx: "pfxData",
 				key: "keyData",
 				cert: "certData",
@@ -249,7 +249,7 @@ describe("Connection", function() {
 		after(function() {
 			Connection.prototype.loadCredentials.restore();
 		});
-		
+
 		beforeEach(function() {
 			socketDouble = new events.EventEmitter();
 			socketDouble.end = sinon.spy();
@@ -374,7 +374,7 @@ describe("Connection", function() {
 			it("ends the socket when connection takes too long", function() {
 				var connection = Connection({connectTimeout: 3000}).createSocket();
 				socketStub.onCall(0).returns(socketDouble);
-				
+
 				process.nextTick(function(){
 					clock.tick(5000);
 				});
@@ -398,7 +398,7 @@ describe("Connection", function() {
 			it("does not end the socket when the connection fails", function() {
 				var connection = Connection({connectTimeout: 3000}).createSocket();
 				socketStub.onCall(0).returns(socketDouble);
-				
+
 				process.nextTick(function() {
 					socketDouble.emit("close");
 				});
