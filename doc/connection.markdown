@@ -16,8 +16,6 @@ Options:
 
  - `production` {Boolean} Specifies which environment to connect to: Production (if true) or Sandbox - The hostname will be set automatically. (Defaults to NODE_ENV == "production", i.e. false unless the NODE_ENV environment variable is set accordingly)
 
- - `voip` {Boolean} Enable when you are using a VoIP certificate to enable paylods up to 4096 bytes.
-
  - `port` {Number} Gateway port (Defaults to: `2195`)
 
  - `rejectUnauthorized` {Boolean} Reject Unauthorized property to be passed through to tls.connect() (Defaults to `true`)

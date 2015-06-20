@@ -479,13 +479,5 @@ describe("Connection", function() {
 				expect(connection.validNotification(notification)).to.equal(false);
 			});
 		});
-
-		describe("VoIP flag set", function() {
-			it("allows longer payload", function() {
-				var connection = Connection({"voip": true});
-				var notification = { length: function() { return 4096; }};
-				expect(connection.validNotification(notification)).to.equal(true);
-			});
-		});
 	});
 });
