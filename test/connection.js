@@ -23,22 +23,22 @@ describe("Connection", function() {
 		});
 
 		// Issue #50
-		it("should use gateway.sandbox.push.apple.com as the default connection address", function () {
-			expect(Connection().options.address).to.equal("gateway.sandbox.push.apple.com");
+		it("should use api.sandbox.push.apple.com as the default connection address", function () {
+			expect(Connection().options.address).to.equal("api.sandbox.push.apple.com");
 		});
 
-		it("should use gateway.push.apple.com when NODE_ENV=production", function () {
+		it("should use api.push.apple.com when NODE_ENV=production", function () {
 			process.env.NODE_ENV = "production";
-			expect(Connection().options.address).to.equal("gateway.push.apple.com");
+			expect(Connection().options.address).to.equal("api.push.apple.com");
 		});
 
 		it("should give precedence to production flag over NODE_ENV=production", function () {
 			process.env.NODE_ENV = "production";
-			expect(Connection({ production: false }).options.address).to.equal("gateway.sandbox.push.apple.com");
+			expect(Connection({ production: false }).options.address).to.equal("api.sandbox.push.apple.com");
 		});
 
-		it("should use gateway.push.apple.com when production:true", function () {
-			expect(Connection({production:true}).options.address).to.equal("gateway.push.apple.com");
+		it("should use api.push.apple.com when production:true", function () {
+			expect(Connection({production:true}).options.address).to.equal("api.push.apple.com");
 		});
 
 		it("should use a custom address when passed", function () {
@@ -47,12 +47,12 @@ describe("Connection", function() {
 
 		describe("address is passed", function() {
 			it("sets production to true when using production address", function() {
-				expect(Connection({address: "gateway.push.apple.com"}).options.production).to.be.true;
+				expect(Connection({address: "api.push.apple.com"}).options.production).to.be.true;
 			});
 
 			it("sets production to false when using sandbox address", function() {
 				process.env.NODE_ENV = "production";
-				expect(Connection({address: "gateway.sandbox.push.apple.com"}).options.production).to.be.false;
+				expect(Connection({address: "api.sandbox.push.apple.com"}).options.production).to.be.false;
 			});
 		});
 	});
