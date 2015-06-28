@@ -103,15 +103,20 @@ describe("Notification", function() {
 				expect(note.contentAvailable).to.be.undefined;
 			});
 
-			it("can be set to a boolean value", function() {
+			it("can be set to `1` with a boolean value", function() {
 				note.contentAvailable = true;
-				expect(typeof note.contentAvailable).to.equal("boolean");
+				expect(note.contentAvailable).to.equal(1);
 			});
 
 			it("can be set to undefined", function() {
 				note.contentAvailable = true;
 				note.contentAvailable = undefined;
 				expect(note.contentAvailable).to.be.undefined;
+			});
+
+			it("can be set to `1`", function() {
+				note.contentAvailable = 1;
+				expect(typeof note.contentAvailable).to.equal("number");
 			});
 
 			it("cannot be set to a string", function() {
@@ -122,12 +127,12 @@ describe("Notification", function() {
 			describe("newsstand-available property", function() {
 				it("sets the content available flag", function() {
 					note.newsstandAvailable = true;
-					expect(note.contentAvailable).to.equal(true);
+					expect(note.contentAvailable).to.equal(1);
 				});
 
 				it("returns the content-available flag", function() {
 					note.contentAvailable = false;
-					expect(note.newsstandAvailable).to.equal(false);
+					expect(note.newsstandAvailable).to.be.undefined;
 				});
 			});
 		});
