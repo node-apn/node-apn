@@ -499,6 +499,11 @@ describe("Connection", function() {
 			connection.pushNotification(notificationDouble(), "aabbccddeeff");
 			expect(http2.request).to.be.calledOnce;
 		});
+
+		it("uses the POST method", function() {
+			connection.pushNotification(notificationDouble(), "aabbccddeeff");
+			expect(http2.request.firstCall.args[0]).to.have.property("method", "POST");
+		});
 	});
 });
 
