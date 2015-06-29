@@ -474,4 +474,37 @@ describe("Connection", function() {
 			});
 		});
 	});
+
+	describe("pushNotification", function() {
+		var http2, connection;
+		before(function() {
+			http2 = Connection.__get__("http2");
+		});
+
+		beforeEach(function() {
+			sinon.stub(http2, "request");
+
+			connection = new Connection();
+		});
+
+		afterEach(function() {
+			http2.request.restore();
+		});
+
+		it("uses the node-http2 library", function() {
+			expect(http2).to.equal(require("http2"));
+		});
+
+		it("calls http2.request", function() {
+			connection.pushNotification(notificationDouble(), "aabbccddeeff");
+			expect(http2.request).to.be.calledOnce;
+		});
+	});
 });
+
+function notificationDouble() {
+	return {
+		payload: { aps: { badge: 1 } },
+		compile: function() { return JSON.stringify(this.payload); }
+	};
+}
