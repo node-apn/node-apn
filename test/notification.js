@@ -19,6 +19,12 @@ describe("Notification", function() {
 				expect(note.alert).to.equal("hello");
 			});
 
+			it("resets the `compiled` flag", function() {
+				note.compiled = true;
+				note.alert = "hello";
+				expect(note.compiled).to.be.false;
+			});
+
 			it("can be set to an object", function() {
 				note.alert = {"body": "hello"};
 				expect(note.alert).to.eql({"body": "hello"});
@@ -64,6 +70,12 @@ describe("Notification", function() {
 				expect(typeof note.badge).to.equal("number");
 			});
 
+			it("resets the `compiled` flag", function() {
+				note.compiled = true;
+				note.badge = 5;
+				expect(note.compiled).to.be.false;
+			});
+
 			it("can be set to undefined", function() {
 				note.badge = 5;
 				note.badge = undefined;
@@ -86,6 +98,12 @@ describe("Notification", function() {
 				expect(typeof note.sound).to.equal("string");
 			});
 
+			it("resets the `compiled` flag", function() {
+				note.compiled = true;
+				note.sound = "sound.caf";
+				expect(note.compiled).to.be.false;
+			});
+
 			it("can be set to undefined", function() {
 				note.sound = "sound.caf";
 				note.sound = undefined;
@@ -106,6 +124,18 @@ describe("Notification", function() {
 			it("can be set to `1` with a boolean value", function() {
 				note.contentAvailable = true;
 				expect(note.contentAvailable).to.equal(1);
+			});
+
+			it("resets the `compiled` flag when enabled", function() {
+				note.compiled = true;
+				note.contentAvailable = true;
+				expect(note.compiled).to.be.false;
+			});
+
+			it("resets the `compiled` flag when disabled", function() {
+				note.compiled = true;
+				note.contentAvailable = false;
+				expect(note.compiled).to.be.false;
 			});
 
 			it("can be set to undefined", function() {
@@ -152,6 +182,12 @@ describe("Notification", function() {
 				expect(typeof note.mdm).to.equal("string");
 			});
 
+			it("resets the `compiled` flag", function() {
+				note.compiled = true;
+				note.mdm = "mdm payload";
+				expect(note.compiled).to.be.false;
+			});
+
 			it("can be set to undefined", function() {
 				note.mdm = "mdm payload";
 				note.mdm = undefined;
@@ -167,6 +203,12 @@ describe("Notification", function() {
 			it("can be set to an array", function() {
 				note.urlArgs = ["arg1", "arg2"];
 				expect(note.urlArgs).to.eql(["arg1", "arg2"]);
+			});
+
+			it("resets the `compiled` flag", function() {
+				note.compiled = true;
+				note.urlArgs = ["arg1"];
+				expect(note.compiled).to.be.false;
 			});
 
 			it("can be set to undefined", function() {
@@ -194,6 +236,12 @@ describe("Notification", function() {
 			it("can be set to a string", function() {
 				note.category = "the-category";
 				expect(note.category).to.eql("the-category");
+			});
+
+			it("resets the `compiled` flag", function() {
+				note.compiled = true;
+				note.category = "the-category";
+				expect(note.compiled).to.be.false;
 			});
 
 			it("cannot be set to an object", function() {
