@@ -124,6 +124,11 @@ describe("Notification", function() {
 				expect(note.contentAvailable).to.be.undefined;
 			});
 
+			it("can be disabled", function() {
+				note.contentAvailable = false;
+				expect(note.contentAvailable).to.be.undefined;
+			});
+
 			describe("newsstand-available property", function() {
 				it("sets the content available flag", function() {
 					note.newsstandAvailable = true;
@@ -552,6 +557,15 @@ describe("Notification", function() {
 					note.contentAvailable = true;
 					
 					expect(note.toJSON().aps["content-available"]).to.eql(1);
+				});
+			});
+
+			describe("with contentAvailable property disabled", function() {
+				it("does not set the 'content-available' flag", function() {
+          note.alert = "message";
+					note.contentAvailable = false;
+					
+					expect(note.toJSON().aps["content-available"]).to.be.undefined;
 				});
 			});
 
