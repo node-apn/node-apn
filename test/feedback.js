@@ -350,4 +350,13 @@ describe("Feedback", function() {
 			});
 		});
 	});
+
+	describe("cancel", function() {
+		it("should clear interval after cancel", function() {
+			var feedback = new Feedback();
+			feedback.interval = 1;
+			feedback.cancel();
+			expect(feedback.interval).to.be.undefined;
+		});
+	});
 });
