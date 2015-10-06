@@ -20,3 +20,4 @@ deploy:
     secure: gs5H2MwW+AInpILDEmSsVWevzrMBapNHBJS/rvmHP9AtFnj0W5HE619F1duDZwhpwV/e6vdbo6xCWnxc+egR7gciW3OQrggsXSaKeWDFcJ9oNFvOsxKePOxk62fBjeSRD3LSPGyrv3XhmE4sm/6x4gCf4ZbzbYqvvOCvADCqJzA=
   on:
     tags: true
+    node: '4.1'
