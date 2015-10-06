@@ -1,5 +1,14 @@
 ## Changelog
 
+1.7.5:
+
+* Notification property improvements
+* Round-robin all open sockets when sending notifications
+* `minConnections` option
+* Prevent crashing when cancelling feedback multiple times (#307)
+* Fix connection.shutdown behaviour (#299)
+* Small doc improvements
+
 1.7.4:
 
 * Notification trim fixes. (#220)
