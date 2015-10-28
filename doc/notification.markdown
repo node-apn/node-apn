@@ -13,7 +13,7 @@ A `Notification` enapsulates the data to be compiled down to JSON and pushed to 
 
 ### notification.retryLimit
 
-The maximum number of retries which should be performed when sending a notification if an error occurs. A value of 0 will only allow one attempt at sending (0 retries). Set to -1 to disable (default).
+The maximum number of retries which should be performed when sending a notification if an error occurs. A value of 0 will only allow one attempt at sending (0 retries). Set to -1 to retry indefinitely (default).
 
 ### notification.expiry
 
