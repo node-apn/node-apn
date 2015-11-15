@@ -1,8 +1,6 @@
 language: node_js
 node_js:
-- '0.12'
-- '0.10'
-- iojs
+- v5.0.0
 before_install:
 - npm install -g npm@2.7.3
 after_success:
