@@ -77,7 +77,7 @@ describe("Endpoint", () => {
       var endpoint;
       beforeEach(() => {
         endpoint = new Endpoint({});
-        sinon.stub(endpoint, "connected");
+        sinon.stub(endpoint, "_connected");
 
         var socket = tls.connect.firstCall.returnValue;
 
@@ -85,11 +85,11 @@ describe("Endpoint", () => {
       });
 
       it("calls Endpoint#connected", () => {
-        expect(endpoint.connected).to.be.calledOnce;
+        expect(endpoint._connected).to.be.calledOnce;
       });
 
       it("uses correct `this` value for Endpoint#connected", () => {
-        expect(endpoint.connected.firstCall.thisValue).to.equal(endpoint);
+        expect(endpoint._connected.firstCall.thisValue).to.equal(endpoint);
       });
     });
   });
@@ -108,24 +108,24 @@ describe("Endpoint", () => {
     });
 
     beforeEach(() => {
-      sinon.stub(Endpoint.prototype, "connect")
+      sinon.stub(Endpoint.prototype, "_connect")
       endpoint = new Endpoint({});
       endpoint._socket = new stream.PassThrough();
     });
 
     afterEach(() => {
-      Endpoint.prototype.connect.restore();
+      Endpoint.prototype._connect.restore();
       h2EndpointSpy.reset()
     });
 
     it("creates an h2Endpoint", () => {
-      endpoint.connected();
+      endpoint._connected();
 
       expect(h2EndpointSpy).to.have.been.calledWithNew;
     });
 
     it("passes the correct parameters when creating the h2Endpoint", () => {
-      endpoint.connected();
+      endpoint._connected();
 
       // Empty bunyan logger
       expect(h2EndpointSpy.firstCall.args[0]).to.have.property("fatal");
@@ -140,7 +140,7 @@ describe("Endpoint", () => {
     });
 
     it("retains the h2Endpoint as an ivar", () => {
-      endpoint.connected();
+      endpoint._connected();
 
       expect(endpoint._h2Endpoint).to.equal(h2EndpointSpy.firstCall.returnValue);
     });
@@ -148,7 +148,7 @@ describe("Endpoint", () => {
     it("pipes the tls socket to the h2Endpoint", () => {
       var pipe = sinon.stub(endpoint._socket, "pipe");
 
-      endpoint.connected();
+      endpoint._connected();
 
       expect(pipe).to.be.calledWith(endpoint._h2Endpoint);
     });
@@ -157,7 +157,7 @@ describe("Endpoint", () => {
       var pipeSource;
       endpoint._socket.on("pipe", writer => pipeSource = writer);
 
-      endpoint.connected();
+      endpoint._connected();
       expect(pipeSource).to.equal(endpoint._h2Endpoint);
     });
 
@@ -165,7 +165,7 @@ describe("Endpoint", () => {
       var errorSpy = sinon.spy();
       endpoint.on("error", errorSpy);
 
-      endpoint.connected();
+      endpoint._connected();
       endpoint._h2Endpoint.emit("error", "this should be bubbled");
 
       expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
