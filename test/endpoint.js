@@ -39,21 +39,18 @@ describe("Endpoint", () => {
 
     it("creates a TLS socket", () => {
       var endpoint = new Endpoint({});
-      endpoint.connect();
 
       expect(tls.connect).to.be.calledOnce;
     });
 
     it("retains the socket as an ivar", () => {
       var endpoint = new Endpoint({});
-      endpoint.connect();
 
       expect(endpoint._socket).to.equal(tls.connect.firstCall.returnValue);
     });
 
     it("passes the connection parameters", () => {
       var endpoint = new Endpoint({address: "localtest", port: 443});
-      endpoint.connect();
 
       var connectParameters = tls.connect.firstCall.args[0];
 
@@ -67,7 +64,6 @@ describe("Endpoint", () => {
         pfx: "pfxData", cert: "certData",
         key: "keyData", passphrase: "p4ssphr4s3"
       });
-      endpoint.connect();
 
       var connectParameters = tls.connect.firstCall.args[0];
 
@@ -83,7 +79,6 @@ describe("Endpoint", () => {
         endpoint = new Endpoint({});
         sinon.stub(endpoint, "connected");
 
-        endpoint.connect();
         var socket = tls.connect.firstCall.returnValue;
 
         socket.emit("secureConnect");
@@ -113,11 +108,13 @@ describe("Endpoint", () => {
     });
 
     beforeEach(() => {
+      sinon.stub(Endpoint.prototype, "connect")
       endpoint = new Endpoint({});
       endpoint._socket = new stream.PassThrough();
     });
 
     afterEach(() => {
+      Endpoint.prototype.connect.restore();
       h2EndpointSpy.reset()
     });
 
