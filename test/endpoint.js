@@ -128,13 +128,15 @@ describe("Endpoint", () => {
       endpoint._connected();
 
       // Empty bunyan logger
-      expect(h2EndpointSpy.firstCall.args[0]).to.have.property("fatal");
-      expect(h2EndpointSpy.firstCall.args[0]).to.have.property("error");
-      expect(h2EndpointSpy.firstCall.args[0]).to.have.property("warn");
-      expect(h2EndpointSpy.firstCall.args[0]).to.have.property("info");
-      expect(h2EndpointSpy.firstCall.args[0]).to.have.property("debug");
-      expect(h2EndpointSpy.firstCall.args[0]).to.have.property("trace");
-      expect(h2EndpointSpy.firstCall.args[0]).to.have.property("child");
+      var logger = h2EndpointSpy.firstCall.args[0];
+      expect(logger).to.have.property("fatal");
+      expect(logger).to.have.property("error");
+      expect(logger).to.have.property("warn");
+      expect(logger).to.have.property("info");
+      expect(logger).to.have.property("debug");
+      expect(logger).to.have.property("trace");
+      expect(logger).to.have.property("child");
+      expect(logger.child()).to.equal(logger);
 
       expect(h2EndpointSpy.firstCall.args[1]).to.equal("CLIENT");
     });
