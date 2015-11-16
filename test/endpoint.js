@@ -58,6 +58,22 @@ describe("Endpoint", () => {
       expect(connectParameters).to.have.property("port", 443);
     });
 
+    it("sets the servername", () => {
+      var endpoint = new Endpoint({address: "localtest", port: 443});
+
+      var connectParameters = tls.connect.firstCall.args[0];
+
+      expect(connectParameters).to.have.property("servername", "localtest");
+    });
+
+    it("sets the ALPNProtocols", () => {
+      var endpoint = new Endpoint({address: "localtest", port: 443});
+
+      var connectParameters = tls.connect.firstCall.args[0];
+
+      expect(connectParameters.ALPNProtocols[0]).to.equal("h2");
+    });
+
     it("passes the credential parameters", () => {
       var endpoint = new Endpoint({
         address: "localtest", port: 443,
