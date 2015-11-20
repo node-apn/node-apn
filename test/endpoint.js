@@ -8,11 +8,11 @@ var EventEmitter = require("events");
 
 describe("Endpoint", () => {
   describe("module references", () => {
-    describe("h2Endpoint", () => {
-      it("is the constructor for http2.protocol.Endpoint", () => {
-        var h2Endpoint = Endpoint.__get__("h2Endpoint");
+    describe("http2 protocol", () => {
+      it("is http2.protocol", () => {
+        var protocol = Endpoint.__get__("protocol");
 
-        expect(h2Endpoint).to.equal(http2.protocol.Endpoint);
+        expect(protocol).to.equal(http2.protocol);
       });
     });
 
@@ -112,39 +112,37 @@ describe("Endpoint", () => {
 
   describe("connected", () => {
     var endpoint;
-    var h2Endpoint, h2EndpointSpy;
+    var protocol;
 
     before(() => {
-      h2EndpointSpy = sinon.spy(stream.PassThrough);
-      h2Endpoint = Endpoint.__set__("h2Endpoint", h2EndpointSpy);
-    });
-
-    after(() => {
-      h2Endpoint()
+      protocol = Endpoint.__get__("protocol");
     });
 
     beforeEach(() => {
-      sinon.stub(Endpoint.prototype, "_connect")
+      sinon.stub(protocol, "Endpoint");
+      protocol.Endpoint.returns(new stream.PassThrough());
+
+      sinon.stub(Endpoint.prototype, "_connect");
       endpoint = new Endpoint({});
       endpoint._socket = new stream.PassThrough();
     });
 
     afterEach(() => {
       Endpoint.prototype._connect.restore();
-      h2EndpointSpy.reset()
+      protocol.Endpoint.restore()
     });
 
     it("creates an h2Endpoint", () => {
       endpoint._connected();
 
-      expect(h2EndpointSpy).to.have.been.calledWithNew;
+      expect(protocol.Endpoint).to.have.been.calledWithNew;
     });
 
     it("passes the correct parameters when creating the h2Endpoint", () => {
       endpoint._connected();
 
       // Empty bunyan logger
-      var logger = h2EndpointSpy.firstCall.args[0];
+      var logger = protocol.Endpoint.firstCall.args[0];
       expect(logger).to.have.property("fatal");
       expect(logger).to.have.property("error");
       expect(logger).to.have.property("warn");
@@ -154,13 +152,13 @@ describe("Endpoint", () => {
       expect(logger).to.have.property("child");
       expect(logger.child()).to.equal(logger);
 
-      expect(h2EndpointSpy.firstCall.args[1]).to.equal("CLIENT");
+      expect(protocol.Endpoint.firstCall.args[1]).to.equal("CLIENT");
     });
 
     it("retains the h2Endpoint as an ivar", () => {
       endpoint._connected();
 
-      expect(endpoint._h2Endpoint).to.equal(h2EndpointSpy.firstCall.returnValue);
+      expect(endpoint._h2Endpoint).to.equal(protocol.Endpoint.firstCall.returnValue);
     });
 
     it("pipes the tls socket to the h2Endpoint", () => {
