@@ -126,4 +126,4 @@ Error codes smaller than 512 correspond to those returned by Apple as per their 
 For further information please read [Handling Errors](Handling%20Errors.markdown).
 
 [googlegroup]:https://groups.google.com/group/node-apn "node-apn Google Group"
-[errors]:https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
+[errors]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Appendixes/BinaryProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH106-SW1 "Binary Provider API"
