@@ -11,29 +11,29 @@ describe("loadCredentials", function() {
 
 	it("should eventually load a pfx file from disk", function () {
 		return expect(loadCredentials({ pfx: "test/support/initializeTest.pfx" })
-				  .get("pfx").post("toString"))
+				  .get("pfx").call("toString"))
 				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually provide pfx data from memory", function () {
-		return expect(loadCredentials({ pfx: pfx }).get("pfx").post("toString"))
+		return expect(loadCredentials({ pfx: pfx }).get("pfx").call("toString"))
 				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually provide pfx data explicitly passed in pfxData parameter", function () {
-		return expect(loadCredentials({ pfxData: pfx }).get("pfx").post("toString"))
+		return expect(loadCredentials({ pfxData: pfx }).get("pfx").call("toString"))
 				  .to.eventually.equal(pfx.toString());
 	});
 
 	it("should eventually load a certificate from disk", function () {
 		return expect(loadCredentials({ cert: "test/support/initializeTest.crt", key: null})
-				  .get("cert").post("toString"))
+				  .get("cert").call("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a certificate from a Buffer", function () {
 		return expect(loadCredentials({ cert: cert, key: null})
-				  .get("cert").post("toString"))
+				  .get("cert").call("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
@@ -45,19 +45,19 @@ describe("loadCredentials", function() {
 
 	it("should eventually provide certificate data explicitly passed in the certData parameter", function () {
 		return expect(loadCredentials({ certData: cert, key: null})
-				  .get("cert").post("toString"))
+				  .get("cert").call("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually load a key from disk", function () {
 		return expect(loadCredentials({ cert: null, key: "test/support/initializeTest.key"})
-				  .get("key").post("toString"))
+				  .get("key").call("toString"))
 				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually provide a key from a Buffer", function () {
 		return expect(loadCredentials({ cert: null, key: key})
-				  .get("key").post("toString"))
+				  .get("key").call("toString"))
 				  .to.eventually.equal(key.toString());
 	});
 
@@ -69,19 +69,19 @@ describe("loadCredentials", function() {
 
 	it("should eventually provide key data explicitly passed in the keyData parameter", function () {
 		return expect(loadCredentials({ cert: null, keyData: key})
-				  .get("key").post("toString"))
+				  .get("key").call("toString"))
 				  .to.eventually.equal(key.toString());
 	});
 
 	it("should eventually load a single CA certificate from disk", function () {
 		return expect(loadCredentials({ cert: null, key: null, ca: "test/support/initializeTest.crt" })
-				  .get("ca").get(0).post("toString"))
+				  .get("ca").get(0).call("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 
 	it("should eventually provide a single CA certificate from a Buffer", function () {
 		return expect(loadCredentials({ cert: null, key: null, ca: cert })
-				  .get("ca").get(0).post("toString"))
+				  .get("ca").get(0).call("toString"))
 				  .to.eventually.equal(cert.toString());
 	});
 

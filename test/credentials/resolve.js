@@ -29,7 +29,7 @@ describe("resolve", function() {
 		
 		it("eventually returns contents for value path", function () {
 			return expect(resolve("test/support/initializeTest.key")
-				.post("toString")).to.eventually.equal(key.toString());
+				.call("toString")).to.eventually.equal(key.toString());
 		});
 
 		it("is eventually rejected for invalid path", function() {

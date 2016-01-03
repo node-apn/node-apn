@@ -4,7 +4,7 @@ var Connection = rewire("../lib/connection");
 var events = require("events");
 var sinon = require("sinon");
 var lolex = require("lolex");
-var Q = require("q");
+var Promise = require("bluebird");
 
 describe("Connection", function() {
 	describe("constructor", function () {
@@ -81,7 +81,7 @@ describe("Connection", function() {
 		});
 
 		it("only loads credentials once", function() {
-			loadStub.returns(Q({}));
+			loadStub.returns(Promise.resolve({}));
 
 			var connection = Connection();
 			connection.loadCredentials();
@@ -100,7 +100,7 @@ describe("Connection", function() {
 				loadStub.withArgs(sinon.match(function(v) {
 					return v.pfx === "myCredentials.pfx" && v.cert === "myCert.pem" && v.key === "myKey.pem" &&
 						v.ca === "myCa.pem" && v.passphrase === "apntest";
-				})).returns(Q({ pfx: "myPfxData", cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
+				})).returns(Promise.resolve({ pfx: "myPfxData", cert: "myCertData", key: "myKeyData", ca: ["myCaData"], passphrase: "apntest" }));
 
 				parseStub.returnsArg(0);
 
@@ -176,7 +176,7 @@ describe("Connection", function() {
 
 		describe("credential file cannot be parsed", function() {
 			beforeEach(function() {
-				loadStub.returns(Q({ cert: "myCertData", key: "myKeyData" }));
+				loadStub.returns(Promise.resolve({ cert: "myCertData", key: "myKeyData" }));
 				parseStub.throws(new Error("unable to parse key"));
 			});
 
@@ -208,7 +208,7 @@ describe("Connection", function() {
 
 		describe("credential validation fails", function() {
 			it("should be rejected", function() {
-				loadStub.returns(Q({ cert: "myCertData", key: "myMismatchedKeyData" }));
+				loadStub.returns(Promise.resolve({ cert: "myCertData", key: "myMismatchedKeyData" }));
 				parseStub.returnsArg(0);
 				validateStub.throws(new Error("certificate and key do not match"));
 
@@ -219,7 +219,7 @@ describe("Connection", function() {
 
 		describe("credential file cannot be loaded", function() {
 			it("should be rejected", function() {
-				loadStub.returns(Q.reject(new Error("ENOENT, no such file or directory")));
+				loadStub.returns(Promise.reject(new Error("ENOENT, no such file or directory")));
 
 				var credentials = Connection({ cert: "noSuchFile.pem", key: "myKey.pem" }).loadCredentials();
 				return expect(credentials).to.eventually.be.rejectedWith("ENOENT, no such file or directory");
