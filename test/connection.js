@@ -69,10 +69,10 @@ describe("Connection", function() {
 			validateStub = sinon.stub();
 			validateStub.displayName = "validateCredentials";
 
-			removeStubs = Connection.__set__({
-				"loadCredentials": loadStub,
-				"parseCredentials": parseStub,
-				"validateCredentials": validateStub,
+			removeStubs = Connection.__set__("credentials", {
+				"load": loadStub,
+				"parse": parseStub,
+				"validate": validateStub,
 			});
 		});
 
