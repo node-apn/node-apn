@@ -7,28 +7,24 @@ var stream = require("stream");
 var EventEmitter = require("events");
 
 describe("Endpoint", () => {
-  describe("module references", () => {
-    describe("http2 protocol", () => {
-      it("is http2.protocol", () => {
-        var protocol = Endpoint.__get__("protocol");
+  var tls = Endpoint.__get__("tls");
+  var protocol = Endpoint.__get__("protocol");
 
+  describe("module references", () => {
+    describe("protocol", () => {
+      it("is http2.protocol", () => {
         expect(protocol).to.equal(http2.protocol);
       });
     });
 
     describe("tls", () => {
       it("is the tls module", () => {
-        var tls = Endpoint.__get__("tls");
-
         expect(tls).to.equal(require('tls'));
       });
     });
   });
 
   describe("connect", () => {
-    var tls = Endpoint.__get__("tls");
-    var protocol = Endpoint.__get__("protocol");
-
     beforeEach(() => {
       sinon.stub(tls, "connect");
       tls.connect.returns(new stream.PassThrough());
@@ -88,7 +84,18 @@ describe("Endpoint", () => {
         });
       });
 
-      it("bubbles error events");
+      it("bubbles error events", () => {
+        var endpoint = new Endpoint({});
+
+        var errorSpy = sinon.spy();
+        endpoint.on("error", errorSpy);
+
+        var socket = tls.connect.firstCall.returnValue;
+
+        socket.emit("error", "this should be bubbled");
+
+        expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
+      });
     });
 
     describe("HTTP/2 Endpoint", () => {
@@ -115,10 +122,13 @@ describe("Endpoint", () => {
         expect(protocol.Endpoint.firstCall.args[1]).to.equal("CLIENT");
       });
 
-      xit("bubbles h2Endpoint error events", () => {
-        var errorSpy = sinon.spy();
+      it("bubbles error events", () => {
         var endpoint = new Endpoint({});
+
+        var errorSpy = sinon.spy();
         endpoint.on("error", errorSpy);
+
+        var h2Endpoint = protocol.Endpoint.firstCall.returnValue;
 
         h2Endpoint.emit("error", "this should be bubbled");
 
@@ -126,7 +136,7 @@ describe("Endpoint", () => {
       });
     });
 
-    describe("on connection", () => {
+    describe("on secureConnect", () => {
       var socket;
       var h2Endpoint;
 
