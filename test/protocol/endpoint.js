@@ -1,62 +1,51 @@
-var rewire = require("rewire");
-var Endpoint = rewire("../../lib/protocol/endpoint");
+"use strict";
 
-var http2 = require("http2");
-var sinon = require("sinon");
-var stream = require("stream");
-var EventEmitter = require("events");
+let sinon = require("sinon");
+let stream = require("stream");
 
 describe("Endpoint", () => {
-  var tls = Endpoint.__get__("tls");
-  var protocol = Endpoint.__get__("protocol");
 
-  describe("module references", () => {
-    describe("protocol", () => {
-      it("is http2.protocol", () => {
-        expect(protocol).to.equal(http2.protocol);
-      });
-    });
+  const fakes = {
+    tls: {
+      connect: sinon.stub(),
+    },
+    protocol: {
+      Endpoint: sinon.stub(),
+    },
+  }
 
-    describe("tls", () => {
-      it("is the tls module", () => {
-        expect(tls).to.equal(require('tls'));
-      });
-    });
-  });
+  const Endpoint = require("../../lib/protocol/endpoint")(fakes);
 
   describe("connect", () => {
     beforeEach(() => {
-      sinon.stub(tls, "connect");
-      tls.connect.returns(new stream.PassThrough());
-
-      sinon.stub(protocol, "Endpoint");
-      protocol.Endpoint.returns(new stream.PassThrough());
+      fakes.tls.connect.returns(new stream.PassThrough());
+      fakes.protocol.Endpoint.returns(new stream.PassThrough());
     });
 
     afterEach(() => {
-      tls.connect.restore();
-      protocol.Endpoint.restore()
+      fakes.tls.connect.reset();
+      fakes.protocol.Endpoint.reset();
     });
 
-    describe("TLS socket", () => {
+    describe("tls socket", () => {
 
       it("is created", () => {
-        var endpoint = new Endpoint({});
+        let endpoint = new Endpoint({});
 
-        expect(tls.connect).to.be.calledOnce;
+        expect(fakes.tls.connect).to.be.calledOnce;
       });
 
       describe("connection parameters", () => {
-        var connectionParameters;
+        let connectParameters;
 
         beforeEach(() => {
-          var endpoint = new Endpoint({
+          let endpoint = new Endpoint({
             address: "localtest", port: 443,
             pfx: "pfxData", cert: "certData",
             key: "keyData", passphrase: "p4ssphr4s3"
           });
 
-          connectParameters = tls.connect.firstCall.args[0];
+          connectParameters = fakes.tls.connect.firstCall.args[0];
         });
 
         it("includes the host and port", () => {
@@ -85,12 +74,11 @@ describe("Endpoint", () => {
       });
 
       it("bubbles error events", () => {
-        var endpoint = new Endpoint({});
-
-        var errorSpy = sinon.spy();
+        const endpoint = new Endpoint({});
+        const errorSpy = sinon.spy();
         endpoint.on("error", errorSpy);
 
-        var socket = tls.connect.firstCall.returnValue;
+        const socket = fakes.tls.connect.firstCall.returnValue;
 
         socket.emit("error", "this should be bubbled");
 
@@ -101,15 +89,15 @@ describe("Endpoint", () => {
     describe("HTTP/2 Endpoint", () => {
 
       it("is created", () => {
-        var endpoint = new Endpoint({});
-        expect(protocol.Endpoint).to.have.been.calledWithNew;
+        const endpoint = new Endpoint({});
+        expect(fakes.protocol.Endpoint).to.have.been.calledWithNew;
       });
 
       it("is passed the correct parameters", () => {
-        var endpoint = new Endpoint({});
+        const endpoint = new Endpoint({});
 
         // Empty bunyan logger
-        var logger = protocol.Endpoint.firstCall.args[0];
+        let logger = fakes.protocol.Endpoint.firstCall.args[0];
         expect(logger).to.have.property("fatal");
         expect(logger).to.have.property("error");
         expect(logger).to.have.property("warn");
@@ -119,16 +107,15 @@ describe("Endpoint", () => {
         expect(logger).to.have.property("child");
         expect(logger.child()).to.equal(logger);
 
-        expect(protocol.Endpoint.firstCall.args[1]).to.equal("CLIENT");
+        expect(fakes.protocol.Endpoint.firstCall.args[1]).to.equal("CLIENT");
       });
 
       it("bubbles error events", () => {
-        var endpoint = new Endpoint({});
-
-        var errorSpy = sinon.spy();
+        const endpoint = new Endpoint({});
+        const errorSpy = sinon.spy();
         endpoint.on("error", errorSpy);
 
-        var h2Endpoint = protocol.Endpoint.firstCall.returnValue;
+        const h2Endpoint = fakes.protocol.Endpoint.firstCall.returnValue;
 
         h2Endpoint.emit("error", "this should be bubbled");
 
@@ -137,17 +124,17 @@ describe("Endpoint", () => {
     });
 
     describe("on secureConnect", () => {
-      var socket;
-      var h2Endpoint;
+      let socket;
+      let h2Endpoint;
 
       beforeEach(() => {
-        new Endpoint({});
-        socket = tls.connect.firstCall.returnValue;
-        h2Endpoint = protocol.Endpoint.firstCall.returnValue;
+        const endpoint = new Endpoint({});
+        socket = fakes.tls.connect.firstCall.returnValue;
+        h2Endpoint = fakes.protocol.Endpoint.firstCall.returnValue;
       });
 
       it("pipes the tls socket to the h2Endpoint", () => {
-        var pipe = sinon.stub(socket, "pipe");
+        let pipe = sinon.stub(socket, "pipe");
 
         socket.emit("secureConnect");
 
@@ -155,7 +142,7 @@ describe("Endpoint", () => {
       });
 
       it("pipes the h2Endpoint to the tls socket", () => {
-        var pipe = sinon.stub(h2Endpoint, "pipe");
+        let pipe = sinon.stub(h2Endpoint, "pipe");
 
         socket.emit("secureConnect");
         expect(pipe).to.be.calledWith(socket)
