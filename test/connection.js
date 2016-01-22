@@ -1,14 +1,24 @@
-var rewire = require("rewire");
-var Connection = rewire("../lib/connection");
+"use strict";
 
-var events = require("events");
-var sinon = require("sinon");
-var lolex = require("lolex");
-var Promise = require("bluebird");
+const events = require("events");
+const sinon = require("sinon");
+const lolex = require("lolex");
+const Promise = require("bluebird");
 
 describe("Connection", function() {
+	const fakes = {
+		credentials: {
+			loadStub: sinon.stub(),
+			parseStub: sinon.stub(),
+			validateStub: sinon.stub(),
+		},
+		EndpointManager: sinon.stub(),
+	}
+
+	const Connection = require("../lib/connection")(fakes)
+
 	describe("constructor", function () {
-		var originalEnv;
+		let originalEnv;
 
 		before(function() {
 			originalEnv = process.env.NODE_ENV;
@@ -20,6 +30,7 @@ describe("Connection", function() {
 
 		beforeEach(function() {
 			process.env.NODE_ENV = "";
+			fakes.EndpointManager.reset();
 		});
 
 		// Issue #50
@@ -55,19 +66,20 @@ describe("Connection", function() {
 				expect(Connection({address: "api.sandbox.push.apple.com"}).options.production).to.be.false;
 			});
 		});
+
+		it("creates an EndpointManager", function() {
+			var options = { address: "api.push.apple.com" }
+			var connection = Connection(options);
+
+			expect(fakes.EndpointManager).to.be.calledOnce;
+			expect(fakes.EndpointManager).to.be.calledWithNew;
+		});
 	});
 
-	describe("#loadCredentials", function () {
+	xdescribe("#loadCredentials", function () {
 		var loadStub, parseStub, validateStub, removeStubs;
 		beforeEach(function() {
-			loadStub = sinon.stub();
-			loadStub.displayName = "loadCredentials";
-
-			parseStub = sinon.stub();
-			parseStub.displayName = "parseCredentials";
-
-			validateStub = sinon.stub();
-			validateStub.displayName = "validateCredentials";
+			
 
 			removeStubs = Connection.__set__("credentials", {
 				"load": loadStub,
@@ -82,6 +94,7 @@ describe("Connection", function() {
 
 		it("only loads credentials once", function() {
 			loadStub.returns(Promise.resolve({}));
+			parseStub.returnsArg(0);
 
 			var connection = Connection();
 			connection.loadCredentials();
@@ -227,284 +240,7 @@ describe("Connection", function() {
 		});
 	});
 
-	xdescribe("createSocket", function() {
-		var socketDouble, socketStub, removeSocketStub;
-
-		before(function() {
-			var loadCredentialsStub = sinon.stub(Connection.prototype, "loadCredentials");
-			loadCredentialsStub.returns(Q({
-				pfx: "pfxData",
-				key: "keyData",
-				cert: "certData",
-				ca: ["caData1", "caData2"],
-				passphrase: "apntest" }));
-		});
-
-		after(function() {
-			Connection.prototype.loadCredentials.restore();
-		});
-
-		beforeEach(function() {
-			socketDouble = new events.EventEmitter();
-			socketDouble.end = sinon.spy();
-
-			socketStub = sinon.stub();
-			socketStub.callsArg(2);
-			socketStub.returns(socketDouble);
-
-			removeSocketStub = Connection.__set__("createSocket", socketStub);
-		});
-
-		afterEach(function() {
-			socketDouble.removeAllListeners();
-			removeSocketStub();
-		});
-
-		it("loadCredentialss the module", function(done) {
-			var connection = Connection({ pfx: "myCredentials.pfx" });
-			return connection.createSocket().finally(function() {
-				expect(connection.loadCredentials).to.have.been.calledOnce;
-				done();
-			});
-		});
-
-		describe("with valid credentials", function() {
-			it("resolves", function() {
-				var connection = Connection({
-					cert: "myCert.pem",
-					key: "myKey.pem"
-				});
-				return expect(connection.createSocket()).to.be.fulfilled;
-			});
-
-			describe("the call to create socket", function() {
-				var connect;
-
-				it("passes PFX data", function() {
-					connect = Connection({
-						pfx: "myCredentials.pfx",
-						passphrase: "apntest"
-					}).createSocket();
-					return connect.then(function() {
-						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.pfx).to.equal("pfxData");
-					});
-				});
-
-				it("passes the passphrase", function() {
-					connect = Connection({
-						passphrase: "apntest",
-						cert: "myCert.pem",
-						key: "myKey.pem"
-					}).createSocket();
-					return connect.then(function() {
-						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.passphrase).to.equal("apntest");
-					});
-				});
-
-				it("passes the cert", function() {
-					connect = Connection({
-						cert: "myCert.pem",
-						key: "myKey.pem"
-					}).createSocket();
-					return connect.then(function() {
-						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.cert).to.equal("certData");
-					});
-				});
-
-				it("passes the key", function() {
-					connect = Connection({
-						cert: "test/credentials/support/cert.pem",
-						key: "test/credentials/support/key.pem"
-					}).createSocket();
-					return connect.then(function() {
-						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.key).to.equal("keyData");
-					});
-				});
-
-				it("passes the ca certificates", function() {
-					connect = Connection({
-						cert: "test/credentials/support/cert.pem",
-						key: "test/credentials/support/key.pem",
-						ca: [ "test/credentials/support/issuerCert.pem" ]
-					}).createSocket();
-					return connect.then(function() {
-						var socketOptions = socketStub.args[0][1];
-						expect(socketOptions.ca[0]).to.equal("caData1");
-					});
-				});
-			});
-		});
-
-		describe("intialization failure", function() {
-			it("is rejected", function() {
-				var connection = Connection({ pfx: "a-non-existant-file-which-really-shouldnt-exist.pfx" });
-				connection.on("error", function() {});
-				connection.loadCredentials = sinon.stub();
-
-				connection.loadCredentials.returns(Q.reject(new Error("loadCredentials failed")));
-
-				return expect(connection.createSocket()).to.be.rejectedWith("loadCredentials failed");
-			});
-		});
-
-		describe("timeout option", function() {
-			var clock, timeoutRestore;
-			beforeEach(function() {
-				clock = lolex.createClock();
-				timeoutRestore = Connection.__set__({
-					"setTimeout": clock.setTimeout,
-					"clearTimeout": clock.clearTimeout
-				});
-			});
-
-			afterEach(function() {
-				timeoutRestore();
-			});
-
-			it("ends the socket when connection takes too long", function() {
-				var connection = Connection({connectTimeout: 3000}).createSocket();
-				socketStub.onCall(0).returns(socketDouble);
-
-				process.nextTick(function(){
-					clock.tick(5000);
-				});
-
-				return connection.then(function() {
-					throw "connection did not time out";
-				}, function() {
-					expect(socketDouble.end).to.have.been.called;
-				});
-			});
-
-			it("does not end the socket when the connnection succeeds", function() {
-				var connection = Connection({connectTimeout: 3000}).createSocket();
-
-				return connection.then(function() {
-					clock.tick(5000);
-					expect(socketDouble.end).to.not.have.been.called;
-				});
-			});
-
-			it("does not end the socket when the connection fails", function() {
-				var connection = Connection({connectTimeout: 3000}).createSocket();
-				socketStub.onCall(0).returns(socketDouble);
-
-				process.nextTick(function() {
-					socketDouble.emit("close");
-				});
-
-				return connection.then(function() {
-					throw "connection should have failed";
-				}, function() {
-					clock.tick(5000);
-					expect(socketDouble.end).to.not.have.been.called;
-				});
-			});
-
-			it("does not fire when disabled", function() {
-				var connection = Connection({connectTimeout: 0}).createSocket();
-				socketStub.onCall(0).returns(socketDouble);
-
-				process.nextTick(function() {
-					clock.tick(100000);
-					socketDouble.emit("close");
-				});
-
-				return connection.then(function() {
-					throw "connection should have failed";
-				}, function() {
-					expect(socketDouble.end).to.not.have.been.called;
-				});
-			});
-
-			context("timeout fires before socket is created", function() {
-				it("does not throw", function() {
-					var connection = Connection({connectTimeout: 100});
-					connection.credentialsPromise = Q.defer();
-
-					connection.createSocket();
-					expect(function() { clock.tick(500); }).to.not.throw(TypeError);
-				});
-			});
-
-			context("after timeout fires", function() {
-				it("does not throw if socket connects", function() {
-					var connection = Connection({connectTimeout: 100});
-					socketStub.onCall(0).returns(socketDouble);
-
-					connection.loadCredentials().then(function() {
-						clock.tick(500);
-					});
-
-					return connection.createSocket().then(null, function() {
-						connection.deferredConnection = null;
-						expect(socketStub.getCall(0).args[2]).to.not.throw(TypeError);
-					});
-				});
-			});
-		});
-	});
-
-	describe("validNotification", function() {
-		describe("notification is shorter than max allowed", function() {
-			it("returns true", function() {
-				var connection = Connection();
-				var notification = { length: function() { return 128; }};
-				expect(connection.validNotification(notification)).to.equal(true);
-			});
-		});
-
-		describe("notification is the maximum length", function() {
-			it("returns true", function() {
-				var connection = Connection();
-				var notification = { length: function() { return 4096; }};
-				expect(connection.validNotification(notification)).to.equal(true);
-			});
-		});
-
-		describe("notification too long", function() {
-			it("returns false", function() {
-				var connection = Connection();
-				var notification = { length: function() { return 4192; }};
-				expect(connection.validNotification(notification)).to.equal(false);
-			});
-		});
-	});
-
-	describe("pushNotification", function() {
-		var http2, connection;
-		before(function() {
-			http2 = Connection.__get__("http2");
-		});
-
-		beforeEach(function() {
-			sinon.stub(http2, "request");
-
-			connection = new Connection();
-		});
-
-		afterEach(function() {
-			http2.request.restore();
-		});
-
-		it("uses the node-http2 library", function() {
-			expect(http2).to.equal(require("http2"));
-		});
-
-		it("calls http2.request", function() {
-			connection.pushNotification(notificationDouble(), "aabbccddeeff");
-			expect(http2.request).to.be.calledOnce;
-		});
-
-		it("uses the POST method", function() {
-			connection.pushNotification(notificationDouble(), "aabbccddeeff");
-			expect(http2.request.firstCall.args[0]).to.have.property("method", "POST");
-		});
-	});
+	describe("pushNotification", () => {});
 });
 
 function notificationDouble() {
