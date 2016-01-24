@@ -3,12 +3,15 @@
 let sinon = require("sinon");
 
 describe("Endpoint Manager", () => {
-	
-	const fakes = {
-    Endpoint: sinon.stub()
-  }
+	let fakes, EndpointManager;
 
-	const EndpointManager = require("../../lib/protocol/endpointManager")(fakes);
+	beforeEach(() => {
+		fakes = {
+			Endpoint: sinon.stub()
+		}
+
+		EndpointManager = require("../../lib/protocol/endpointManager")(fakes);
+	});
 
 	describe("get stream", () => {
 		let manager;
