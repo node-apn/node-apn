@@ -4,27 +4,29 @@ let sinon = require("sinon");
 let stream = require("stream");
 
 describe("Endpoint", () => {
+  let fakes, Endpoint;
 
-  const fakes = {
-    tls: {
-      connect: sinon.stub(),
-    },
-    protocol: {
-      Endpoint: sinon.stub(),
-    },
-  }
+  beforeEach(() => {
+    fakes = {
+      tls: {
+        connect: sinon.stub(),
+      },
+      protocol: {
+        Connection: sinon.stub(),
+        Serializer: sinon.stub(),
+        Deserializer: sinon.stub(),
+        Compressor: sinon.stub(),
+        Decompressor: sinon.stub(),
+      },
+    }
 
-  const Endpoint = require("../../lib/protocol/endpoint")(fakes);
+    Endpoint = require("../../lib/protocol/endpoint")(fakes);
+  })
 
   describe("connect", () => {
     beforeEach(() => {
       fakes.tls.connect.returns(new stream.PassThrough());
-      fakes.protocol.Endpoint.returns(new stream.PassThrough());
-    });
-
-    afterEach(() => {
-      fakes.tls.connect.reset();
-      fakes.protocol.Endpoint.reset();
+      fakes.protocol.Connection.returns(new stream.PassThrough());
     });
 
     describe("tls socket", () => {
@@ -101,28 +103,29 @@ describe("Endpoint", () => {
       });
     });
 
-    describe("HTTP/2 Endpoint", () => {
+    describe("HTTP/2 connection", () => {
 
       it("is created", () => {
         const endpoint = new Endpoint({});
-        expect(fakes.protocol.Endpoint).to.have.been.calledWithNew;
+        expect(fakes.protocol.Connection).to.have.been.calledWithNew;
+        expect(fakes.protocol.Connection).to.have.been.calledOnce;
       });
 
       it("is passed the correct parameters", () => {
         const endpoint = new Endpoint({});
 
         // Empty bunyan logger
-        let logger = fakes.protocol.Endpoint.firstCall.args[0];
-        expect(logger).to.have.property("fatal");
-        expect(logger).to.have.property("error");
-        expect(logger).to.have.property("warn");
-        expect(logger).to.have.property("info");
-        expect(logger).to.have.property("debug");
-        expect(logger).to.have.property("trace");
-        expect(logger).to.have.property("child");
-        expect(logger.child()).to.equal(logger);
+        expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match({
+          fatal: sinon.match.func,
+          warn: sinon.match.func,
+          info: sinon.match.func,
+          debug: sinon.match.func,
+          trace: sinon.match.func,
+          child: sinon.match.func
+        }));
 
-        expect(fakes.protocol.Endpoint.firstCall.args[1]).to.equal("CLIENT");
+        // First stream ID
+        expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match.any, 1);
       });
 
       it("bubbles error events", () => {
@@ -130,37 +133,56 @@ describe("Endpoint", () => {
         const errorSpy = sinon.spy();
         endpoint.on("error", errorSpy);
 
-        const h2Endpoint = fakes.protocol.Endpoint.firstCall.returnValue;
+        const connection = fakes.protocol.Connection.firstCall.returnValue;
 
-        h2Endpoint.emit("error", "this should be bubbled");
+        connection.emit("error", "this should be bubbled");
 
         expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
       });
     });
 
-    describe("on secureConnect", () => {
-      let socket;
-      let h2Endpoint;
+    context("when tls is established", () => {
+      let endpoint, socket, connection;
 
       beforeEach(() => {
-        const endpoint = new Endpoint({});
+        endpoint = new Endpoint({});
         socket = fakes.tls.connect.firstCall.returnValue;
-        h2Endpoint = fakes.protocol.Endpoint.firstCall.returnValue;
+        connection = fakes.protocol.Connection.firstCall.returnValue;
       });
 
-      it("pipes the tls socket to the h2Endpoint", () => {
+      it("pipes the tls socket to itself", () => {
         let pipe = sinon.stub(socket, "pipe");
 
         socket.emit("secureConnect");
 
-        expect(pipe).to.be.calledWith(h2Endpoint);
+        expect(pipe).to.be.calledWith(endpoint);
       });
 
-      it("pipes the h2Endpoint to the tls socket", () => {
-        let pipe = sinon.stub(h2Endpoint, "pipe");
+      it("pipes itself to the tls socket", () => {
+        let pipe = sinon.stub(endpoint, "pipe");
 
         socket.emit("secureConnect");
         expect(pipe).to.be.calledWith(socket)
+      });
+
+      it("writes the HTTP/2 prelude", done => {
+        sinon.stub(socket, "pipe");
+        socket.emit("secureConnect");
+
+        const HTTP2_PRELUDE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n';
+
+        socket.once("readable", () => {
+          expect(socket.read().toString()).to.equal(HTTP2_PRELUDE);
+          done();
+        });
+      });
+
+      it("emits 'connect' event", () => {
+        let connect = sinon.spy();
+
+        endpoint.on("connect", connect);
+        socket.emit("secureConnect");
+        expect(connect).to.be.calledOnce;
       });
     });
   });
