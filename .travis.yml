@@ -1,5 +1,6 @@
 language: node_js
 node_js:
+- v4.0.0
 - v5.0.0
 before_install:
 - npm install -g npm@2.7.3
