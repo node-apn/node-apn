@@ -35,7 +35,6 @@
   "devDependencies": {
     "chai": "2.x",
     "chai-as-promised": "*",
-    "lolex": "^1.2.1",
     "mocha": "*",
     "rewire": "^2.3.0",
     "sinon": "^1.12.2",

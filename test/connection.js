@@ -1,8 +1,6 @@
 "use strict";
 
-const events = require("events");
 const sinon = require("sinon");
-const lolex = require("lolex");
 const Promise = require("bluebird");
 
 describe("Connection", function() {
