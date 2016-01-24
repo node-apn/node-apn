@@ -20,14 +20,13 @@ describe("Endpoint", () => {
       },
     }
 
+    fakes.tls.connect.returns(new stream.PassThrough());
+    fakes.protocol.Connection.returns(new stream.PassThrough());
+
     Endpoint = require("../../lib/protocol/endpoint")(fakes);
   })
 
   describe("connect", () => {
-    beforeEach(() => {
-      fakes.tls.connect.returns(new stream.PassThrough());
-      fakes.protocol.Connection.returns(new stream.PassThrough());
-    });
 
     describe("tls socket", () => {
 
@@ -140,7 +139,9 @@ describe("Endpoint", () => {
         expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
       });
     });
+  });
 
+  describe("stream behaviour", () => {
     context("when tls is established", () => {
       let endpoint, socket, connection;
 
