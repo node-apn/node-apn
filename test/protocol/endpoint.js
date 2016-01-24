@@ -38,39 +38,54 @@ describe("Endpoint", () => {
       describe("connection parameters", () => {
         let connectParameters;
 
-        beforeEach(() => {
-          let endpoint = new Endpoint({
-            address: "localtest", port: 443,
-            pfx: "pfxData", cert: "certData",
-            key: "keyData", passphrase: "p4ssphr4s3"
+        context("all supplied", () => {
+
+          beforeEach(() => {
+            new Endpoint({
+              address: "localtest", host: "127.0.0.1", port: 443,
+              pfx: "pfxData", cert: "certData",
+              key: "keyData", passphrase: "p4ssphr4s3"
+            });
           });
 
-          connectParameters = fakes.tls.connect.firstCall.args[0];
+          it("includes the host and port and servername", () => {
+            expect(fakes.tls.connect).to.be.calledWith(sinon.match({
+              host: "127.0.0.1",
+              port: 443,
+              servername: "localtest"
+            }));
+          });
+
+          it("includes the ALPNProtocols", () => {
+            expect(fakes.tls.connect).to.be.calledWith(sinon.match({
+              ALPNProtocols: ["h2"]
+            }));
+          });
+
+          it("includes the credentials", () => {
+            expect(fakes.tls.connect).to.be.calledWith(sinon.match({
+              pfx: "pfxData",
+              cert: "certData",
+              key: "keyData",
+              passphrase: "p4ssphr4s3"
+            }));
+          });
         });
 
-        it("includes the host and port", () => {
-          expect(connectParameters).to.have.property("host", "localtest")
-          expect(connectParameters).to.have.property("port", 443);
+        context("host is not omitted", () => {
+            it("falls back on 'address'", () => {
+              let endpoint = new Endpoint({
+                address: "localtest", port: 443
+              });
+
+              expect(fakes.tls.connect).to.be.calledWith(sinon.match({
+                host: "localtest",
+                port: 443,
+                servername: "localtest"
+              }));
+            });
         });
 
-        context("host is not supplied", () => {
-            it("falls back on 'address'");
-        });
-
-        it("includes the servername", () => {
-          expect(connectParameters).to.have.property("servername", "localtest");
-        });
-
-        it("includes the ALPNProtocols", () => {
-          expect(connectParameters.ALPNProtocols[0]).to.equal("h2");
-        });
-
-        it("includes the credentials", () => {
-          expect(connectParameters).to.have.property("pfx", "pfxData");
-          expect(connectParameters).to.have.property("cert", "certData");
-          expect(connectParameters).to.have.property("key", "keyData");
-          expect(connectParameters).to.have.property("passphrase", "p4ssphr4s3");
-        });
       });
 
       it("bubbles error events", () => {
@@ -82,7 +97,7 @@ describe("Endpoint", () => {
 
         socket.emit("error", "this should be bubbled");
 
-        expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
+        expect(errorSpy).to.have.been.calledWith("this should be bubbled");
       });
     });
 
