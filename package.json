@@ -46,7 +46,7 @@
     "node": true
   },
   "engines": {
-    "node": ">= 0.10.19"
+    "node": ">= 4.0.0"
   },
   "license": "MIT"
 }
