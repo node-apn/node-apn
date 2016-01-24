@@ -36,7 +36,6 @@
     "chai": "2.x",
     "chai-as-promised": "*",
     "mocha": "*",
-    "rewire": "^2.3.0",
     "sinon": "^1.12.2",
     "sinon-chai": "^2.6.0"
   },
