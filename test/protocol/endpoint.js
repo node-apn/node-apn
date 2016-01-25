@@ -4,7 +4,7 @@ let sinon = require("sinon");
 let stream = require("stream");
 
 describe("Endpoint", () => {
-  let fakes, Endpoint, socket, connection;
+  let fakes, streams, Endpoint;
 
   beforeEach(() => {
     fakes = {
@@ -12,24 +12,34 @@ describe("Endpoint", () => {
         connect: sinon.stub(),
       },
       protocol: {
-        Connection: sinon.stub(),
-        Serializer: sinon.stub(),
+        Connection:   sinon.stub(),
+        Serializer:   sinon.stub(),
         Deserializer: sinon.stub(),
-        Compressor: sinon.stub(),
+        Compressor:   sinon.stub(),
         Decompressor: sinon.stub(),
       },
-    }
+    };
 
-    socket = new stream.PassThrough()
-    fakes.tls.connect.returns(socket);
-    connection = new stream.PassThrough()
-    fakes.protocol.Connection.returns(connection);
+    streams = {
+      socket:       new stream.PassThrough(),
+      connection:   new stream.PassThrough(),
+      serializer:   new stream.PassThrough(),
+      deserializer: new stream.PassThrough(),
+      compressor:   new stream.PassThrough(),
+      decompressor: new stream.PassThrough(),
+    };
+
+    fakes.tls.connect.returns(streams.socket);
+    fakes.protocol.Connection.returns(streams.connection);
+    fakes.protocol.Serializer.returns(streams.serializer);
+    fakes.protocol.Deserializer.returns(streams.deserializer);
+    fakes.protocol.Compressor.returns(streams.compressor);
+    fakes.protocol.Decompressor.returns(streams.decompressor);
 
     Endpoint = require("../../lib/protocol/endpoint")(fakes);
-  })
+  });
 
   describe("connect", () => {
-
     describe("tls socket", () => {
 
       it("is created", () => {
@@ -95,7 +105,7 @@ describe("Endpoint", () => {
         let connect = sinon.spy();
 
         endpoint.on("connect", connect);
-        socket.emit("secureConnect");
+        streams.socket.emit("secureConnect");
         expect(connect).to.be.calledOnce;
       });
 
@@ -104,9 +114,7 @@ describe("Endpoint", () => {
         const errorSpy = sinon.spy();
         endpoint.on("error", errorSpy);
 
-        const socket = fakes.tls.connect.firstCall.returnValue;
-
-        socket.emit("error", "this should be bubbled");
+        streams.socket.emit("error", "this should be bubbled");
 
         expect(errorSpy).to.have.been.calledWith("this should be bubbled");
       });
@@ -165,17 +173,17 @@ describe("Endpoint", () => {
       beforeEach(() => {
         endpoint = new Endpoint({});
         sinon.stub(endpoint, "pipe");
-        sinon.stub(socket, "pipe");
+        sinon.stub(streams.socket, "pipe");
 
-        socket.emit("secureConnect");
+        streams.socket.emit("secureConnect");
       });
 
       it("pipes the tls socket to itself", () => {
-        expect(socket.pipe).to.be.calledWith(endpoint);
+        expect(streams.socket.pipe).to.be.calledWith(endpoint);
       });
 
       it("pipes itself to the tls socket", () => {
-        expect(endpoint.pipe).to.be.calledWith(socket)
+        expect(endpoint.pipe).to.be.calledWith(streams.socket)
       });
     });
   });
