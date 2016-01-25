@@ -148,6 +148,13 @@ describe("Endpoint", () => {
 
         expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
       });
+
+      it("writes the HTTP/2 prelude", () => {
+        const endpoint = new Endpoint({});
+        const HTTP2_PRELUDE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n';
+
+        expect(endpoint.read().toString()).to.equal(HTTP2_PRELUDE);
+      });
     });
   });
 
@@ -169,12 +176,6 @@ describe("Endpoint", () => {
 
       it("pipes itself to the tls socket", () => {
         expect(endpoint.pipe).to.be.calledWith(socket)
-      });
-
-      it("writes the HTTP/2 prelude", () => {
-        const HTTP2_PRELUDE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n';
-
-        expect(endpoint.read().toString()).to.equal(HTTP2_PRELUDE);
       });
     });
   });
