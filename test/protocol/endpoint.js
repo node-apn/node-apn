@@ -44,6 +44,9 @@ describe("Endpoint", () => {
     sinon.stub(streams.socket, "pipe");
     sinon.stub(streams.connection, "pipe");
 
+    streams.compressor.setTableSizeLimit = sinon.spy();
+    streams.decompressor.setTableSizeLimit = sinon.spy();
+
     fakes.tls.connect.returns(streams.socket);
     fakes.protocol.Connection.returns(streams.connection);
     fakes.protocol.Serializer.returns(streams.serializer);
@@ -230,6 +233,11 @@ describe("Endpoint", () => {
           expect(fakes.protocol.Compressor).to.have.been.calledWith(sinon.match.any, 'REQUEST');
         });
 
+        it("handles HEADER_TABLE_SIZE settings update", () => {
+          streams.connection.emit('RECEIVING_SETTINGS_HEADER_TABLE_SIZE', 1000);
+          expect(streams.compressor.setTableSizeLimit).to.have.been.calledWith(1000);
+        });
+
         it("bubbles error events", () => {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
@@ -249,6 +257,11 @@ describe("Endpoint", () => {
         it("is passed the correct parameters", () => {
           expect(fakes.protocol.Decompressor).to.have.been.calledWith(bunyanLogger);
           expect(fakes.protocol.Decompressor).to.have.been.calledWith(sinon.match.any, 'RESPONSE');
+        });
+
+        it("handles HEADER_TABLE_SIZE settings acknowledgement", () => {
+          streams.connection.emit('ACKNOWLEDGED_SETTINGS_HEADER_TABLE_SIZE', 1000);
+          expect(streams.decompressor.setTableSizeLimit).to.have.been.calledWith(1000);
         });
 
         it("bubbles error events", () => {
