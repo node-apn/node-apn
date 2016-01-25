@@ -150,6 +150,52 @@ describe("Endpoint", () => {
         });
       });
 
+      describe("serializer", () => {
+        it("is created", () => {
+          expect(fakes.protocol.Serializer).to.have.been.calledWithNew;
+          expect(fakes.protocol.Serializer).to.have.been.calledOnce;
+        });
+
+        it("is passed the logger", () => {
+          expect(fakes.protocol.Serializer).to.have.been.calledWith(bunyanLogger);
+        });
+      });
+
+      describe("deserializer", () => {
+        it("is created", () => {
+          expect(fakes.protocol.Deserializer).to.have.been.calledWithNew;
+          expect(fakes.protocol.Deserializer).to.have.been.calledOnce;
+        });
+
+        it("is passed the logger", () => {
+          expect(fakes.protocol.Deserializer).to.have.been.calledWith(bunyanLogger);
+        });
+      });
+
+      describe("compressor", () => {
+        it("is created", () => {
+          expect(fakes.protocol.Compressor).to.have.been.calledWithNew;
+          expect(fakes.protocol.Compressor).to.have.been.calledOnce;
+        });
+
+        it("is passed the correct parameters", () => {
+          expect(fakes.protocol.Compressor).to.have.been.calledWith(bunyanLogger);
+          expect(fakes.protocol.Compressor).to.have.been.calledWith(sinon.match.any, 'REQUEST');
+        });
+      });
+
+      describe("decompressor", () => {
+        it("is created", () => {
+          expect(fakes.protocol.Decompressor).to.have.been.calledWithNew;
+          expect(fakes.protocol.Decompressor).to.have.been.calledOnce;
+        });
+
+        it("is passed the correct parameters", () => {
+          expect(fakes.protocol.Decompressor).to.have.been.calledWith(bunyanLogger);
+          expect(fakes.protocol.Decompressor).to.have.been.calledWith(sinon.match.any, 'RESPONSE');
+        });
+      });
+    });
 
     it("bubbles error events", () => {
       const endpoint = new Endpoint({});
@@ -176,6 +222,10 @@ describe("Endpoint", () => {
     beforeEach(() => {
       sinon.stub(streams.socket, "pipe");
       sinon.stub(streams.connection, "pipe");
+      sinon.stub(streams.serializer, "pipe");
+      sinon.stub(streams.deserializer, "pipe");
+      sinon.stub(streams.compressor, "pipe");
+      sinon.stub(streams.decompressor, "pipe");
       
       endpoint = new Endpoint({});
       sinon.stub(endpoint, "pipe");
@@ -194,6 +244,10 @@ describe("Endpoint", () => {
         expect(endpoint.pipe).to.be.calledWith(streams.socket);
       });
     });
+
+    // it("pipes the connection to the compressor", () => {
+    //   expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
+    // });
   });
 
   describe("available slots", () => {
