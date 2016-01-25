@@ -233,9 +233,21 @@ describe("Endpoint", () => {
       });
     });
 
-    // it("pipes the connection to the compressor", () => {
-    //   expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
-    // });
+    it("pipes the connection to the compressor", () => {
+      expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
+    });
+
+    it("pipes the compressor to the serializer", () => {
+      expect(streams.compressor.pipe).to.be.calledWith(streams.serializer);
+    });
+
+    it("pipes the deserializer to the decompressor", () => {
+      expect(streams.deserializer.pipe).to.be.calledWith(streams.decompressor);
+    });
+
+    it("pipes the decompressor to the connection", () => {
+      expect(streams.decompressor.pipe).to.be.calledWith(streams.connection);
+    });
   });
 
   describe("available slots", () => {
