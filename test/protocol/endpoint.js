@@ -38,6 +38,12 @@ describe("Endpoint", () => {
       decompressor: new stream.PassThrough(),
     };
 
+    // These streams should never actually pass writable -> readable 
+    // otherwise the tests create an infinite loop. The real streams terminate.
+    // PassThrough is just an easy way to inspect the stream behaviour.
+    sinon.stub(streams.socket, "pipe");
+    sinon.stub(streams.connection, "pipe");
+
     fakes.tls.connect.returns(streams.socket);
     fakes.protocol.Connection.returns(streams.connection);
     fakes.protocol.Serializer.returns(streams.serializer);
@@ -109,13 +115,25 @@ describe("Endpoint", () => {
         });
       });
 
-      it("emits 'connect' event", () => {
-        const endpoint = new Endpoint({});
-        let connect = sinon.spy();
+      context("connection established", () => {
+        it("writes the HTTP/2 prelude", () => {
+          const endpoint = new Endpoint({});
 
-        endpoint.on("connect", connect);
-        streams.socket.emit("secureConnect");
-        expect(connect).to.be.calledOnce;
+          const HTTP2_PRELUDE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n';
+
+          streams.socket.once("readable", () => {
+            expect(streams.socket.read().toString()).to.equal(HTTP2_PRELUDE);
+          });
+        });
+
+        it("emits 'connect' event", () => {
+          const endpoint = new Endpoint({});
+          let connect = sinon.spy();
+
+          endpoint.on("connect", connect);
+          streams.socket.emit("secureConnect");
+          expect(connect).to.be.calledOnce;
+        });
       });
 
       it("bubbles error events", () => {
@@ -196,27 +214,17 @@ describe("Endpoint", () => {
         });
       });
     });
-
-    it("writes the HTTP/2 prelude", () => {
-      const endpoint = new Endpoint({});
-      const HTTP2_PRELUDE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n';
-
-      expect(endpoint.read().toString()).to.equal(HTTP2_PRELUDE);
-    });
   });
 
   describe("stream behaviour", () => {
     let endpoint;
     beforeEach(() => {
-      sinon.stub(streams.socket, "pipe");
-      sinon.stub(streams.connection, "pipe");
       sinon.stub(streams.serializer, "pipe");
       sinon.stub(streams.deserializer, "pipe");
       sinon.stub(streams.compressor, "pipe");
       sinon.stub(streams.decompressor, "pipe");
       
       endpoint = new Endpoint({});
-      sinon.stub(endpoint, "pipe");
     });
 
     context("when tls is established", () => {
@@ -224,12 +232,12 @@ describe("Endpoint", () => {
         streams.socket.emit("secureConnect");
       });
 
-      it("pipes the tls socket to itself", () => {
-        expect(streams.socket.pipe).to.be.calledWith(endpoint);
+      it("pipes the tls socket to the deserializer", () => {
+        expect(streams.socket.pipe).to.be.calledWith(streams.deserializer);
       });
 
-      it("pipes itself to the tls socket", () => {
-        expect(endpoint.pipe).to.be.calledWith(streams.socket);
+      it("pipes the serializer to the tls socket", () => {
+        expect(streams.serializer.pipe).to.be.calledWith(streams.socket);
       });
     });
 
