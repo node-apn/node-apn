@@ -148,8 +148,10 @@ describe("Endpoint", () => {
     });
 
     describe("HTTP/2 layer", () => {
+      let endpoint;
+
       beforeEach(() => {
-        const endpoint = new Endpoint({});
+        endpoint = new Endpoint({});
       });
       
       describe("connection", () => {
@@ -166,6 +168,15 @@ describe("Endpoint", () => {
           // First stream ID
           expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match.any, 1);
         });
+
+        it("bubbles error events", () => {
+          const errorSpy = sinon.spy();
+          endpoint.on("error", errorSpy);
+
+          streams.connection.emit("error", "this should be bubbled");
+
+          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+        });
       });
 
       describe("serializer", () => {
@@ -177,6 +188,15 @@ describe("Endpoint", () => {
         it("is passed the logger", () => {
           expect(fakes.protocol.Serializer).to.have.been.calledWith(bunyanLogger);
         });
+
+        it("bubbles error events", () => {
+          const errorSpy = sinon.spy();
+          endpoint.on("error", errorSpy);
+
+          streams.serializer.emit("error", "this should be bubbled");
+
+          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+        });
       });
 
       describe("deserializer", () => {
@@ -187,6 +207,15 @@ describe("Endpoint", () => {
 
         it("is passed the logger", () => {
           expect(fakes.protocol.Deserializer).to.have.been.calledWith(bunyanLogger);
+        });
+
+        it("bubbles error events", () => {
+          const errorSpy = sinon.spy();
+          endpoint.on("error", errorSpy);
+
+          streams.deserializer.emit("error", "this should be bubbled");
+
+          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
         });
       });
 
@@ -200,6 +229,15 @@ describe("Endpoint", () => {
           expect(fakes.protocol.Compressor).to.have.been.calledWith(bunyanLogger);
           expect(fakes.protocol.Compressor).to.have.been.calledWith(sinon.match.any, 'REQUEST');
         });
+
+        it("bubbles error events", () => {
+          const errorSpy = sinon.spy();
+          endpoint.on("error", errorSpy);
+
+          streams.compressor.emit("error", "this should be bubbled");
+
+          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+        });
       });
 
       describe("decompressor", () => {
@@ -211,6 +249,15 @@ describe("Endpoint", () => {
         it("is passed the correct parameters", () => {
           expect(fakes.protocol.Decompressor).to.have.been.calledWith(bunyanLogger);
           expect(fakes.protocol.Decompressor).to.have.been.calledWith(sinon.match.any, 'RESPONSE');
+        });
+
+        it("bubbles error events", () => {
+          const errorSpy = sinon.spy();
+          endpoint.on("error", errorSpy);
+
+          streams.decompressor.emit("error", "this should be bubbled");
+
+          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
         });
       });
     });
@@ -266,17 +313,5 @@ describe("Endpoint", () => {
     context("when streams have been reserved", () => {
       it("reflects the number of remaining slots");
     });
-  });
-
-  it("bubbles error events", () => {
-    const endpoint = new Endpoint({});
-    const errorSpy = sinon.spy();
-    endpoint.on("error", errorSpy);
-
-    const connection = fakes.protocol.Connection.firstCall.returnValue;
-
-    connection.emit("error", "this should be bubbled");
-
-    expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
   });
 });
