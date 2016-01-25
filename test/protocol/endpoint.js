@@ -197,18 +197,6 @@ describe("Endpoint", () => {
       });
     });
 
-    it("bubbles error events", () => {
-      const endpoint = new Endpoint({});
-      const errorSpy = sinon.spy();
-      endpoint.on("error", errorSpy);
-
-      const connection = fakes.protocol.Connection.firstCall.returnValue;
-
-      connection.emit("error", "this should be bubbled");
-
-      expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
-    });
-
     it("writes the HTTP/2 prelude", () => {
       const endpoint = new Endpoint({});
       const HTTP2_PRELUDE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n';
@@ -258,5 +246,17 @@ describe("Endpoint", () => {
     context("when streams have been reserved", () => {
       it("reflects the number of remaining slots");
     });
+  });
+
+  it("bubbles error events", () => {
+    const endpoint = new Endpoint({});
+    const errorSpy = sinon.spy();
+    endpoint.on("error", errorSpy);
+
+    const connection = fakes.protocol.Connection.firstCall.returnValue;
+
+    connection.emit("error", "this should be bubbled");
+
+    expect(errorSpy.firstCall).to.have.been.calledWith("this should be bubbled");
   });
 });
