@@ -47,10 +47,13 @@ The value to specify for `payload.aps.sound`
 
 The value to specify for `payload.aps.alert` can be either a `String` or an `Object` as outlined by the payload documentation.
 
-### notification.newsstandAvailable
+### notification.category
+
+The value to specify for `payload.aps.category` for use with custom actions.
+
 ### notification.contentAvailable
 
-Setting either of these properties to true will specify "content-available" in the payload when it is compiled.
+Set the `content-available` property of the `aps` object.
 
 ### notification.mdm
 
@@ -58,7 +61,7 @@ The value to specify for the `mdm` field where applicable.
 
 ### notification.urlArgs
 
-The value to specify for `payload.aps['url-args']`. This used for Safari Push NOtifications and should be an array of values in accordance with the [Web Payload Documentation][webpayloaddocs].
+The value to specify for `payload.aps['url-args']`. This used for Safari Push Notifications and should be an array of values in accordance with the [Web Payload Documentation][webpayloaddocs].
 
 ### notification.truncateAtWordEnd
 
@@ -96,7 +99,6 @@ Set the `launch-image` property of the `aps.alert` object.
 
 Set the `mdm` property on the payload.
 
-### notification.setNewsstandAvailable(available)
 ### notification.setContentAvailable(available)
 
 Set the `content-available` property of the `aps` object.
