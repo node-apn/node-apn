@@ -318,13 +318,18 @@ describe("Endpoint", () => {
     });
   });
 
-  describe("available slots", () => {
-    context("before settings received from server", () => {
-      it("defaults to zero");
-    });
+  describe("available stream slots", () => {
+    it("reflects the underlying connection property", () => {
+      streams.connection._streamSlotsFree = Infinity;
+      let endpoint = new Endpoint({});
 
-    context("when streams have been reserved", () => {
-      it("reflects the number of remaining slots");
+      expect(endpoint.availableStreamSlots).to.equal(Infinity);
+
+      streams.connection._streamSlotsFree = 1024;
+      expect(endpoint.availableStreamSlots).to.equal(1024);
+
+      streams.connection._streamSlotsFree = 0;
+      expect(endpoint.availableStreamSlots).to.equal(0);
     });
   });
 });
