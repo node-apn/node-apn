@@ -332,4 +332,26 @@ describe("Endpoint", () => {
       expect(endpoint.availableStreamSlots).to.equal(0);
     });
   });
+
+  describe("createStream", () => {
+    let endpoint;
+
+    beforeEach(() => {
+      streams.connection.createStream = sinon.stub();
+      endpoint = new Endpoint({});
+    });
+
+    it("calls createStream on the connection", () => {
+      endpoint.createStream();
+
+      expect(streams.connection.createStream).to.have.been.calledOnce;
+    });
+
+    it("passes the return value from the connection", () => {
+      const sentinel = {sentinel: "stream"};
+      streams.connection.createStream.returns(sentinel);
+
+      expect(endpoint.createStream()).to.equal(sentinel);
+    });
+  });
 });
