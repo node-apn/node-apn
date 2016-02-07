@@ -57,7 +57,7 @@ describe("Endpoint Manager", () => {
 			});
 		});
 
-		context("with an existing connection", () => {
+		context("with an established endpoint", () => {
 			let endpoint;
 
 			beforeEach(() => {
@@ -66,11 +66,23 @@ describe("Endpoint Manager", () => {
 				endpoint.emit("connect");
 			});
 
-			it("calls createStream on the endpoint", () => {
-				const sentinel = new Object;
-				endpoint.createStream.returns(sentinel);
+			context("when there are available slots", () => {
+				beforeEach(() => {
+					endpoint.availableStreamSlots = 5;
+				});
 
-				expect(manager.getStream()).to.equal(sentinel);
+				it("calls createStream on the endpoint", () => {
+					manager.getStream();
+
+					expect(endpoint.createStream).to.have.been.calledOnce;
+				});
+
+				it("returns the endpoints created stream", () => {
+					const sentinel = new Object;
+					endpoint.createStream.returns(sentinel);
+
+					expect(manager.getStream()).to.equal(sentinel);
+				});
 			});
 		});
 
