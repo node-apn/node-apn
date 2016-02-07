@@ -11,7 +11,10 @@ describe("Endpoint Manager", () => {
 			Endpoint: sinon.stub()
 		}
 
-		fakes.Endpoint.returns(new EventEmitter);
+		const endpoint = new EventEmitter;
+		endpoint.createStream = sinon.stub().returns({"kind": "stream"});
+
+		fakes.Endpoint.returns(endpoint);
 
 		EndpointManager = require("../../lib/protocol/endpointManager")(fakes);
 	});
@@ -32,6 +35,10 @@ describe("Endpoint Manager", () => {
 				expect(fakes.Endpoint).to.be.calledWithNew;
 			});
 
+			it("returns null", () => {
+				expect(manager.getStream()).to.be.null;
+			});
+
 			context("with an endpoint already connecting", () => {
 				it("does not create a new Endpoint", () => {
 					manager.getStream();
@@ -41,6 +48,23 @@ describe("Endpoint Manager", () => {
 
 					expect(fakes.Endpoint).to.not.be.called;
 				})
+			});
+		});
+
+		context("with an existing connection", () => {
+			let endpoint;
+
+			beforeEach(() => {
+				manager.getStream();
+				endpoint = fakes.Endpoint.returnValues[0];
+				endpoint.emit("connect");
+			});
+
+			it("calls createStream on the endpoint", () => {
+				const sentinel = new Object;
+				endpoint.createStream.returns(sentinel);
+
+				expect(manager.getStream()).to.equal(sentinel);
 			});
 		});
 
