@@ -44,7 +44,6 @@ describe("Endpoint Manager", () => {
 			});
 		});
 
-
 		context("with multiple endpoints", () => {
 			it("reserves streams by round-robin")
 			context("where next endpoint has no available slots", () => {
@@ -73,7 +72,37 @@ describe("Endpoint Manager", () => {
 		});
 
 		context("when an endpoint wakes up", () => {
-			it("is emitted when a connection has slots available")
+			let wakeupSpy, endpoint;
+
+			beforeEach(() => {
+				const manager = new EndpointManager();
+				manager.getStream();
+				
+				endpoint = fakes.Endpoint.firstCall.returnValue;
+				endpoint.emit("connect");
+				wakeupSpy = sinon.spy();
+				manager.on("wakeup", wakeupSpy);
+			});
+			
+			context("with slots available", () => {
+				it("is emitted", () => {
+					endpoint.availableStreamSlots = 5;
+
+					endpoint.emit("wakeup");
+
+					expect(wakeupSpy).to.be.called;
+				});
+			});
+
+			context("with no slots available", () => {
+				it("doesn't emit", () => {
+					endpoint.availableStreamSlots = 0;
+
+					endpoint.emit("wakeup");
+
+					expect(wakeupSpy).to.not.be.called;
+				});
+			});
 		});
 	});
 });
