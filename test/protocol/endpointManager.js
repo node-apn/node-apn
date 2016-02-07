@@ -47,7 +47,13 @@ describe("Endpoint Manager", () => {
 					manager.getStream();
 
 					expect(fakes.Endpoint).to.not.be.called;
-				})
+				});
+
+				it("returns null", () => {
+					manager.getStream();
+
+					expect(manager.getStream()).to.be.null;
+				});
 			});
 		});
 
