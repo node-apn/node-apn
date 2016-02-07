@@ -180,6 +180,15 @@ describe("Endpoint", () => {
 
           expect(errorSpy).to.have.been.calledWith("this should be bubbled");
         });
+
+        it("bubbles `wakeup` events", () => {
+          const wakeupSpy = sinon.spy();
+          endpoint.on("wakeup", wakeupSpy);
+
+          streams.connection.emit("wakeup");
+
+          expect(wakeupSpy).to.have.been.calledOnce;
+        });
       });
 
       describe("serializer", () => {
