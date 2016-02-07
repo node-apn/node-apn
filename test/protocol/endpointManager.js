@@ -84,6 +84,26 @@ describe("Endpoint Manager", () => {
 					expect(manager.getStream()).to.equal(sentinel);
 				});
 			});
+
+			context("when there are no available stream slots", () => {
+				beforeEach(() => {
+					endpoint.availableStreamSlots = 0;
+				});
+
+				it("doesn't call createStream on the endpoint", () => {
+					manager.getStream();
+
+					expect(endpoint.createStream).to.have.not.been.called;
+				});
+
+				it("doesn't create another endpoint", () => {
+					fakes.Endpoint.reset();
+
+					manager.getStream();
+
+					expect(fakes.Endpoint).to.have.not.been.called;
+				});
+			});
 		});
 
 		context("with multiple endpoints", () => {
