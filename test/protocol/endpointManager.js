@@ -33,7 +33,7 @@ describe("Endpoint Manager", () => {
 			});
 
 			context("with an endpoint already connecting", () => {
-				xit("does not create a new Endpoint", () => {
+				it("does not create a new Endpoint", () => {
 					manager.getStream();
 
 					fakes.Endpoint.reset();
