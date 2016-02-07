@@ -1,7 +1,7 @@
 "use strict";
 
-let sinon = require("sinon");
-let EventEmitter = require("events");
+const sinon = require("sinon");
+const EventEmitter = require("events");
 
 describe("Endpoint Manager", () => {
 	let fakes, EndpointManager;
