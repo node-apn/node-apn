@@ -29,9 +29,13 @@ describe("Endpoint Manager", () => {
 
 		context("with no established endpoints", () => {
 			it("creates an endpoint connection", () => {
+				const fakeConfig = { "sentinel": "config"};
+
+				manager = new EndpointManager(fakeConfig);
 				manager.getStream();
 
 				expect(fakes.Endpoint).to.be.calledOnce;
+				expect(fakes.Endpoint).to.be.calledWith(fakeConfig);
 				expect(fakes.Endpoint).to.be.calledWithNew;
 			});
 
