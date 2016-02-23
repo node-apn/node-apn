@@ -96,7 +96,7 @@ The above options will compile the following dictionary to send to the device:
 
 	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
 
-You should only create one `Connection` for each certificate/key pair you have, you do not need to create a new one for each notification. If you are only sending notifications to one app then there is no need for more than one `Connection`, if throughput is a problem then look at the `maxConnections` property.
+You should only create one `Connection` per-process for each certificate/key pair you have. You do not need to create a new `Connection` for each notification. If you are only sending notifications to one app then there is no need for more than one `Connection`, if throughput is a problem then look at the `maxConnections` property.
 
 ### Setting up the feedback service
 
