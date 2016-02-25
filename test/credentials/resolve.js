@@ -22,19 +22,19 @@ describe("resolve", function() {
 	});
 
 	describe("with file path", function() {
-		it("eventually returns a Buffer for valid path", function() {
+		it("returns a Buffer for valid path", function() {
 			return expect(resolve("test/support/initializeTest.key"))
-						 .to.eventually.satisfy(Buffer.isBuffer);
+						 .to.satisfy(Buffer.isBuffer);
 		});
 		
-		it("eventually returns contents for value path", function () {
+		it("returns contents for value path", function () {
 			return expect(resolve("test/support/initializeTest.key")
-				.call("toString")).to.eventually.equal(key.toString());
+				.toString()).to.equal(key.toString());
 		});
 
-		it("is eventually rejected for invalid path", function() {
-			return expect(resolve("test/support/fail/initializeTest.key"))
-				.to.eventually.be.rejected;
+		it("throws for invalid path", function() {
+			return expect(() => { resolve("test/support/fail/initializeTest.key") })
+				.to.throw;
 		});
 	});
 
