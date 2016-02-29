@@ -7,7 +7,8 @@ describe("config", () => {
 
   beforeEach(function() {
     fakes = {
-      debug: sinon.spy()
+      debug: sinon.spy(),
+      prepareCredentials: sinon.stub(),
     };
 
     config = require("../lib/config")(fakes);
@@ -78,7 +79,7 @@ describe("config", () => {
     });
   });
 
-  describe("credential defaults", () => {
+  describe("credentials", () => {
     context("pfx value is supplied without cert and key", () => {
       it("includes the value of `pfx`", () => {
         expect(config( { pfx: "apn.pfx" } )).to.have.property("pfx", "apn.pfx");
@@ -133,6 +134,15 @@ describe("config", () => {
       it("does not include a value for `key`", () => {
         expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" })).to.have.property("key", "key.pem");
       });
+    });
+
+    it("loads and validates the credentials", () => {
+      fakes.prepareCredentials.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData"});
+
+      let configuration = config({});
+      expect(configuration).to.have.property("cert", "certData");
+      expect(configuration).to.have.property("key", "keyData");
+      expect(configuration).to.have.property("pfx", "pfxData");
     });
   });
 

@@ -2,8 +2,8 @@
 
 const sinon = require("sinon");
 
-describe("loadAndValidate", function () {
-  let fakes, loadAndValidate;
+describe("prepare", function () {
+  let fakes, prepare;
 
   beforeEach(() => {
     fakes = {
@@ -12,7 +12,7 @@ describe("loadAndValidate", function () {
       validate: sinon.stub(),
     }
 
-    loadAndValidate = require("../../lib/credentials/loadAndValidate")(fakes);
+    prepare = require("../../lib/credentials/prepare")(fakes);
   });
 
   describe("with valid credentials", function() {
@@ -38,7 +38,7 @@ describe("loadAndValidate", function () {
       );
 
       fakes.parse.returnsArg(0);
-      credentials = loadAndValidate(testOptions);
+      credentials = prepare(testOptions);
     });
 
     describe("the validation stage", function() {
@@ -100,7 +100,7 @@ describe("loadAndValidate", function () {
     });
 
     it("should resolve with the credentials", function() {
-      let credentials = loadAndValidate({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem", production: true });
+      let credentials = prepare({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem", production: true });
       return expect(credentials).to.deep.equal({ cert: "myCertData", key: "myKeyData" });
     });
 
@@ -118,7 +118,7 @@ describe("loadAndValidate", function () {
     });
 
     it("should not attempt to validate", function() {
-      let credentials = loadAndValidate({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" });
+      let credentials = prepare({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" });
       expect(fakes.validate).to.not.be.called;
     });
   });
@@ -129,7 +129,7 @@ describe("loadAndValidate", function () {
       fakes.parse.returnsArg(0);
       fakes.validate.throws(new Error("certificate and key do not match"));
 
-      return expect(() => loadAndValidate({ cert: "myCert.pem", key: "myMistmatchedKey.pem" })).to.throw(/certificate and key do not match/);
+      return expect(() => prepare({ cert: "myCert.pem", key: "myMistmatchedKey.pem" })).to.throw(/certificate and key do not match/);
     });
   });
 
@@ -137,7 +137,7 @@ describe("loadAndValidate", function () {
     it("should throw", function() {
       fakes.load.throws(new Error("ENOENT, no such file or directory"));
 
-      return expect(() => loadAndValidate({ cert: "noSuchFile.pem", key: "myKey.pem" })).to.throw("ENOENT, no such file or directory");
+      return expect(() => prepare({ cert: "noSuchFile.pem", key: "myKey.pem" })).to.throw("ENOENT, no such file or directory");
     });
   });
 });

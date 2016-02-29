@@ -8,11 +8,6 @@ describe("Connection", function() {
 	beforeEach(() => {
 		fakes = {
 			config: sinon.stub(),
-			credentials: {
-				load: sinon.stub(),
-				parse: sinon.stub(),
-				validate: sinon.stub(),
-			},
 			EndpointManager: sinon.stub(),
 		}
 
