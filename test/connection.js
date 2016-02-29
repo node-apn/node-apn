@@ -7,6 +7,7 @@ describe("Connection", function() {
 
 	beforeEach(() => {
 		fakes = {
+			config: sinon.stub(),
 			credentials: {
 				load: sinon.stub(),
 				parse: sinon.stub(),
@@ -20,15 +21,36 @@ describe("Connection", function() {
 
 	describe("constructor", function () {
 
-		it("creates an EndpointManager", function() {
-			var options = { address: "api.push.apple.com" }
-			var connection = Connection(options);
+		context("called without `new`", () => {
+			it("returns a new instance", () => {
+				expect(Connection()).to.be.an.instanceof(Connection);
+			});
+		});
 
-			expect(fakes.EndpointManager).to.be.calledOnce;
-			expect(fakes.EndpointManager).to.be.calledWithNew;
+		it("prepares the configuration with passed options", () => {
+			let options = { production: true };
+			let connection = Connection(options);
+
+			expect(fakes.config).to.be.calledWith(options);
+		});
+
+		describe("EndpointManager instance", function() {
+			it("is created", () => {
+				Connection();
+
+				expect(fakes.EndpointManager).to.be.calledOnce;
+				expect(fakes.EndpointManager).to.be.calledWithNew;
+			});
+
+			it("is passed the prepared configuration", () => {
+				const returnSentinel = { "configKey": "configValue"};
+				fakes.config.returns(returnSentinel);
+
+				Connection({});
+				expect(fakes.EndpointManager).to.be.calledWith(returnSentinel);
+			});
 		});
 	});
-
 
 	describe("pushNotification", () => {});
 });
