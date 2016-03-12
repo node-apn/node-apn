@@ -1,11 +1,11 @@
-var apn = require("../");
+var Notification = require("../lib/notification");
 var sinon = require("sinon");
 
 describe("Notification", function() {
 
 	var note;
 	beforeEach(function() {
-		note = new apn.Notification();
+		note = new Notification();
 	});
 
 	describe("aps payload", function() {
