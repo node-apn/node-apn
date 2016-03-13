@@ -83,7 +83,6 @@ describe("Connection", function() {
 		          ":method": "POST",
 		          ":authority": "testapi",
 		          ":path": "/3/device/abcd1234",
-		          "apns-topic": "io.apn.node",
 		          "content-length": Buffer.byteLength(notificationDouble().compile()),
 		        } );
 					});
@@ -102,8 +101,20 @@ describe("Connection", function() {
 					});
 				});
 
-				xcontext("error occurs", () => {
+				context("error occurs", () => {
+					let promise;
+
+					beforeEach(() => {
+						const connection = new Connection( { address: "testapi" } );
+
+						fakes.stream = new FakeStream("abcd1234", 400, { "reason" : "BadDeviceToken" });
+						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+						promise = connection.pushNotification(notificationDouble(), "abcd1234");
+					});
+
 					it("resolves with the device token, status code and response in the failed array", () => {
+						return expect(promise).to.eventually.deep.equal([[], [{"device": "abcd1234", "status": 400, "response": { "reason" : "BadDeviceToken" }}]])
 					});
 				});
 			});
