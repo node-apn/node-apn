@@ -23,6 +23,7 @@ describe("config", () => {
 			passphrase: null,
 			production: false,
 			address: "api.sandbox.push.apple.com",
+			port: 443,
 			rejectUnauthorized: true,
 			connectTimeout: 10000,
 			connectionTimeout: 3600000,
