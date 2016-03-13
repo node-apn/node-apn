@@ -112,20 +112,6 @@ describe("Endpoint Manager", () => {
 	});
 
 	describe("wakeup event", () => {
-		context("when an endpoint connects", () => {
-
-			it("is emitted", () => {
-				const wakeupSpy = sinon.spy();
-				const manager = new EndpointManager();
-
-				manager.on("wakeup", wakeupSpy);
-				manager.getStream();
-
-				fakes.Endpoint.firstCall.returnValue.emit("connect");
-
-				expect(wakeupSpy).to.be.calledOnce;
-			});
-		});
 
 		context("when an endpoint wakes up", () => {
 			let wakeupSpy, endpoint;
