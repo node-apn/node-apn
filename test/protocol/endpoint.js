@@ -174,6 +174,14 @@ describe("Endpoint", () => {
           expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match.any, 1);
         });
 
+        it("has streamLimit set to 0", () => {
+          expect(streams.connection._streamLimit).to.equal(0);
+        });
+
+        it("has streamSlotsFree set to 0", () => {
+          expect(streams.connection._streamSlotsFree).to.equal(0);
+        });
+
         it("bubbles error events", () => {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
@@ -337,7 +345,8 @@ describe("Endpoint", () => {
       streams.connection._streamSlotsFree = Infinity;
       let endpoint = new Endpoint({});
 
-      expect(endpoint.availableStreamSlots).to.equal(Infinity);
+      /// This is zeroed out during endpoint creation.
+      expect(endpoint.availableStreamSlots).to.equal(0);
 
       streams.connection._streamSlotsFree = 1024;
       expect(endpoint.availableStreamSlots).to.equal(1024);
