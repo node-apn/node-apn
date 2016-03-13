@@ -151,11 +151,12 @@ describe("Endpoint", () => {
       });
     });
 
-    describe("HTTP/2 layer", () => {
+    context("after socket connects, HTTP/2", () => {
       let endpoint;
 
       beforeEach(() => {
         endpoint = new Endpoint({});
+        streams.socket.emit("secureConnect");
       });
       
       describe("connection", () => {
@@ -299,32 +300,35 @@ describe("Endpoint", () => {
 
     context("when tls is established", () => {
       beforeEach(() => {
+        sinon.spy(streams.socket, "write");
         streams.socket.emit("secureConnect");
       });
 
       it("pipes the tls socket to the deserializer", () => {
         expect(streams.socket.pipe).to.be.calledWith(streams.deserializer);
+        expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
       });
 
       it("pipes the serializer to the tls socket", () => {
         expect(streams.serializer.pipe).to.be.calledWith(streams.socket);
+        expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
       });
-    });
 
-    it("pipes the connection to the compressor", () => {
-      expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
-    });
+      it("pipes the connection to the compressor", () => {
+        expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
+      });
 
-    it("pipes the compressor to the serializer", () => {
-      expect(streams.compressor.pipe).to.be.calledWith(streams.serializer);
-    });
+      it("pipes the compressor to the serializer", () => {
+        expect(streams.compressor.pipe).to.be.calledWith(streams.serializer);
+      });
 
-    it("pipes the deserializer to the decompressor", () => {
-      expect(streams.deserializer.pipe).to.be.calledWith(streams.decompressor);
-    });
+      it("pipes the deserializer to the decompressor", () => {
+        expect(streams.deserializer.pipe).to.be.calledWith(streams.decompressor);
+      });
 
-    it("pipes the decompressor to the connection", () => {
-      expect(streams.decompressor.pipe).to.be.calledWith(streams.connection);
+      it("pipes the decompressor to the connection", () => {
+        expect(streams.decompressor.pipe).to.be.calledWith(streams.connection);
+      });
     });
   });
 
