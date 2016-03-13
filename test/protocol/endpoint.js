@@ -122,11 +122,12 @@ describe("Endpoint", () => {
         it("writes the HTTP/2 prelude", () => {
           const endpoint = new Endpoint({});
 
-          const HTTP2_PRELUDE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n';
+          sinon.spy(streams.socket, "write");
+          streams.socket.emit("secureConnect");
 
-          streams.socket.once("readable", () => {
-            expect(streams.socket.read().toString()).to.equal(HTTP2_PRELUDE);
-          });
+          const HTTP2_PRELUDE = new Buffer('PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n');
+
+          expect(streams.socket.write.firstCall).to.be.calledWith(HTTP2_PRELUDE);
         });
 
         it("emits 'connect' event", () => {
