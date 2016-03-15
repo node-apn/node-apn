@@ -64,13 +64,14 @@ describe("Connection", function() {
 				let promise;
 
 				context("transmission succeeds", () => {
-					beforeEach(() => {
+					beforeEach( done => {
 						const connection = new Connection( { address: "testapi" } );
 
 						fakes.stream = new FakeStream("abcd1234", 200);
 						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
 
 						promise = connection.pushNotification(notificationDouble(), "abcd1234");
+						promise.then( () => done() );
 					});
 
 					it("attempts to acquire one stream", () => {
