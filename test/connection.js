@@ -50,13 +50,12 @@ describe("Connection", function() {
 
 	describe("pushNotification", () => {
 
-    beforeEach(() => {
-      fakes.config.returnsArg(0);
-      fakes.endpointManager = {
-        getStream: sinon.stub(),
-      }
-      fakes.EndpointManager.returns(fakes.endpointManager);
-    });
+		beforeEach(() => {
+			fakes.config.returnsArg(0);
+			fakes.endpointManager.getStream = sinon.stub();
+
+			fakes.EndpointManager.returns(fakes.endpointManager);
+		});
 
 		context("a single stream is available", () => {
 
@@ -80,12 +79,12 @@ describe("Connection", function() {
 
 					it("sends the required headers", () => {
 						expect(fakes.stream.headers).to.be.calledWith( {
-		          ":scheme": "https",
-		          ":method": "POST",
-		          ":authority": "testapi",
-		          ":path": "/3/device/abcd1234",
-		          "content-length": Buffer.byteLength(notificationDouble().compile()),
-		        } );
+							":scheme": "https",
+							":method": "POST",
+							":authority": "testapi",
+							":path": "/3/device/abcd1234",
+							"content-length": Buffer.byteLength(notificationDouble().compile()),
+						});
 					});
 
 					it("writes the notification data to the pipe", () => {
@@ -159,7 +158,7 @@ describe("Connection", function() {
 				it("resolves with the device token, status code and response of the unsuccessful notifications", () => {
 				});
 			});
-	  });
+		});
 	});
 });
 
