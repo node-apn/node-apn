@@ -98,7 +98,7 @@ describe("Connection", function() {
 					});
 
 					it("resolves with the device token in the success array", () => {
-						return expect(promise).to.eventually.deep.equal([[{"device": "abcd1234"}], []]);
+						return expect(promise).to.become([[{"device": "abcd1234"}], []]);
 					});
 				});
 
