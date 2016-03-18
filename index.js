@@ -19,15 +19,15 @@ const config = require("./lib/config")({
 
 const tls = require("tls");
 
-const framer = require("http2/lib/protocol/framer");
+const framer     = require("http2/lib/protocol/framer");
 const compressor = require("http2/lib/protocol/compressor");
 
 const protocol = {
-	Serializer: framer.Serializer,
+	Serializer:   framer.Serializer,
 	Deserializer: framer.Deserializer,
-	Compressor: compressor.Compressor,
+	Compressor:   compressor.Compressor,
 	Decompressor: compressor.Decompressor,
-	Connection: require("http2/lib/protocol/connection").Connection,
+	Connection:   require("http2/lib/protocol/connection").Connection,
 }
 
 const Endpoint = require("./lib/protocol/endpoint")({
