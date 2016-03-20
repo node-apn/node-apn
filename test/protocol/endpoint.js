@@ -191,13 +191,26 @@ describe("Endpoint", () => {
           expect(errorSpy).to.have.been.calledWith("this should be bubbled");
         });
 
-        it("bubbles `wakeup` events", () => {
-          const wakeupSpy = sinon.spy();
-          endpoint.on("wakeup", wakeupSpy);
+        describe("`wakeup` event", () => {
+          it("bubbles", () => {
+            const wakeupSpy = sinon.spy();
+            endpoint.on("wakeup", wakeupSpy);
 
-          streams.connection.emit("wakeup");
+            streams.connection.emit("wakeup");
 
-          expect(wakeupSpy).to.have.been.calledOnce;
+            expect(wakeupSpy).to.have.been.calledOnce;
+          });
+
+          it("does not re-enter", () => {
+            const wakeupSpy = sinon.spy(() => {
+              streams.connection.emit("wakeup");
+            });
+            endpoint.on("wakeup", wakeupSpy);
+
+            streams.connection.emit("wakeup");
+
+            expect(wakeupSpy).to.have.been.calledOnce;
+          });
         });
       });
 
