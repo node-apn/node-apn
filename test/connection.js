@@ -2,6 +2,7 @@
 
 const sinon = require("sinon");
 const stream = require("stream");
+const EventEmitter = require("events");
 
 describe("Connection", function() {
 	let fakes, Connection;
@@ -10,7 +11,10 @@ describe("Connection", function() {
 		fakes = {
 			config: sinon.stub(),
 			EndpointManager: sinon.stub(),
+			endpointManager: new EventEmitter(),
 		}
+
+		fakes.EndpointManager.returns(fakes.endpointManager);
 
 		Connection = require("../lib/connection")(fakes)
 	})
@@ -119,9 +123,30 @@ describe("Connection", function() {
 				});
 			});
 
-			xcontext("no new stream is returned but the endpoint later wakes up", () => {
-				it("sends the required headers", () => {
+			context("no new stream is returned but the endpoint later wakes up", () => {
+
+				it("sends the required headers to the newly available stream", () => {
+					const connection = new Connection( { address: "testapi" } );
+
+					fakes.stream = new FakeStream("abcd1234", 200);
+					fakes.endpointManager.getStream.onCall(0).returns(null);
+					fakes.endpointManager.getStream.onCall(1).returns(fakes.stream);
+					let promise = connection.pushNotification(notificationDouble(), "abcd1234");
+
+					expect(fakes.stream.headers).to.not.be.called;
+
+					fakes.endpointManager.emit("wakeup");
+					return promise.then(() => {
+						expect(fakes.stream.headers).to.be.calledWith( {
+							":scheme": "https",
+							":method": "POST",
+							":authority": "testapi",
+							":path": "/3/device/abcd1234",
+							"content-length": Buffer.byteLength(notificationDouble().compile()),
+						} );
+					});
 				});
+
 				it("writes the notification data to the pipe", () => {
 				});
 			});
