@@ -74,7 +74,7 @@ describe("Connection", function() {
 						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
 
 						promise = connection.pushNotification(notificationDouble(), "abcd1234");
-						promise.then( () => done() );
+						promise.then( () => done(), done );
 					});
 
 					it("attempts to acquire one stream", () => {
@@ -138,7 +138,7 @@ describe("Connection", function() {
 
 					fakes.endpointManager.emit("wakeup");
 
-					promise.then( () => { done(); } )
+					promise.then( () => done(), done );
 				});
 
 				it("sends the required headers to the newly available stream", () => {
@@ -158,10 +158,42 @@ describe("Connection", function() {
 			});
 		});
 
-		xcontext("when 10 tokens are passed", () => {
+		context("when 5 tokens are passed", () => {
+
+			beforeEach(() => {
+					fakes.streams = [
+						new FakeStream("abcd1234", 200),
+						new FakeStream("adfe5969", 400, { reason: "MissingTopic" }),
+						new FakeStream("abcd1335", 410, { reason: "BadDeviceToken", timestamp: 123456789 }),
+						new FakeStream("bcfe4433", 200),
+						new FakeStream("aabbc788", 413, { reason: "PayloadTooLarge" }),
+					];
+			});
+
 			context("streams are always returned", () => {
-				it("sends the required headers for each stream", () => {
+				let promise;
+
+				beforeEach( done => {
+					const connection = new Connection( { address: "testapi" } );
+
+					fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+					fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+					fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
+					fakes.endpointManager.getStream.onCall(3).returns(fakes.streams[3]);
+					fakes.endpointManager.getStream.onCall(4).returns(fakes.streams[4]);
+
+					promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"])
+					promise.then( () => done(), done);
 				});
+
+				it("sends the required headers for each stream", () => {
+					expect(fakes.streams[0].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/abcd1234" }) );
+					expect(fakes.streams[1].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/adfe5969" }) );
+					expect(fakes.streams[2].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/abcd1335" }) );
+					expect(fakes.streams[3].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/bcfe4433" }) );
+					expect(fakes.streams[4].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/aabbc788" }) );
+				});
+
 				it("writes the notification data for each stream", () => {
 				});
 				it("resolves with the successful notifications", () => {
