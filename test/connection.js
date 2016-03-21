@@ -158,15 +158,6 @@ describe("Connection", function() {
 			});
 		});
 
-		xcontext("transmission succeeds", () => {
-			it("resolves with the device token in the success array", () => {
-			});
-		});
-		xcontext("error occurs", () => {
-			it("resolves with the device token, status code and response in the failed array", () => {
-			});
-		});
-
 		xcontext("when 10 tokens are passed", () => {
 			context("streams are always returned", () => {
 				it("sends the required headers for each stream", () => {
