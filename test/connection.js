@@ -124,8 +124,9 @@ describe("Connection", function() {
 			});
 
 			context("no new stream is returned but the endpoint later wakes up", () => {
+				let promise
 
-				it("sends the required headers to the newly available stream", () => {
+				beforeEach( done => {
 					const connection = new Connection( { address: "testapi" } );
 
 					fakes.stream = new FakeStream("abcd1234", 200);
@@ -136,18 +137,23 @@ describe("Connection", function() {
 					expect(fakes.stream.headers).to.not.be.called;
 
 					fakes.endpointManager.emit("wakeup");
-					return promise.then(() => {
-						expect(fakes.stream.headers).to.be.calledWith( {
-							":scheme": "https",
-							":method": "POST",
-							":authority": "testapi",
-							":path": "/3/device/abcd1234",
-							"content-length": Buffer.byteLength(notificationDouble().compile()),
-						} );
+
+					promise.then( () => { done(); } )
+				});
+
+				it("sends the required headers to the newly available stream", () => {
+					expect(fakes.stream.headers).to.be.calledWith( {
+						":scheme": "https",
+						":method": "POST",
+						":authority": "testapi",
+						":path": "/3/device/abcd1234",
+						"content-length": Buffer.byteLength(notificationDouble().compile()),
 					});
 				});
 
 				it("writes the notification data to the pipe", () => {
+					const writtenData = fakes.stream._transform.firstCall.args[0];
+					expect(writtenData).to.deep.equal(Buffer(notificationDouble().compile()));
 				});
 			});
 		});
