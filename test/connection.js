@@ -92,8 +92,7 @@ describe("Connection", function() {
 					});
 
 					it("writes the notification data to the pipe", () => {
-						const writtenData = fakes.stream._transform.firstCall.args[0];
-						expect(writtenData).to.deep.equal(Buffer(notificationDouble().compile()));
+						expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
 					});
 
 					it("ends the stream", () => {
@@ -152,8 +151,7 @@ describe("Connection", function() {
 				});
 
 				it("writes the notification data to the pipe", () => {
-					const writtenData = fakes.stream._transform.firstCall.args[0];
-					expect(writtenData).to.deep.equal(Buffer(notificationDouble().compile()));
+					expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
 				});
 			});
 		});
