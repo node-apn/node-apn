@@ -120,9 +120,10 @@ describe("Endpoint", () => {
 
       context("connection established", () => {
         it("writes the HTTP/2 prelude", () => {
+          sinon.spy(streams.socket, "write");
+
           const endpoint = new Endpoint({});
 
-          sinon.spy(streams.socket, "write");
           streams.socket.emit("secureConnect");
 
           const HTTP2_PRELUDE = new Buffer('PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n');
@@ -151,12 +152,11 @@ describe("Endpoint", () => {
       });
     });
 
-    context("after socket connects, HTTP/2", () => {
+    describe("HTTP/2 layer", () => {
       let endpoint;
 
       beforeEach(() => {
         endpoint = new Endpoint({});
-        streams.socket.emit("secureConnect");
       });
       
       describe("connection", () => {
@@ -315,41 +315,36 @@ describe("Endpoint", () => {
       sinon.stub(streams.deserializer, "pipe");
       sinon.stub(streams.compressor, "pipe");
       sinon.stub(streams.decompressor, "pipe");
+
+      sinon.spy(streams.socket, "write");
       
       endpoint = new Endpoint({});
     });
 
-    context("when tls is established", () => {
-      beforeEach(() => {
-        sinon.spy(streams.socket, "write");
-        streams.socket.emit("secureConnect");
-      });
+    it("pipes the tls socket to the deserializer", () => {
+      expect(streams.socket.pipe).to.be.calledWith(streams.deserializer);
+      expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
+    });
 
-      it("pipes the tls socket to the deserializer", () => {
-        expect(streams.socket.pipe).to.be.calledWith(streams.deserializer);
-        expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
-      });
+    it("pipes the serializer to the tls socket", () => {
+      expect(streams.serializer.pipe).to.be.calledWith(streams.socket);
+      expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
+    });
 
-      it("pipes the serializer to the tls socket", () => {
-        expect(streams.serializer.pipe).to.be.calledWith(streams.socket);
-        expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
-      });
+    it("pipes the connection to the compressor", () => {
+      expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
+    });
 
-      it("pipes the connection to the compressor", () => {
-        expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
-      });
+    it("pipes the compressor to the serializer", () => {
+      expect(streams.compressor.pipe).to.be.calledWith(streams.serializer);
+    });
 
-      it("pipes the compressor to the serializer", () => {
-        expect(streams.compressor.pipe).to.be.calledWith(streams.serializer);
-      });
+    it("pipes the deserializer to the decompressor", () => {
+      expect(streams.deserializer.pipe).to.be.calledWith(streams.decompressor);
+    });
 
-      it("pipes the deserializer to the decompressor", () => {
-        expect(streams.deserializer.pipe).to.be.calledWith(streams.decompressor);
-      });
-
-      it("pipes the decompressor to the connection", () => {
-        expect(streams.decompressor.pipe).to.be.calledWith(streams.connection);
-      });
+    it("pipes the decompressor to the connection", () => {
+      expect(streams.decompressor.pipe).to.be.calledWith(streams.connection);
     });
   });
 
