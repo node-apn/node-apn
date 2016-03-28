@@ -82,7 +82,7 @@ describe("Connection", function() {
 					});
 
 					it("sends the required headers", () => {
-						expect(fakes.stream.headers).to.be.calledWith( {
+						expect(fakes.stream.headers).to.be.calledWithMatch( {
 							":scheme": "https",
 							":method": "POST",
 							":authority": "testapi",
@@ -141,7 +141,7 @@ describe("Connection", function() {
 				});
 
 				it("sends the required headers to the newly available stream", () => {
-					expect(fakes.stream.headers).to.be.calledWith( {
+					expect(fakes.stream.headers).to.be.calledWithMatch( {
 						":scheme": "https",
 						":method": "POST",
 						":authority": "testapi",
@@ -185,11 +185,11 @@ describe("Connection", function() {
 				});
 
 				it("sends the required headers for each stream", () => {
-					expect(fakes.streams[0].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/abcd1234" }) );
-					expect(fakes.streams[1].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/adfe5969" }) );
-					expect(fakes.streams[2].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/abcd1335" }) );
-					expect(fakes.streams[3].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/bcfe4433" }) );
-					expect(fakes.streams[4].headers).to.be.calledWith( sinon.match({ ":path": "/3/device/aabbc788" }) );
+					expect(fakes.streams[0].headers).to.be.calledWithMatch( { ":path": "/3/device/abcd1234" } );
+					expect(fakes.streams[1].headers).to.be.calledWithMatch( { ":path": "/3/device/adfe5969" } );
+					expect(fakes.streams[2].headers).to.be.calledWithMatch( { ":path": "/3/device/abcd1335" } );
+					expect(fakes.streams[3].headers).to.be.calledWithMatch( { ":path": "/3/device/bcfe4433" } );
+					expect(fakes.streams[4].headers).to.be.calledWithMatch( { ":path": "/3/device/aabbc788" } );
 				});
 
 				it("writes the notification data for each stream", () => {
