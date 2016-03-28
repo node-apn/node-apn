@@ -216,10 +216,40 @@ describe("Connection", function() {
 			});
 		
 			context("some streams return, others wake up later", () => {
-				it("sends the required headers for each stream", () => {
+				let promise;
+
+				beforeEach( done => {
+					const connection = new Connection( { address: "testapi" } );
+
+					fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+					fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+
+					promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"])
+					promise.then( () => done(), done);
+
+					setTimeout(() => {
+						fakes.endpointManager.getStream.reset();
+						fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[2]);
+						fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[3]);
+						fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[4]);
+						fakes.endpointManager.emit("wakeup");
+					}, 5);
 				});
+
+				it("sends the correct device ID for each stream", () => {
+					expect(fakes.streams[0].headers).to.be.calledWithMatch({":path": "/3/device/abcd1234"});
+					expect(fakes.streams[1].headers).to.be.calledWithMatch({":path": "/3/device/adfe5969"});
+					expect(fakes.streams[2].headers).to.be.calledWithMatch({":path": "/3/device/abcd1335"});
+					expect(fakes.streams[3].headers).to.be.calledWithMatch({":path": "/3/device/bcfe4433"});
+					expect(fakes.streams[4].headers).to.be.calledWithMatch({":path": "/3/device/aabbc788"});
+				});
+
 				it("writes the notification data for each stream", () => {
+					fakes.streams.forEach( stream => {
+						expect(stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
+					});
 				});
+
 				it("resolves with the successful notifications", () => {
 				});
 				it("resolves with the device token, status code and response of the unsuccessful notifications", () => {
