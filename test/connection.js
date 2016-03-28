@@ -199,19 +199,15 @@ describe("Connection", function() {
 				});
 
 				it("resolves with the successful notifications", () => {
-					return promise.then( response => {
-						expect(response[0]).to.deep.equal([{device: "abcd1234"}, {device: "bcfe4433"}]);
-					});
+					return expect(promise.get(0)).to.eventually.deep.equal([{device: "abcd1234"}, {device: "bcfe4433"}]);
 				});
 
 				it("resolves with the device token, status code and response of the unsuccessful notifications", () => {
-					return promise.then( response => {
-						expect(response[1]).to.deep.equal([
-							{ device: "adfe5969", status: 400, response: { reason: "MissingTopic" }},
-							{ device: "abcd1335", status: 410, response: { reason: "BadDeviceToken", timestamp: 123456789 }},
-							{ device: "aabbc788", status: 413, response: { reason: "PayloadTooLarge" }},
-						]);
-					});
+					return expect(promise.get(1)).to.eventually.deep.equal([
+						{ device: "adfe5969", status: 400, response: { reason: "MissingTopic" }},
+						{ device: "abcd1335", status: 410, response: { reason: "BadDeviceToken", timestamp: 123456789 }},
+						{ device: "aabbc788", status: 413, response: { reason: "PayloadTooLarge" }},
+					]);
 				});
 			});
 		
