@@ -182,28 +182,6 @@ describe("Endpoint", () => {
 
           expect(errorSpy).to.have.been.calledWith("this should be bubbled");
         });
-
-        describe("`wakeup` event", () => {
-          it("bubbles", () => {
-            const wakeupSpy = sinon.spy();
-            endpoint.on("wakeup", wakeupSpy);
-
-            streams.connection.emit("wakeup");
-
-            expect(wakeupSpy).to.have.been.calledOnce;
-          });
-
-          it("does not re-enter", () => {
-            const wakeupSpy = sinon.spy(() => {
-              streams.connection.emit("wakeup");
-            });
-            endpoint.on("wakeup", wakeupSpy);
-
-            streams.connection.emit("wakeup");
-
-            expect(wakeupSpy).to.have.been.calledOnce;
-          });
-        });
       });
 
       describe("serializer", () => {
@@ -367,6 +345,35 @@ describe("Endpoint", () => {
 
       stream.emit("end");
       expect(endpoint.availableStreamSlots).to.equal(5);
+    });
+  });
+
+
+  describe("`wakeup` event", () => {
+
+    context("when max concurrent streams limit updates", () => {
+      it("emits", () => {
+        const endpoint = new Endpoint({});
+        const wakeupSpy = sinon.spy();
+        endpoint.on("wakeup", wakeupSpy);
+        
+        streams.connection.emit("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", 5);
+
+        expect(wakeupSpy).to.have.been.calledOnce;
+      });
+    });
+
+    context("when stream ends", () => {
+      it("emits", () => {
+        const endpoint = new Endpoint({});
+        const wakeupSpy = sinon.spy();
+        endpoint.on("wakeup", wakeupSpy);
+
+        streams.connection.createStream = sinon.stub().returns(new stream.PassThrough());
+        endpoint.createStream().emit("end");
+
+        expect(wakeupSpy).to.have.been.calledOnce;
+      });
     });
   });
 
