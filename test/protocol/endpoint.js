@@ -174,14 +174,6 @@ describe("Endpoint", () => {
           expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match.any, 1);
         });
 
-        it("has streamLimit set to 0", () => {
-          expect(streams.connection._streamLimit).to.equal(0);
-        });
-
-        it("has streamSlotsFree set to 0", () => {
-          expect(streams.connection._streamSlotsFree).to.equal(0);
-        });
-
         it("bubbles error events", () => {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
@@ -349,18 +341,32 @@ describe("Endpoint", () => {
   });
 
   describe("available stream slots", () => {
-    it("reflects the underlying connection property", () => {
-      streams.connection._streamSlotsFree = Infinity;
-      let endpoint = new Endpoint({});
+    let endpoint;
 
-      /// This is zeroed out during endpoint creation.
+    beforeEach(() => {
+      endpoint = new Endpoint({});
+      streams.connection.createStream = sinon.stub().returns(new stream.PassThrough());
+
       expect(endpoint.availableStreamSlots).to.equal(0);
+      streams.connection.emit("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", 5);
+      expect(endpoint.availableStreamSlots).to.equal(5);
+    });
 
-      streams.connection._streamSlotsFree = 1024;
+    it("reflects the received settings value", () => {
+      streams.connection.emit("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", 1024);
       expect(endpoint.availableStreamSlots).to.equal(1024);
+    });
 
-      streams.connection._streamSlotsFree = 0;
-      expect(endpoint.availableStreamSlots).to.equal(0);
+    it("reduces when a stream is created", () => {
+      endpoint.createStream();
+      expect(endpoint.availableStreamSlots).to.equal(4);
+    });
+
+    it("increases when a stream ends", () => {
+      const stream = endpoint.createStream();
+
+      stream.emit("end");
+      expect(endpoint.availableStreamSlots).to.equal(5);
     });
   });
 
@@ -368,7 +374,7 @@ describe("Endpoint", () => {
     let endpoint;
 
     beforeEach(() => {
-      streams.connection.createStream = sinon.stub();
+      streams.connection.createStream = sinon.stub().returns(new stream.PassThrough());
       endpoint = new Endpoint({});
     });
 
@@ -379,10 +385,10 @@ describe("Endpoint", () => {
     });
 
     it("passes the return value from the connection", () => {
-      const sentinel = {sentinel: "stream"};
-      streams.connection.createStream.returns(sentinel);
+      let stream = endpoint.createStream();
+      let connectionStream = streams.connection.createStream.firstCall.returnValue;
 
-      expect(endpoint.createStream()).to.equal(sentinel);
+      expect(stream).to.deep.equal(connectionStream);
     });
   });
 });
