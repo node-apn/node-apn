@@ -64,11 +64,11 @@ describe("Connection", function() {
 		context("a single stream is available", () => {
 
 			context("a single token is passed", () => {
-				let promise;
+				let promise, connection;
 
 				context("transmission succeeds", () => {
 					beforeEach( done => {
-						const connection = new Connection( { address: "testapi" } );
+						connection = new Connection( { address: "testapi" } );
 
 						fakes.stream = new FakeStream("abcd1234", 200);
 						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
@@ -88,6 +88,20 @@ describe("Connection", function() {
 							":authority": "testapi",
 							":path": "/3/device/abcd1234",
 							"content-length": Buffer.byteLength(notificationDouble().compile()),
+						});
+					});
+
+					it("sends the content-length", () => {
+						let notification = notificationDouble();
+						notification.payload = { "aps": { "alert": "Hello, world!" }};
+						fakes.stream = new FakeStream("abcd1234", 200);
+						fakes.endpointManager.getStream.reset();
+						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+						return connection.pushNotification(notification, "abcd1234").then(() => {
+							expect(fakes.stream.headers).to.be.calledWithMatch( {
+								"content-length": Buffer.byteLength(notification.compile()),
+							});
 						});
 					});
 
@@ -123,7 +137,7 @@ describe("Connection", function() {
 			});
 
 			context("no new stream is returned but the endpoint later wakes up", () => {
-				let promise
+				let notification, promise;
 
 				beforeEach( done => {
 					const connection = new Connection( { address: "testapi" } );
@@ -131,7 +145,9 @@ describe("Connection", function() {
 					fakes.stream = new FakeStream("abcd1234", 200);
 					fakes.endpointManager.getStream.onCall(0).returns(null);
 					fakes.endpointManager.getStream.onCall(1).returns(fakes.stream);
-					let promise = connection.pushNotification(notificationDouble(), "abcd1234");
+
+					notification = notificationDouble();
+					promise = connection.pushNotification(notification, "abcd1234");
 
 					expect(fakes.stream.headers).to.not.be.called;
 
@@ -146,12 +162,12 @@ describe("Connection", function() {
 						":method": "POST",
 						":authority": "testapi",
 						":path": "/3/device/abcd1234",
-						"content-length": Buffer.byteLength(notificationDouble().compile()),
+						"content-length": Buffer.byteLength(notification.compile()),
 					});
 				});
 
 				it("writes the notification data to the pipe", () => {
-					expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
+					expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notification.compile())));
 				});
 			});
 		});
