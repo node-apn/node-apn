@@ -87,21 +87,6 @@ describe("Connection", function() {
 							":method": "POST",
 							":authority": "testapi",
 							":path": "/3/device/abcd1234",
-							"content-length": Buffer.byteLength(notificationDouble().compile()),
-						});
-					});
-
-					it("sends the content-length", () => {
-						let notification = notificationDouble();
-						notification.payload = { "aps": { "alert": "Hello, world!" }};
-						fakes.stream = new FakeStream("abcd1234", 200);
-						fakes.endpointManager.getStream.reset();
-						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
-
-						return connection.pushNotification(notification, "abcd1234").then(() => {
-							expect(fakes.stream.headers).to.be.calledWithMatch( {
-								"content-length": Buffer.byteLength(notification.compile()),
-							});
 						});
 					});
 
@@ -162,7 +147,6 @@ describe("Connection", function() {
 						":method": "POST",
 						":authority": "testapi",
 						":path": "/3/device/abcd1234",
-						"content-length": Buffer.byteLength(notification.compile()),
 					});
 				});
 
