@@ -79,11 +79,12 @@ describe("loadCredentials", function() {
 				  .to.equal(cert.toString());
 	});
 
-	xit("should load an array of CA certificates", function () {
+	it("should load an array of CA certificates", function () {
     const certString = cert.toString();
 		return expect(loadCredentials({ cert: null, key: null,
             ca: ["test/support/initializeTest.crt", cert, certString]
-          }).ca).to.equal([certString, certString, certString]);
+          }).ca.map( cert => cert.toString() ))
+			.to.deep.equal([certString, certString, certString]);
 	});
 
 	it("returns undefined if no CA values are specified", function() {
