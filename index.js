@@ -10,6 +10,7 @@ const prepareCredentials = require("./lib/credentials/prepare")({
 	load: require("./lib/credentials/load"),
 	parse,
 	validate: require("./lib/credentials/validate"),
+	logger: debug,
 });
 
 const config = require("./lib/config")({

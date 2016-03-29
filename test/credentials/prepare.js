@@ -10,6 +10,7 @@ describe("prepare", function () {
       load: sinon.stub(),
       parse: sinon.stub(),
       validate: sinon.stub(),
+      logger: sinon.stub(),
     }
 
     prepare = require("../../lib/credentials/prepare")(fakes);
@@ -104,17 +105,12 @@ describe("prepare", function () {
       return expect(credentials).to.deep.equal({ cert: "myCertData", key: "myKeyData" });
     });
 
-    xit("should log an error", function() {
-      var debug = sinon.spy();
-      var reset = Connection.__set__("debug", debug);
-      var credentials = Connection({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" }).loadCredentials();
+    it("should log an error", function() {
+      let credentials = prepare({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" });
 
-      return credentials.finally(function() {
-        reset();
-        expect(debug).to.be.calledWith(sinon.match(function(err) {
+      expect(fakes.logger).to.be.calledWith(sinon.match(function(err) {
           return err.message ? err.message.match(/unable to parse key/) : false;
         }, "\"unable to parse key\""));
-      });
     });
 
     it("should not attempt to validate", function() {
