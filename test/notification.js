@@ -528,9 +528,34 @@ describe("Notification", function() {
 			});
 
 			describe("when aps payload is present", function() {
+				beforeEach(function() {
+					note.payload = {"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }};
+				});
+
 				it("contains all original payload properties", function() {
-					note.payload = {"foo": "bar", "baz": 1};
-					expect(note.toJSON()).to.contain.all.keys(["foo", "baz"]);
+					expect(note.toJSON()).to.have.property("foo", "bar");
+					expect(note.toJSON()).to.have.property("baz", 1);
+				});
+
+				it("contains the correct aps properties", function() {
+					expect(note.toJSON()).to.have.deep.property("aps.badge", 1);
+					expect(note.toJSON()).to.have.deep.property("aps.alert", "Hi there!");
+				});
+			});
+
+			context("when passed in the notification constructor", function() {
+				beforeEach(function() {
+					note = new apn.Notification({"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }});
+				});
+
+				it("contains all original payload properties", function() {
+					expect(note.toJSON()).to.have.property("foo", "bar");
+					expect(note.toJSON()).to.have.property("baz", 1);
+				});
+
+				it("contains the correct aps properties", function() {
+					expect(note.toJSON()).to.have.deep.property("aps.badge", 1);
+					expect(note.toJSON()).to.have.deep.property("aps.alert", "Hi there!");
 				});
 			});
 		});
