@@ -256,6 +256,12 @@ describe("Notification", function() {
 		});
 	});
 
+	describe("headers", function() {
+		it("contains no properties by default", function() {
+			expect(note.headers()).to.deep.equal({});
+		});
+	});
+
 	describe("trim", function() {
 		describe("when notification payload is below the maximum length", function() {
 			it("returns zero",function() {

@@ -61,45 +61,88 @@ describe("Connection", function() {
 			fakes.EndpointManager.returns(fakes.endpointManager);
 		});
 
-		context("a single stream is available", () => {
+		describe("single notification behaviour", () => {
 
-			context("a single token is passed", () => {
-				let promise, connection;
+			context("a single stream is available", () => {
+				let connection;
 
 				context("transmission succeeds", () => {
-					beforeEach( done => {
+					beforeEach( () => {
 						connection = new Connection( { address: "testapi" } );
 
 						fakes.stream = new FakeStream("abcd1234", 200);
 						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
-
-						promise = connection.pushNotification(notificationDouble(), "abcd1234");
-						promise.then( () => done(), done );
 					});
 
 					it("attempts to acquire one stream", () => {
-						expect(fakes.endpointManager.getStream).to.be.calledOnce;
+						return connection.pushNotification(notificationDouble(), "abcd1234")
+							.then(() => {
+								expect(fakes.endpointManager.getStream).to.be.calledOnce;
+							});
 					});
 
-					it("sends the required headers", () => {
-						expect(fakes.stream.headers).to.be.calledWithMatch( {
-							":scheme": "https",
-							":method": "POST",
-							":authority": "testapi",
-							":path": "/3/device/abcd1234",
+					describe("headers", () => {
+
+						it("sends the required HTTP/2 headers", () => {
+							return connection.pushNotification(notificationDouble(), "abcd1234")
+								.then(() => {
+									expect(fakes.stream.headers).to.be.calledWithMatch( {
+										":scheme": "https",
+										":method": "POST",
+										":authority": "testapi",
+										":path": "/3/device/abcd1234",
+									});
+								});
+						});
+
+						it("does not include apns headers when not required", () => {
+							return connection.pushNotification(notificationDouble(), "abcd1234")
+								.then(() => {
+									["apns-id", "apns-priority", "apns-expiration", "apns-topic"].forEach( header => {
+										expect(fakes.stream.headers).to.not.be.calledWithMatch(sinon.match.has(header));
+									});
+								});
+						});
+
+						it("sends the notification-specific apns headers when specified", () => {
+							let notification = notificationDouble();
+
+							notification.headers.returns({
+								"apns-id": "123e4567-e89b-12d3-a456-42665544000",
+								"apns-priority": 5,
+								"apns-expiration": 123,
+								"apns-topic": "io.apn.node",
+							});
+
+							return connection.pushNotification(notification, "abcd1234")
+								.then(() => {
+									expect(fakes.stream.headers).to.be.calledWithMatch( {
+										"apns-id": "123e4567-e89b-12d3-a456-42665544000",
+										"apns-priority": 5,
+										"apns-expiration": 123,
+										"apns-topic": "io.apn.node",
+									});
+								});
 						});
 					});
 
 					it("writes the notification data to the pipe", () => {
-						expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
+						return connection.pushNotification(notificationDouble(), "abcd1234")
+							.then(() => {
+								expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
+							});
 					});
 
 					it("ends the stream", () => {
-						expect(() => fakes.stream.write("ended?")).to.throw("write after end");
+						return connection.pushNotification(notificationDouble(), "abcd1234")
+							.then(() => {
+								expect(() => fakes.stream.write("ended?")).to.throw("write after end");
+							});
 					});
 
 					it("resolves with the device token in the success array", () => {
-						return expect(promise).to.become([[{"device": "abcd1234"}], []]);
+						return expect(connection.pushNotification(notificationDouble(), "abcd1234"))
+							.to.become([[{"device": "abcd1234"}], []]);
 					});
 				});
 
@@ -264,8 +307,8 @@ describe("Connection", function() {
 
 function notificationDouble() {
 	return {
+		headers: sinon.stub().returns({}),
 		payload: { aps: { badge: 1 } },
-		topic: "io.apn.node",
 		compile: function() { return JSON.stringify(this.payload); }
 	};
 }
