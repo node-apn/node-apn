@@ -70,7 +70,7 @@ describe("Connection", function() {
 					beforeEach( () => {
 						connection = new Connection( { address: "testapi" } );
 
-						fakes.stream = new FakeStream("abcd1234", 200);
+						fakes.stream = new FakeStream("abcd1234", "200");
 						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
 					});
 
@@ -152,14 +152,14 @@ describe("Connection", function() {
 					beforeEach(() => {
 						const connection = new Connection( { address: "testapi" } );
 
-						fakes.stream = new FakeStream("abcd1234", 400, { "reason" : "BadDeviceToken" });
+						fakes.stream = new FakeStream("abcd1234", "400", { "reason" : "BadDeviceToken" });
 						fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
 
 						promise = connection.pushNotification(notificationDouble(), "abcd1234");
 					});
 
 					it("resolves with the device token, status code and response in the failed array", () => {
-						return expect(promise).to.eventually.deep.equal([[], [{"device": "abcd1234", "status": 400, "response": { "reason" : "BadDeviceToken" }}]])
+						return expect(promise).to.eventually.deep.equal([[], [{"device": "abcd1234", "status": "400", "response": { "reason" : "BadDeviceToken" }}]])
 					});
 				});
 			});
@@ -170,7 +170,7 @@ describe("Connection", function() {
 				beforeEach( done => {
 					const connection = new Connection( { address: "testapi" } );
 
-					fakes.stream = new FakeStream("abcd1234", 200);
+					fakes.stream = new FakeStream("abcd1234", "200");
 					fakes.endpointManager.getStream.onCall(0).returns(null);
 					fakes.endpointManager.getStream.onCall(1).returns(fakes.stream);
 
@@ -203,11 +203,11 @@ describe("Connection", function() {
 
 			beforeEach(() => {
 					fakes.streams = [
-						new FakeStream("abcd1234", 200),
-						new FakeStream("adfe5969", 400, { reason: "MissingTopic" }),
-						new FakeStream("abcd1335", 410, { reason: "BadDeviceToken", timestamp: 123456789 }),
-						new FakeStream("bcfe4433", 200),
-						new FakeStream("aabbc788", 413, { reason: "PayloadTooLarge" }),
+						new FakeStream("abcd1234", "200"),
+						new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
+						new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
+						new FakeStream("bcfe4433", "200"),
+						new FakeStream("aabbc788", "413", { reason: "PayloadTooLarge" }),
 					];
 			});
 
@@ -247,9 +247,9 @@ describe("Connection", function() {
 
 				it("resolves with the device token, status code and response of the unsuccessful notifications", () => {
 					return expect(promise.get(1)).to.eventually.deep.equal([
-						{ device: "adfe5969", status: 400, response: { reason: "MissingTopic" }},
-						{ device: "abcd1335", status: 410, response: { reason: "BadDeviceToken", timestamp: 123456789 }},
-						{ device: "aabbc788", status: 413, response: { reason: "PayloadTooLarge" }},
+						{ device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
+						{ device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
+						{ device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }},
 					]);
 				});
 			});
@@ -295,9 +295,9 @@ describe("Connection", function() {
 
 				it("resolves with the device token, status code and response of the unsuccessful notifications", () => {
 					return expect(promise.get(1)).to.eventually.deep.equal([
-						{ device: "adfe5969", status: 400, response: { reason: "MissingTopic" }},
-						{ device: "abcd1335", status: 410, response: { reason: "BadDeviceToken", timestamp: 123456789 }},
-						{ device: "aabbc788", status: 413, response: { reason: "PayloadTooLarge" }},
+						{ device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
+						{ device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
+						{ device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }},
 					]);
 				});
 			});
