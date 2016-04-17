@@ -61,13 +61,12 @@ describe("Endpoint", () => {
     describe("tls socket", () => {
 
       it("is created", () => {
-        let endpoint = new Endpoint({});
+        new Endpoint({});
 
         expect(fakes.tls.connect).to.be.calledOnce;
       });
 
       describe("connection parameters", () => {
-        let connectParameters;
 
         context("all supplied", () => {
 
@@ -105,7 +104,7 @@ describe("Endpoint", () => {
 
         context("host is not omitted", () => {
             it("falls back on 'address'", () => {
-              let endpoint = new Endpoint({
+              new Endpoint({
                 address: "localtest", port: 443
               });
 
@@ -122,7 +121,7 @@ describe("Endpoint", () => {
         it("writes the HTTP/2 prelude", () => {
           sinon.spy(streams.socket, "write");
 
-          const endpoint = new Endpoint({});
+          new Endpoint({});
 
           streams.socket.emit("secureConnect");
 
@@ -279,7 +278,7 @@ describe("Endpoint", () => {
   });
 
   describe("stream behaviour", () => {
-    let endpoint;
+
     beforeEach(() => {
       sinon.stub(streams.serializer, "pipe");
       sinon.stub(streams.deserializer, "pipe");
@@ -288,7 +287,7 @@ describe("Endpoint", () => {
 
       sinon.spy(streams.socket, "write");
       
-      endpoint = new Endpoint({});
+      new Endpoint({});
     });
 
     it("pipes the tls socket to the deserializer", () => {

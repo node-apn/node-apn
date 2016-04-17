@@ -106,7 +106,7 @@ describe("prepare", function () {
     });
 
     it("should log an error", function() {
-      let credentials = prepare({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" });
+      prepare({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" });
 
       expect(fakes.logger).to.be.calledWith(sinon.match(function(err) {
           return err.message ? err.message.match(/unable to parse key/) : false;

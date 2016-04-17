@@ -29,7 +29,7 @@ describe("Connection", function() {
 
 		it("prepares the configuration with passed options", () => {
 			let options = { production: true };
-			let connection = Connection(options);
+			Connection(options);
 
 			expect(fakes.config).to.be.calledWith(options);
 		});
