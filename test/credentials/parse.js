@@ -19,7 +19,7 @@ describe("parseCredentials", function() {
 			parsePkcs12: sinon.stub(),
 			parsePemKey: sinon.stub(),
 			parsePemCert: sinon.stub(),
-		}
+		};
 
 		fakes.parsePemKey.withArgs("pemkey").returns(pemKey);
 

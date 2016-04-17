@@ -125,7 +125,7 @@ describe("Endpoint", () => {
 
           streams.socket.emit("secureConnect");
 
-          const HTTP2_PRELUDE = new Buffer('PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n');
+          const HTTP2_PRELUDE = new Buffer("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n");
 
           expect(streams.socket.write.firstCall).to.be.calledWith(HTTP2_PRELUDE);
         });
@@ -231,11 +231,11 @@ describe("Endpoint", () => {
 
         it("is passed the correct parameters", () => {
           expect(fakes.protocol.Compressor).to.have.been.calledWith(bunyanLogger);
-          expect(fakes.protocol.Compressor).to.have.been.calledWith(sinon.match.any, 'REQUEST');
+          expect(fakes.protocol.Compressor).to.have.been.calledWith(sinon.match.any, "REQUEST");
         });
 
         it("handles HEADER_TABLE_SIZE settings update", () => {
-          streams.connection.emit('RECEIVING_SETTINGS_HEADER_TABLE_SIZE', 1000);
+          streams.connection.emit("RECEIVING_SETTINGS_HEADER_TABLE_SIZE", 1000);
           expect(streams.compressor.setTableSizeLimit).to.have.been.calledWith(1000);
         });
 
@@ -257,11 +257,11 @@ describe("Endpoint", () => {
 
         it("is passed the correct parameters", () => {
           expect(fakes.protocol.Decompressor).to.have.been.calledWith(bunyanLogger);
-          expect(fakes.protocol.Decompressor).to.have.been.calledWith(sinon.match.any, 'RESPONSE');
+          expect(fakes.protocol.Decompressor).to.have.been.calledWith(sinon.match.any, "RESPONSE");
         });
 
         it("handles HEADER_TABLE_SIZE settings acknowledgement", () => {
-          streams.connection.emit('ACKNOWLEDGED_SETTINGS_HEADER_TABLE_SIZE', 1000);
+          streams.connection.emit("ACKNOWLEDGED_SETTINGS_HEADER_TABLE_SIZE", 1000);
           expect(streams.decompressor.setTableSizeLimit).to.have.been.calledWith(1000);
         });
 

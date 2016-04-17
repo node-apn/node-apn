@@ -11,7 +11,7 @@ describe("prepare", function () {
       parse: sinon.stub(),
       validate: sinon.stub(),
       logger: sinon.stub(),
-    }
+    };
 
     prepare = require("../../lib/credentials/prepare")(fakes);
   });

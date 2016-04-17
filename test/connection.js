@@ -12,12 +12,12 @@ describe("Connection", function() {
 			config: sinon.stub(),
 			EndpointManager: sinon.stub(),
 			endpointManager: new EventEmitter(),
-		}
+		};
 
 		fakes.EndpointManager.returns(fakes.endpointManager);
 
-		Connection = require("../lib/connection")(fakes)
-	})
+		Connection = require("../lib/connection")(fakes);
+	});
 
 	describe("constructor", function () {
 
@@ -159,7 +159,7 @@ describe("Connection", function() {
 					});
 
 					it("resolves with the device token, status code and response in the failed array", () => {
-						return expect(promise).to.eventually.deep.equal([[], [{"device": "abcd1234", "status": "400", "response": { "reason" : "BadDeviceToken" }}]])
+						return expect(promise).to.eventually.deep.equal([[], [{"device": "abcd1234", "status": "400", "response": { "reason" : "BadDeviceToken" }}]]);
 					});
 				});
 			});
@@ -223,7 +223,7 @@ describe("Connection", function() {
 					fakes.endpointManager.getStream.onCall(3).returns(fakes.streams[3]);
 					fakes.endpointManager.getStream.onCall(4).returns(fakes.streams[4]);
 
-					promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"])
+					promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
 					promise.then( () => done(), done);
 				});
 

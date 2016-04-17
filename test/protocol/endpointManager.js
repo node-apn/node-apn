@@ -9,7 +9,7 @@ describe("Endpoint Manager", () => {
 	beforeEach(() => {
 		fakes = {
 			Endpoint: sinon.stub()
-		}
+		};
 
 		const endpoint = new EventEmitter;
 		endpoint.createStream = sinon.stub().returns({"kind": "stream"});
@@ -101,7 +101,7 @@ describe("Endpoint Manager", () => {
 		});
 
 		context("with multiple endpoints", () => {
-			it("reserves streams by round-robin")
+			it("reserves streams by round-robin");
 			context("where next endpoint has no available slots", () => {
 				it("skips to endpoint with availablility");
 			});

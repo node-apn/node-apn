@@ -29,7 +29,7 @@ const protocol = {
 	Compressor:   compressor.Compressor,
 	Decompressor: compressor.Decompressor,
 	Connection:   require("http2/lib/protocol/connection").Connection,
-}
+};
 
 const Endpoint = require("./lib/protocol/endpoint")({
 	tls,
