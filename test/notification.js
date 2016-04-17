@@ -218,6 +218,43 @@ describe("Notification", function() {
 		});
 	});
 
+	describe("headers", function() {
+		it("contains no properties by default", function() {
+			expect(note.headers()).to.deep.equal({});
+		});
+
+		context("priority is non-default", function() {
+			it("contains the apns-priority header", function() {
+				note.priority = 5;
+				expect(note.headers()).to.have.property("apns-priority", 5);
+			});
+		});
+
+		context("id is set", function() {
+			it("contains the apns-id header", function() {
+				note.id = "123e4567-e89b-12d3-a456-42665544000";
+
+				expect(note.headers()).to.have.property("apns-id", "123e4567-e89b-12d3-a456-42665544000");
+			});
+		});
+
+		context("expiry is non-zero", function() {
+			it("contains the apns-expiration header", function() {
+				note.expiry = 1000;
+
+				expect(note.headers()).to.have.property("apns-expiration", 1000);
+			});
+		});
+
+		context("topic is set", function() {
+			it("contains the apns-topic header", function() {
+				note.topic = "io.apn.node";
+
+				expect(note.headers()).to.have.property("apns-topic", "io.apn.node");
+			});
+		});
+	});
+
 	describe("compile", function() {
 		var stub;
 		beforeEach(function() {
@@ -253,12 +290,6 @@ describe("Notification", function() {
 			note.compiled = false;
 
 			expect(note.compile()).to.equal("\"payload2\"");
-		});
-	});
-
-	describe("headers", function() {
-		it("contains no properties by default", function() {
-			expect(note.headers()).to.deep.equal({});
 		});
 	});
 
