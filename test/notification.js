@@ -493,16 +493,16 @@ describe("Notification", function() {
 		});
 	});
 
-	describe("toJSON", function() {
+	describe("JSON", function() {
 		it("returns an Object", function() {
-			expect(note.toJSON()).to.be.an("object");
+			expect(JSON.parse(note.compile())).to.be.an("object");
 		});
 
 		describe("payload", function() {
 			describe("when no aps properties are set", function() {
 				it("contains all original payload properties", function() {
 					note.payload = {"foo": "bar", "baz": 1};
-					expect(note.toJSON()).to.eql(note.payload);
+					expect(JSON.parse(note.compile())).to.eql({"foo": "bar", "baz": 1});
 				});
 			});
 
@@ -512,13 +512,13 @@ describe("Notification", function() {
 				});
 
 				it("contains all original payload properties", function() {
-					expect(note.toJSON()).to.have.property("foo", "bar");
-					expect(note.toJSON()).to.have.property("baz", 1);
+					expect(JSON.parse(note.compile())).to.have.property("foo", "bar");
+					expect(JSON.parse(note.compile())).to.have.property("baz", 1);
 				});
 
 				it("contains the correct aps properties", function() {
-					expect(note.toJSON()).to.have.deep.property("aps.badge", 1);
-					expect(note.toJSON()).to.have.deep.property("aps.alert", "Hi there!");
+					expect(JSON.parse(note.compile())).to.have.deep.property("aps.badge", 1);
+					expect(JSON.parse(note.compile())).to.have.deep.property("aps.alert", "Hi there!");
 				});
 			});
 
@@ -528,13 +528,13 @@ describe("Notification", function() {
 				});
 
 				it("contains all original payload properties", function() {
-					expect(note.toJSON()).to.have.property("foo", "bar");
-					expect(note.toJSON()).to.have.property("baz", 1);
+					expect(JSON.parse(note.compile())).to.have.property("foo", "bar");
+					expect(JSON.parse(note.compile())).to.have.property("baz", 1);
 				});
 
 				it("contains the correct aps properties", function() {
-					expect(note.toJSON()).to.have.deep.property("aps.badge", 1);
-					expect(note.toJSON()).to.have.deep.property("aps.alert", "Hi there!");
+					expect(JSON.parse(note.compile())).to.have.deep.property("aps.badge", 1);
+					expect(JSON.parse(note.compile())).to.have.deep.property("aps.alert", "Hi there!");
 				});
 			});
 		});
@@ -542,21 +542,21 @@ describe("Notification", function() {
 		describe("mdm payload", function() {
 			it("is included in the notification", function() {
 				note.mdm = "mdm payload";
-				expect(note.toJSON().mdm).to.equal("mdm payload");
+				expect(JSON.parse(note.compile()).mdm).to.equal("mdm payload");
 			});
 
 			it("does not include the aps payload", function() {
 				note.mdm = "mdm payload";
 				note.badge = 5;
 
-				expect(note.toJSON()).to.not.have.any.keys("aps");
+				expect(JSON.parse(note.compile())).to.not.have.any.keys("aps");
 			});
 		});
 
 		describe("aps payload", function() {
 			describe("when no aps properties are set", function() {
 				it("is not present", function() {
-					expect(note.toJSON().aps).to.be.undefined;
+					expect(JSON.parse(note.compile()).aps).to.be.undefined;
 				});
 			});
 
@@ -565,7 +565,7 @@ describe("Notification", function() {
 					note.payload.aps = {};
 					note.payload.aps.custom = "custom property";
 
-					expect(note.toJSON().aps.custom).to.equal("custom property");
+					expect(JSON.parse(note.compile()).aps.custom).to.equal("custom property");
 				});
 
 				it("adds the alert property", function() {
@@ -573,14 +573,14 @@ describe("Notification", function() {
 					note.payload.aps.custom = "custom property";
 					note.alert = "test alert";
 
-					expect(note.toJSON().aps.custom).to.equal("custom property");
-					expect(note.toJSON().aps.alert).to.equal("test alert");
+					expect(JSON.parse(note.compile()).aps.custom).to.equal("custom property");
+					expect(JSON.parse(note.compile()).aps.alert).to.equal("test alert");
 				});
 			});
 
 			it("includes alert text", function() {
 				note.alert = "Test Message";
-				expect(note.toJSON().aps.alert).to.equal("Test Message");
+				expect(JSON.parse(note.compile()).aps.alert).to.equal("Test Message");
 			});
 
 			it("includes alert object", function() {
@@ -589,26 +589,26 @@ describe("Notification", function() {
 				};
 				note.alert = alert;
 
-				expect(note.toJSON().aps.alert).to.eql(alert);
+				expect(JSON.parse(note.compile()).aps.alert).to.eql(alert);
 			});
 
 			it("includes badge value", function() {
 				note.badge = 3;
 
-				expect(note.toJSON().aps.badge).to.eql(3);
+				expect(JSON.parse(note.compile()).aps.badge).to.eql(3);
 			});
 
 			it("includes sound value", function() {
 				note.sound = "awesome.caf";
 
-				expect(note.toJSON().aps.sound).to.eql("awesome.caf");
+				expect(JSON.parse(note.compile()).aps.sound).to.eql("awesome.caf");
 			});
 
 			describe("with contentAvailable property", function() {
 				it("sets the 'content-available' flag", function() {
 					note.contentAvailable = true;
 					
-					expect(note.toJSON().aps["content-available"]).to.eql(1);
+					expect(JSON.parse(note.compile()).aps["content-available"]).to.eql(1);
 				});
 			});
 
@@ -616,20 +616,20 @@ describe("Notification", function() {
 				it("sets the 'content-available' flag", function() {
 					note.contentAvailable = true;
 					
-					expect(note.toJSON().aps["content-available"]).to.eql(1);
+					expect(JSON.parse(note.compile()).aps["content-available"]).to.eql(1);
 				});
 			});
 
 			it("includes the urlArgs property", function() {
 				note.urlArgs = ["arguments", "for", "url"];
 
-				expect(note.toJSON().aps["url-args"]).to.eql(["arguments", "for", "url"]);
+				expect(JSON.parse(note.compile()).aps["url-args"]).to.eql(["arguments", "for", "url"]);
 			});
 
 			it("includes the category value", function() {
 				note.category = "mouse";
 
-				expect(note.toJSON().aps.category).to.eql("mouse");
+				expect(JSON.parse(note.compile()).aps.category).to.eql("mouse");
 			});
 		});
 	});
