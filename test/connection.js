@@ -263,7 +263,7 @@ describe("Connection", function() {
 					fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
 					fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
 
-					promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"])
+					promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
 					promise.then( () => done(), done);
 
 					setTimeout(() => {

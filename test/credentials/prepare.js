@@ -114,7 +114,7 @@ describe("prepare", function () {
     });
 
     it("should not attempt to validate", function() {
-      let credentials = prepare({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" });
+      prepare({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem" });
       expect(fakes.validate).to.not.be.called;
     });
   });
