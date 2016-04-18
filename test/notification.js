@@ -53,23 +53,16 @@ describe("Notification", function() {
 				note.alert = 5;
 				expect(note.alert).to.be.undefined;
 			});
+		});
 
-			describe("getAlertText", function() {
-				describe("plain alert string", function() {
-					it("gets the alert text", function() {
-						note.alert = "hello";
+		describe("alertText property", function() {
+			it("defaults to undefined", function() {
+				expect(note.alertText).to.be.undefined;
+			});
 
-						expect(note.getAlertText()).to.equal("hello");
-					});
-				});
-
-				describe("alert object", function() {
-					it("gets the alert text", function() {
-						note.alert = { "body": "hello" };
-
-						expect(note.getAlertText()).to.equal("hello");
-					});
-				});
+			it("can be set to a string", function() {
+				note.alertText = "Hello, world";
+				expect(note.alert)
 			});
 		});
 
@@ -597,18 +590,34 @@ describe("Notification", function() {
 				});
 			});
 
-			it("includes alert text", function() {
-				note.alert = "Test Message";
-				expect(JSON.parse(note.compile()).aps.alert).to.equal("Test Message");
+			context("alert is a string", function() {
+				it("includes the value", function() {
+					note.alert = "Test Message";
+					expect(JSON.parse(note.compile()).aps.alert).to.equal("Test Message");
+				});
+
+				it("inclues the alertText value", function() {
+					note.alertText = "Test Message";
+					expect(JSON.parse(note.compile()).aps.alert).to.equal("Test Message");
+				});
 			});
 
-			it("includes alert object", function() {
-				var alert = {
-					body: "Test Message"
-				};
-				note.alert = alert;
+			context("alert is an object", function() {
+				it("includes the value", function() {
+					var alert = {
+						body: "Test Message"
+					};
+					note.alert = alert;
 
-				expect(JSON.parse(note.compile()).aps.alert).to.eql(alert);
+					expect(JSON.parse(note.compile()).aps.alert).to.eql(alert);
+				});
+
+				it("includes the alertText value", function() {
+					note.alert = {};
+					note.alertText = "Test Message";
+
+					expect(JSON.parse(note.compile()).aps.alert.body).to.eql("Test Message");
+				});
 			});
 
 			it("includes badge value", function() {
