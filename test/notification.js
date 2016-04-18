@@ -146,7 +146,7 @@ describe("Notification", function() {
 
 				it("returns the content-available flag", function() {
 					note.contentAvailable = false;
-					expect(note.newsstandAvailable).to.equal(false);
+					expect(note.newsstandAvailable).to.be.undefined;
 				});
 			});
 		});
