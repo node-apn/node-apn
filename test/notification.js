@@ -216,18 +216,6 @@ describe("Notification", function() {
 			note.alert = "length";
 			expect(note.length()).to.equal(26);
 		});
-
-		describe("payload changes after first calculation", function() {
-			beforeEach(function() {
-				note.alert = "short";
-				note.length();
-			});
-
-			it("returns the correct payload length", function() {
-				note.alert = "longer";
-				expect(note.length()).to.equal(26);
-			});
-		});
 	});
 
 	describe("headers", function() {
