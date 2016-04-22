@@ -16,6 +16,7 @@ describe("Notification", function() {
 			note = new Notification(payload);
 
 			expect(note.payload).to.deep.equal({ "some": "payload" });
+			expect(compiledOutput()).to.deep.equal({ "some": "payload" });
 		});
 
 		it("retains default aps properties", () => {
@@ -24,6 +25,7 @@ describe("Notification", function() {
 			note = new Notification(payload);
 
 			expect(note.payload).to.deep.equal({ "some": "payload", "aps": {"alert": "Foo"}});
+			expect(compiledOutput()).to.deep.equal({ "some": "payload", "aps": {"alert": "Foo"}});
 		});
 	});
 
@@ -31,27 +33,36 @@ describe("Notification", function() {
 		describe("alert property", function() {
 			it("defaults to undefined", function() {
 				expect(note.alert).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
 			});
 
 			it("can be set to a string", function() {
 				note.alert = "hello";
+
 				expect(note.alert).to.equal("hello");
+				expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
 			});
 
 			it("can be set to an object", function() {
 				note.alert = {"body": "hello"};
 				expect(note.alert).to.eql({"body": "hello"});
+				expect(compiledOutput()).to.have.deep.property("aps.alert")
+					.that.deep.equals({"body": "hello"});
 			});
 
 			it("can be set to undefined", function() {
 				note.alert = {"body": "hello"};
 				note.alert = undefined;
+
 				expect(note.alert).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
 			});
 
 			it("cannot be set to a number", function() {
 				note.alert = 5;
+
 				expect(note.alert).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
 			});
 		});
 
@@ -69,77 +80,103 @@ describe("Notification", function() {
 		describe("badge property", function() {
 			it("defaults to undefined", function() {
 				expect(note.badge).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
 			});
 
 			it("can be set to a number", function() {
 				note.badge = 5;
+
 				expect(typeof note.badge).to.equal("number");
+				expect(compiledOutput()).to.have.deep.property("aps.badge", 5);
 			});
 
 			it("can be set to undefined", function() {
 				note.badge = 5;
 				note.badge = undefined;
+
 				expect(note.badge).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
 			});
 
 			it("cannot be set to a string", function() {
 				note.badge = "hello";
+
 				expect(note.badge).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
 			});
 		});
 
 		describe("sound property", function() {
 			it("defaults to undefined", function() {
 				expect(note.sound).to.be.undefined;
+
+				expect(compiledOutput()).to.not.have.deep.property("aps.sound");
 			});
 
 			it("can be set to a string", function() {
 				note.sound = "sound.caf";
+
 				expect(typeof note.sound).to.equal("string");
+				expect(compiledOutput()).to.have.deep.property("aps.sound", "sound.caf");
 			});
 
 			it("can be set to undefined", function() {
 				note.sound = "sound.caf";
 				note.sound = undefined;
+
 				expect(note.sound).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.sound");
 			});
 
 			it("cannot be set to a number", function() {
 				note.sound = 5;
+
 				expect(note.sound).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.sound");
 			});
 		});
 
 		describe("content-available property", function() {
 			it("defaults to undefined", function() {
 				expect(note.contentAvailable).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
 			});
 
 			it("can be set to a boolean value", function() {
 				note.contentAvailable = true;
+
 				expect(typeof note.contentAvailable).to.equal("boolean");
+				expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
 			});
 
 			it("can be set to undefined", function() {
 				note.contentAvailable = true;
 				note.contentAvailable = undefined;
+
 				expect(note.contentAvailable).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
 			});
 
 			it("cannot be set to a string", function() {
 				note.contentAvailable = "true";
+
 				expect(note.contentAvailable).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
 			});
 
 			describe("newsstand-available property", function() {
 				it("sets the content available flag", function() {
 					note.newsstandAvailable = true;
+
 					expect(note.contentAvailable).to.equal(true);
+					expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
 				});
 
 				it("returns the content-available flag", function() {
 					note.contentAvailable = false;
+
 					expect(note.newsstandAvailable).to.be.undefined;
+					expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
 				});
 			});
 		});
@@ -151,40 +188,61 @@ describe("Notification", function() {
 
 			it("can be set to a string", function() {
 				note.mdm = "mdm payload";
-				expect(typeof note.mdm).to.equal("string");
+
+				expect(note.mdm).to.equal("mdm payload");
+				expect(compiledOutput()).to.deep.equal({"mdm": "mdm payload"});
 			});
 
 			it("can be set to undefined", function() {
 				note.mdm = "mdm payload";
 				note.mdm = undefined;
+
 				expect(note.mdm).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("mdm");
+			});
+
+			it("does not include the aps payload", function() {
+				note.mdm = "mdm payload";
+				note.badge = 5;
+
+				expect(compiledOutput()).to.not.have.any.keys("aps");
 			});
 		});
 
 		describe("urlArgs property", function() {
 			it("defaults to undefined", function() {
 				expect(note.urlArgs).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
 			});
 
 			it("can be set to an array", function() {
 				note.urlArgs = ["arg1", "arg2"];
+
 				expect(note.urlArgs).to.eql(["arg1", "arg2"]);
+				expect(compiledOutput()).to.have.deep.property("aps.url\-args")
+					.that.deep.equals(["arg1", "arg2"]);
 			});
 
 			it("can be set to undefined", function() {
 				note.urlArgs = ["arg1", "arg2"];
 				note.urlArgs = undefined;
+
 				expect(note.urlArgs).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
 			});
 
 			it("cannot be set to an object", function() {
 				note.urlArgs = {};
 				expect(note.urlArgs).to.be.undefined;
+
+				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
 			});
 
 			it("cannot be set to a string", function() {
 				note.urlArgs = "arg1";
 				expect(note.urlArgs).to.be.undefined;
+
+				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
 			});
 		});
 
@@ -211,6 +269,53 @@ describe("Notification", function() {
 				note.category = undefined;
 				expect(note.category).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.category");
+			});
+		});
+
+		context("when no aps properties are set", function() {
+			it("is not present", function() {
+				expect(compiledOutput().aps).to.be.undefined;
+			});
+		});
+	});
+
+	describe("payload", function() {
+		describe("when no aps properties are set", function() {
+			it("contains all original payload properties", function() {
+				note.payload = {"foo": "bar", "baz": 1};
+				expect(compiledOutput()).to.eql({"foo": "bar", "baz": 1});
+			});
+		});
+
+		describe("when aps payload is present", function() {
+			beforeEach(function() {
+				note.payload = {"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }};
+			});
+
+			it("contains all original payload properties", function() {
+				expect(compiledOutput()).to.have.property("foo", "bar");
+				expect(compiledOutput()).to.have.property("baz", 1);
+			});
+
+			xit("contains the correct aps properties", function() {
+				expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
+				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
+			});
+		});
+
+		context("when passed in the notification constructor", function() {
+			beforeEach(function() {
+				note = new Notification({"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }});
+			});
+
+			it("contains all original payload properties", function() {
+				expect(compiledOutput()).to.have.property("foo", "bar");
+				expect(compiledOutput()).to.have.property("baz", 1);
+			});
+
+			it("contains the correct aps properties", function() {
+				expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
+				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
 			});
 		});
 	});
@@ -493,157 +598,6 @@ describe("Notification", function() {
 
 					expect(note.alert.charCodeAt(1)).to.equal(7);
 				});
-			});
-		});
-	});
-
-	describe("JSON", function() {
-		it("returns an Object", function() {
-			expect(compiledOutput()).to.be.an("object");
-		});
-
-		describe("payload", function() {
-			describe("when no aps properties are set", function() {
-				it("contains all original payload properties", function() {
-					note.payload = {"foo": "bar", "baz": 1};
-					expect(compiledOutput()).to.eql({"foo": "bar", "baz": 1});
-				});
-			});
-
-			describe("when aps payload is present", function() {
-				beforeEach(function() {
-					note.payload = {"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }};
-				});
-
-				it("contains all original payload properties", function() {
-					expect(compiledOutput()).to.have.property("foo", "bar");
-					expect(compiledOutput()).to.have.property("baz", 1);
-				});
-
-				xit("contains the correct aps properties", function() {
-					expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
-					expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
-				});
-			});
-
-			context("when passed in the notification constructor", function() {
-				beforeEach(function() {
-					note = new Notification({"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }});
-				});
-
-				it("contains all original payload properties", function() {
-					expect(compiledOutput()).to.have.property("foo", "bar");
-					expect(compiledOutput()).to.have.property("baz", 1);
-				});
-
-				it("contains the correct aps properties", function() {
-					expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
-					expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
-				});
-			});
-		});
-
-		describe("mdm payload", function() {
-			it("is included in the notification", function() {
-				note.mdm = "mdm payload";
-				expect(compiledOutput().mdm).to.equal("mdm payload");
-			});
-
-			it("does not include the aps payload", function() {
-				note.mdm = "mdm payload";
-				note.badge = 5;
-
-				expect(compiledOutput()).to.not.have.any.keys("aps");
-			});
-		});
-
-		describe("aps payload", function() {
-			describe("when no aps properties are set", function() {
-				it("is not present", function() {
-					expect(compiledOutput().aps).to.be.undefined;
-				});
-			});
-
-			xdescribe("when manual `aps` properties are set on `payload`", function() {
-				it("retains them", function() {
-					note.payload.aps = {};
-					note.payload.aps.custom = "custom property";
-
-					expect(compiledOutput().aps.custom).to.equal("custom property");
-				});
-
-				it("adds the alert property", function() {
-					note.payload.aps = {};
-					note.payload.aps.custom = "custom property";
-					note.alert = "test alert";
-
-					expect(compiledOutput().aps.custom).to.equal("custom property");
-					expect(compiledOutput().aps.alert).to.equal("test alert");
-				});
-			});
-
-			context("alert is a string", function() {
-				it("includes the value", function() {
-					note.alert = "Test Message";
-					expect(compiledOutput().aps.alert).to.equal("Test Message");
-				});
-
-				it("inclues the alertText value", function() {
-					note.alertText = "Test Message";
-					expect(compiledOutput().aps.alert).to.equal("Test Message");
-				});
-			});
-
-			context("alert is an object", function() {
-				it("includes the value", function() {
-					var alert = {
-						body: "Test Message"
-					};
-					note.alert = alert;
-
-					expect(compiledOutput().aps.alert).to.eql(alert);
-				});
-
-				it("includes the alertText value", function() {
-					note.alert = {};
-					note.alertText = "Test Message";
-
-					expect(compiledOutput().aps.alert.body).to.eql("Test Message");
-				});
-			});
-
-			it("includes badge value", function() {
-				note.badge = 3;
-
-				expect(compiledOutput().aps.badge).to.eql(3);
-			});
-
-			it("includes sound value", function() {
-				note.sound = "awesome.caf";
-
-				expect(compiledOutput().aps.sound).to.eql("awesome.caf");
-			});
-
-			describe("with contentAvailable property", function() {
-				it("sets the 'content-available' flag", function() {
-					note.contentAvailable = true;
-					
-					expect(compiledOutput().aps["content-available"]).to.eql(1);
-				});
-			});
-
-			describe("with newsstandAvailable property", function() {
-				it("sets the 'content-available' flag", function() {
-					note.contentAvailable = true;
-					
-					expect(compiledOutput().aps["content-available"]).to.eql(1);
-				});
-			});
-
-			it("includes the urlArgs property", function() {
-				note.urlArgs = ["arguments", "for", "url"];
-
-				expect(compiledOutput().aps["url-args"]).to.eql(["arguments", "for", "url"]);
 			});
 		});
 	});
