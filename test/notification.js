@@ -191,22 +191,26 @@ describe("Notification", function() {
 		describe("category property", function() {
 			it("defaults to undefined", function() {
 				expect(note.category).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.category");
 			});
 
 			it("can be set to a string", function() {
 				note.category = "the-category";
 				expect(note.category).to.eql("the-category");
+				expect(compiledOutput()).to.have.deep.property("aps.category", "the-category");
 			});
 
 			it("cannot be set to an object", function() {
 				note.category = {};
 				expect(note.category).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.category");
 			});
 
 			it("can be set to undefined", function() {
 				note.category = "the-category";
 				note.category = undefined;
 				expect(note.category).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("aps.category");
 			});
 		});
 	});
@@ -640,12 +644,6 @@ describe("Notification", function() {
 				note.urlArgs = ["arguments", "for", "url"];
 
 				expect(compiledOutput().aps["url-args"]).to.eql(["arguments", "for", "url"]);
-			});
-
-			it("includes the category value", function() {
-				note.category = "mouse";
-
-				expect(compiledOutput().aps.category).to.eql("mouse");
 			});
 		});
 	});
