@@ -163,22 +163,6 @@ describe("Notification", function() {
 				expect(note.contentAvailable).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
 			});
-
-			describe("newsstand-available property", function() {
-				it("sets the content available flag", function() {
-					note.newsstandAvailable = true;
-
-					expect(note.contentAvailable).to.equal(true);
-					expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
-				});
-
-				it("returns the content-available flag", function() {
-					note.contentAvailable = false;
-
-					expect(note.newsstandAvailable).to.be.undefined;
-					expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
-				});
-			});
 		});
 
 		describe("mdm property", function() {
