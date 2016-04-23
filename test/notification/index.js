@@ -97,6 +97,18 @@ describe("Notification", function() {
 			});
 		});
 
+		describe("locKey", () => {
+		});
+		describe("locArgs", () => {});
+
+		describe("action", () => {});
+		describe("actionLocKey", () => {});
+
+		describe("titleLocKey", () => {});
+		describe("titleLocArgs", () => {});
+
+		describe("launchImage", () => {});
+
 		describe("badge property", function() {
 			it("defaults to undefined", function() {
 				expect(note.badge).to.be.undefined;
