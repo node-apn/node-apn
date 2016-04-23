@@ -73,7 +73,27 @@ describe("Notification", function() {
 
 			it("can be set to a string", function() {
 				note.alertText = "Hello, world";
-				expect(note.alert)
+				expect(typeof note.alert).to.equal("string");
+			});
+
+			it("sets alert as a string by default", () => {
+				note.alertText = "Hello, world";
+				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hello, world");
+			});
+
+			context("alert is already an Object", () => {
+				beforeEach(() => {
+					note.alert = {"body": "Existing Body"};
+				});
+
+				it("reads the value from alert body", () => {
+					expect(note.alertText).to.equal("Existing Body");
+				});
+
+				it("sets the value correctly", () => {
+					note.alertText = "Hello, world";
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
 			});
 		});
 
