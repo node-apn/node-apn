@@ -281,9 +281,8 @@ describe("Notification", function() {
 				expect(compiledOutput()).to.have.property("baz", 1);
 			});
 
-			xit("contains the correct aps properties", function() {
-				expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
-				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
+			it("does not contain the aps properties", function() {
+				expect(compiledOutput()).to.not.have.property("aps");
 			});
 		});
 
