@@ -30,7 +30,7 @@ describe("Notification", function() {
 	});
 
 	describe("aps payload", function() {
-		describe("alert property", function() {
+		describe("alert", function() {
 			it("defaults to undefined", function() {
 				expect(note.alert).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
@@ -66,7 +66,7 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("alertText property", function() {
+		describe("alertText", function() {
 			it("defaults to undefined", function() {
 				expect(note.alertText).to.be.undefined;
 			});
@@ -105,30 +105,30 @@ describe("Notification", function() {
 
 			context("alert is already an object", () => {
 				beforeEach(() => {
-					note.alert = {body: "Test", action: "reply"};
+					note.alert = {body: "Test", "launch-image": "test.png"};
 					note.locKey = "hello_world";
 				});
 
 				it("contains all expected properties", () => {
 					expect(compiledOutput()).to.have.deep.property("aps.alert")
-						.that.deep.equals({body: "Test", action: "reply", "loc-key": "hello_world"});
+						.that.deep.equals({body: "Test", "launch-image": "test.png", "loc-key": "hello_world"});
 				});
 			});
 
 			context("alert is already a string", () => {
 				beforeEach(() => {
-					note.alert = "Hello, world";
-					note.locKey = "hello_world";
+					note.alert = "Good Morning";
+					note.locKey = "good_morning";
 				});
 
 				it("retains the alert body correctly", () => {
-					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Good Morning");
 				});
 
 				it("sets the aps.alert.loc-key property", () => {
-					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "hello_world");
+					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "good_morning");
 				});
-			})
+			});
 		});
 
 		describe("locArgs", () => {
@@ -140,13 +140,13 @@ describe("Notification", function() {
 
 			context("alert is already an object", () => {
 				beforeEach(() => {
-					note.alert = {body: "Test", "action": "reply"};
+					note.alert = {body: "Test", "launch-image": "test.png"};
 					note.locArgs = ["Hi there"];
 				});
 
 				it("contains all expected properties", () => {
 					expect(compiledOutput()).to.have.deep.property("aps.alert")
-						.that.deep.equals({body: "Test", action: "reply", "loc-args": ["Hi there"]});
+						.that.deep.equals({body: "Test", "launch-image": "test.png", "loc-args": ["Hi there"]});
 				});
 			});
 
@@ -167,15 +167,215 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("action", () => {});
-		describe("actionLocKey", () => {});
+		describe("title", () => {
+			it("sets the aps.alert.title property", () => {
+				note.title = "node-apn";
+				expect(compiledOutput()).to.have.deep.property("aps.alert.title", "node-apn");
+			});
 
-		describe("titleLocKey", () => {});
-		describe("titleLocArgs", () => {});
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", "launch-image": "test.png"};
+					note.title = "node-apn";
+				});
 
-		describe("launchImage", () => {});
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", "launch-image": "test.png", "title": "node-apn"});
+				});
+			});
 
-		describe("badge property", function() {
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Hello, world";
+					note.title = "Welcome";
+				});
+
+				it("retains the alert body", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+
+				it("sets the aps.alert.title property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Welcome");
+				})
+			});
+		});
+
+		describe("titleLocKey", () => {
+			it("sets the aps.alert.title-loc-key property", () => {
+				note.titleLocKey = "Warning";
+				expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "Warning");
+			});
+
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", "launch-image": "test.png"};
+					note.titleLocKey = "Warning";
+				});
+
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", "launch-image": "test.png", "title-loc-key": "Warning"});
+				});
+			});
+
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Hello, world";
+					note.titleLocKey = "Warning";
+				});
+
+				it("retains the alert body correctly", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+
+				it("sets the aps.alert.title-loc-key property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "Warning");
+				});
+			});
+		});
+
+		describe("titleLocArgs", () => {
+			it("sets the aps.alert.title-loc-args property", () => {
+				note.titleLocArgs = ["arg1", "arg2"];
+				expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
+					.that.deep.equals(["arg1", "arg2"]);
+			});
+
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", "launch-image": "test.png"};
+					note.titleLocArgs = ["Hi there"];
+				});
+
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", "launch-image": "test.png", "title-loc-args": ["Hi there"]});
+				});
+			});
+
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Hello, world";
+					note.titleLocArgs = ["Hi there"];
+				});
+
+				it("retains the alert body", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+
+				it("sets the aps.alert.title-loc-args property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
+						.that.deep.equals(["Hi there"]);
+				})
+			});
+		});
+
+		describe("action", () => {
+			it("sets the aps.alert.action property", () => {
+				note.action = "View";
+				expect(compiledOutput()).to.have.deep.property("aps.alert.action", "View");
+			});
+
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", "launch-image": "test.png"};
+					note.action = "View";
+				});
+
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", "launch-image": "test.png", "action": "View"});
+				});
+			});
+
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Alert";
+					note.action = "Investigate";
+				});
+
+				it("retains the alert body", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Alert");
+				});
+
+				it("sets the aps.alert.action property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Investigate");
+				})
+			});
+		});
+
+		describe("actionLocKey", () => {
+			it("sets the aps.alert.action-loc-key property", () => {
+				note.actionLocKey = "reply_title";
+				expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "reply_title");
+			});
+
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", "launch-image": "test.png"};
+					note.actionLocKey = "reply_title";
+				});
+
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", "launch-image": "test.png", "action-loc-key": "reply_title"});
+				});
+			});
+
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Hello, world";
+					note.actionLocKey = "ignore_title";
+				});
+
+				it("retains the alert body correctly", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+
+				it("sets the aps.alert.action-loc-key property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "ignore_title");
+				});
+			});
+		});
+
+		describe("launchImage", () => {
+			it("sets the aps.alert.launch-image property", () => {
+				note.launchImage = "testLaunch.png";
+				expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image")
+					.that.deep.equals("testLaunch.png");
+			});
+
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", "title-loc-key": "node-apn"};
+					note.launchImage = "apnLaunch.png";
+				});
+
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", "title-loc-key": "node-apn", "launch-image": "apnLaunch.png"});
+				});
+			});
+
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Hello, world";
+					note.launchImage = "apnLaunch.png";
+				});
+
+				it("retains the alert body", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+
+				it("sets the aps.alert.launch-image property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image")
+						.that.deep.equals("apnLaunch.png");
+				})
+			});
+		});
+
+		describe("badge", function() {
 			it("defaults to undefined", function() {
 				expect(note.badge).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
@@ -204,7 +404,7 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("sound property", function() {
+		describe("sound", function() {
 			it("defaults to undefined", function() {
 				expect(note.sound).to.be.undefined;
 
@@ -234,7 +434,7 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("content-available property", function() {
+		describe("content-available", function() {
 			it("defaults to undefined", function() {
 				expect(note.contentAvailable).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
@@ -263,7 +463,7 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("mdm property", function() {
+		describe("mdm", function() {
 			it("defaults to undefined", function() {
 				expect(note.mdm).to.be.undefined;
 			});
@@ -291,7 +491,7 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("urlArgs property", function() {
+		describe("urlArgs", function() {
 			it("defaults to undefined", function() {
 				expect(note.urlArgs).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
@@ -328,7 +528,7 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("category property", function() {
+		describe("category", function() {
 			it("defaults to undefined", function() {
 				expect(note.category).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.category");
