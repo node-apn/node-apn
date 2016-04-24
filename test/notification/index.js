@@ -66,18 +66,18 @@ describe("Notification", function() {
 			});
 		});
 
-		describe("alertText", function() {
+		describe("body", function() {
 			it("defaults to undefined", function() {
-				expect(note.alertText).to.be.undefined;
+				expect(note.body).to.be.undefined;
 			});
 
 			it("can be set to a string", function() {
-				note.alertText = "Hello, world";
+				note.body = "Hello, world";
 				expect(typeof note.alert).to.equal("string");
 			});
 
 			it("sets alert as a string by default", () => {
-				note.alertText = "Hello, world";
+				note.body = "Hello, world";
 				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hello, world");
 			});
 
@@ -87,11 +87,11 @@ describe("Notification", function() {
 				});
 
 				it("reads the value from alert body", () => {
-					expect(note.alertText).to.equal("Existing Body");
+					expect(note.body).to.equal("Existing Body");
 				});
 
 				it("sets the value correctly", () => {
-					note.alertText = "Hello, world";
+					note.body = "Hello, world";
 					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
 				});
 			});
