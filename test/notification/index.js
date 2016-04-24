@@ -484,6 +484,6 @@ describe("Notification", function() {
 	});
 
 	function compiledOutput() {
-		return JSON.parse(note.compile())
+		return JSON.parse(note.compile());
 	}
 });
