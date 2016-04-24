@@ -32,20 +32,16 @@ describe("Notification", function() {
 	describe("aps payload", function() {
 		describe("alert", function() {
 			it("defaults to undefined", function() {
-				expect(note.alert).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
 			});
 
 			it("can be set to a string", function() {
 				note.alert = "hello";
-
-				expect(note.alert).to.equal("hello");
 				expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
 			});
 
 			it("can be set to an object", function() {
 				note.alert = {"body": "hello"};
-				expect(note.alert).to.eql({"body": "hello"});
 				expect(compiledOutput()).to.have.deep.property("aps.alert")
 					.that.deep.equals({"body": "hello"});
 			});
@@ -53,15 +49,6 @@ describe("Notification", function() {
 			it("can be set to undefined", function() {
 				note.alert = {"body": "hello"};
 				note.alert = undefined;
-
-				expect(note.alert).to.be.undefined;
-				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
-			});
-
-			it("cannot be set to a number", function() {
-				note.alert = 5;
-
-				expect(note.alert).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
 			});
 		});
@@ -73,7 +60,7 @@ describe("Notification", function() {
 
 			it("can be set to a string", function() {
 				note.body = "Hello, world";
-				expect(typeof note.alert).to.equal("string");
+				expect(typeof compiledOutput().aps.alert).to.equal("string");
 			});
 
 			it("sets alert as a string by default", () => {
@@ -377,14 +364,12 @@ describe("Notification", function() {
 
 		describe("badge", function() {
 			it("defaults to undefined", function() {
-				expect(note.badge).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
 			});
 
 			it("can be set to a number", function() {
 				note.badge = 5;
 
-				expect(typeof note.badge).to.equal("number");
 				expect(compiledOutput()).to.have.deep.property("aps.badge", 5);
 			});
 
@@ -392,29 +377,24 @@ describe("Notification", function() {
 				note.badge = 5;
 				note.badge = undefined;
 
-				expect(note.badge).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
 			});
 
 			it("cannot be set to a string", function() {
 				note.badge = "hello";
 
-				expect(note.badge).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
 			});
 		});
 
 		describe("sound", function() {
 			it("defaults to undefined", function() {
-				expect(note.sound).to.be.undefined;
-
 				expect(compiledOutput()).to.not.have.deep.property("aps.sound");
 			});
 
 			it("can be set to a string", function() {
 				note.sound = "sound.caf";
 
-				expect(typeof note.sound).to.equal("string");
 				expect(compiledOutput()).to.have.deep.property("aps.sound", "sound.caf");
 			});
 
@@ -422,28 +402,30 @@ describe("Notification", function() {
 				note.sound = "sound.caf";
 				note.sound = undefined;
 
-				expect(note.sound).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.sound");
 			});
 
 			it("cannot be set to a number", function() {
 				note.sound = 5;
 
-				expect(note.sound).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.sound");
 			});
 		});
 
 		describe("content-available", function() {
 			it("defaults to undefined", function() {
-				expect(note.contentAvailable).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
 			});
 
 			it("can be set to a boolean value", function() {
 				note.contentAvailable = true;
 
-				expect(typeof note.contentAvailable).to.equal("boolean");
+				expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
+			});
+
+			it("can be set to `1`", () => {
+				note.contentAvailable = 1;
+
 				expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
 			});
 
@@ -451,27 +433,18 @@ describe("Notification", function() {
 				note.contentAvailable = true;
 				note.contentAvailable = undefined;
 
-				expect(note.contentAvailable).to.be.undefined;
-				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
-			});
-
-			it("cannot be set to a string", function() {
-				note.contentAvailable = "true";
-
-				expect(note.contentAvailable).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
 			});
 		});
 
 		describe("mdm", function() {
 			it("defaults to undefined", function() {
-				expect(note.mdm).to.be.undefined;
+				expect(compiledOutput()).to.not.have.deep.property("mdm");
 			});
 
 			it("can be set to a string", function() {
 				note.mdm = "mdm payload";
 
-				expect(note.mdm).to.equal("mdm payload");
 				expect(compiledOutput()).to.deep.equal({"mdm": "mdm payload"});
 			});
 
@@ -479,7 +452,6 @@ describe("Notification", function() {
 				note.mdm = "mdm payload";
 				note.mdm = undefined;
 
-				expect(note.mdm).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("mdm");
 			});
 
@@ -493,14 +465,12 @@ describe("Notification", function() {
 
 		describe("urlArgs", function() {
 			it("defaults to undefined", function() {
-				expect(note.urlArgs).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
 			});
 
 			it("can be set to an array", function() {
 				note.urlArgs = ["arg1", "arg2"];
 
-				expect(note.urlArgs).to.eql(["arg1", "arg2"]);
 				expect(compiledOutput()).to.have.deep.property("aps.url\-args")
 					.that.deep.equals(["arg1", "arg2"]);
 			});
@@ -509,47 +479,23 @@ describe("Notification", function() {
 				note.urlArgs = ["arg1", "arg2"];
 				note.urlArgs = undefined;
 
-				expect(note.urlArgs).to.be.undefined;
-				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
-			});
-
-			it("cannot be set to an object", function() {
-				note.urlArgs = {};
-				expect(note.urlArgs).to.be.undefined;
-
-				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
-			});
-
-			it("cannot be set to a string", function() {
-				note.urlArgs = "arg1";
-				expect(note.urlArgs).to.be.undefined;
-
 				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
 			});
 		});
 
 		describe("category", function() {
 			it("defaults to undefined", function() {
-				expect(note.category).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.category");
 			});
 
 			it("can be set to a string", function() {
 				note.category = "the-category";
-				expect(note.category).to.eql("the-category");
 				expect(compiledOutput()).to.have.deep.property("aps.category", "the-category");
-			});
-
-			it("cannot be set to an object", function() {
-				note.category = {};
-				expect(note.category).to.be.undefined;
-				expect(compiledOutput()).to.not.have.deep.property("aps.category");
 			});
 
 			it("can be set to undefined", function() {
 				note.category = "the-category";
 				note.category = undefined;
-				expect(note.category).to.be.undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.category");
 			});
 		});
