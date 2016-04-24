@@ -31,6 +31,13 @@ describe("Notification", function() {
 				note.alert = undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.alert");
 			});
+
+			describe("setAlert", () => {
+				it("is chainable", () => {
+					expect(note.setAlert("hello")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
+				});
+			});
 		});
 
 		describe("body", function() {
@@ -60,6 +67,13 @@ describe("Notification", function() {
 				it("sets the value correctly", () => {
 					note.body = "Hello, world";
 					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+			});
+
+			describe("setBody", () => {
+				it("is chainable", () => {
+					expect(note.setBody("hello")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
 				});
 			});
 		});
@@ -93,6 +107,13 @@ describe("Notification", function() {
 				});
 
 				it("sets the aps.alert.loc-key property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "good_morning");
+				});
+			});
+
+			describe("setLocKey", () => {
+				it("is chainable", () => {
+					expect(note.setLocKey("good_morning")).to.equal(note);
 					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "good_morning");
 				});
 			});
@@ -132,6 +153,14 @@ describe("Notification", function() {
 						.that.deep.equals(["Hi there"]);
 				})
 			});
+
+			describe("setLocArgs", () => {
+				it("is chainable", () => {
+					expect(note.setLocArgs(["Robert"])).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
+						.that.deep.equals(["Robert"]);
+				});
+			});
 		});
 
 		describe("title", () => {
@@ -166,6 +195,13 @@ describe("Notification", function() {
 					expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Welcome");
 				})
 			});
+
+			describe("setTitle", () => {
+				it("is chainable", () => {
+					expect(note.setTitle("Bienvenue")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Bienvenue");
+				});
+			});
 		});
 
 		describe("titleLocKey", () => {
@@ -198,6 +234,13 @@ describe("Notification", function() {
 
 				it("sets the aps.alert.title-loc-key property", () => {
 					expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "Warning");
+				});
+			});
+
+			describe("setAlert", () => {
+				it("is chainable", () => {
+					expect(note.setTitleLocKey("greeting")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "greeting");
 				});
 			});
 		});
@@ -236,6 +279,14 @@ describe("Notification", function() {
 						.that.deep.equals(["Hi there"]);
 				})
 			});
+
+			describe("setTitleLocArgs", () => {
+				it("is chainable", () => {
+					expect(note.setTitleLocArgs(["iPhone 6s"])).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
+						.that.deep.equals(["iPhone 6s"]);
+				});
+			});
 		});
 
 		describe("action", () => {
@@ -270,6 +321,13 @@ describe("Notification", function() {
 					expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Investigate");
 				})
 			});
+
+			describe("setAction", () => {
+				it("is chainable", () => {
+					expect(note.setAction("Reply")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Reply");
+				});
+			});
 		});
 
 		describe("actionLocKey", () => {
@@ -301,6 +359,13 @@ describe("Notification", function() {
 				});
 
 				it("sets the aps.alert.action-loc-key property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "ignore_title");
+				});
+			});
+
+			describe("setActionLocKey", () => {
+				it("is chainable", () => {
+					expect(note.setActionLocKey("ignore_title")).to.equal(note);
 					expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "ignore_title");
 				});
 			});
@@ -340,6 +405,13 @@ describe("Notification", function() {
 						.that.deep.equals("apnLaunch.png");
 				})
 			});
+
+			describe("setLaunchImage", () => {
+				it("is chainable", () => {
+					expect(note.setLaunchImage("remoteLaunch.png")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image", "remoteLaunch.png");
+				});
+			});
 		});
 
 		describe("badge", function() {
@@ -364,6 +436,13 @@ describe("Notification", function() {
 				note.badge = "hello";
 
 				expect(compiledOutput()).to.not.have.deep.property("aps.badge");
+			});
+
+			describe("setBadge", () => {
+				it("is chainable", () => {
+					expect(note.setBadge(7)).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.badge", 7);
+				});
 			});
 		});
 
@@ -390,6 +469,13 @@ describe("Notification", function() {
 
 				expect(compiledOutput()).to.not.have.deep.property("aps.sound");
 			});
+
+			describe("setSound", () => {
+				it("is chainable", () => {
+					expect(note.setSound("bee.caf")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.sound", "bee.caf");
+				});
+			});
 		});
 
 		describe("content-available", function() {
@@ -414,6 +500,13 @@ describe("Notification", function() {
 				note.contentAvailable = undefined;
 
 				expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
+			});
+
+			describe("setContentAvailable", () => {
+				it("is chainable", () => {
+					expect(note.setContentAvailable(true)).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
+				});
 			});
 		});
 
@@ -441,6 +534,13 @@ describe("Notification", function() {
 
 				expect(compiledOutput()).to.not.have.any.keys("aps");
 			});
+
+			describe("setMdm", () => {
+				it("is chainable", () => {
+					expect(note.setMdm("hello")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("mdm", "hello");
+				});
+			});
 		});
 
 		describe("urlArgs", function() {
@@ -461,6 +561,14 @@ describe("Notification", function() {
 
 				expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
 			});
+
+			describe("setUrlArgs", () => {
+				it("is chainable", () => {
+					expect(note.setUrlArgs(["A318", "BA001"])).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.url\-args")
+						.that.deep.equals(["A318", "BA001"]);
+				});
+			});
 		});
 
 		describe("category", function() {
@@ -477,6 +585,13 @@ describe("Notification", function() {
 				note.category = "the-category";
 				note.category = undefined;
 				expect(compiledOutput()).to.not.have.deep.property("aps.category");
+			});
+
+			describe("setCategory", () => {
+				it("is chainable", () => {
+					expect(note.setCategory("reminder")).to.equal(note);
+					expect(compiledOutput()).to.have.deep.property("aps.category", "reminder");
+				});
 			});
 		});
 
