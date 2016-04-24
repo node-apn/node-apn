@@ -98,8 +98,74 @@ describe("Notification", function() {
 		});
 
 		describe("locKey", () => {
+			it("sets the aps.alert.loc-key property", () => {
+				note.locKey = "hello_world";
+				expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "hello_world");
+			});
+
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", action: "reply"};
+					note.locKey = "hello_world";
+				});
+
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", action: "reply", "loc-key": "hello_world"});
+				});
+			});
+
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Hello, world";
+					note.locKey = "hello_world";
+				});
+
+				it("retains the alert body correctly", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+
+				it("sets the aps.alert.loc-key property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "hello_world");
+				});
+			})
 		});
-		describe("locArgs", () => {});
+
+		describe("locArgs", () => {
+			it("sets the aps.alert.loc-args property", () => {
+				note.locArgs = ["arg1", "arg2"];
+				expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
+					.that.deep.equals(["arg1", "arg2"]);
+			});
+
+			context("alert is already an object", () => {
+				beforeEach(() => {
+					note.alert = {body: "Test", "action": "reply"};
+					note.locArgs = ["Hi there"];
+				});
+
+				it("contains all expected properties", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert")
+						.that.deep.equals({body: "Test", action: "reply", "loc-args": ["Hi there"]});
+				});
+			});
+
+			context("alert is already a string", () => {
+				beforeEach(() => {
+					note.alert = "Hello, world";
+					note.locArgs = ["Hi there"];
+				});
+
+				it("retains the alert body", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+				});
+
+				it("sets the aps.alert.loc-args property", () => {
+					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
+						.that.deep.equals(["Hi there"]);
+				})
+			});
+		});
 
 		describe("action", () => {});
 		describe("actionLocKey", () => {});
