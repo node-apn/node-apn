@@ -81,6 +81,21 @@ describe("config", () => {
   });
 
   describe("credentials", () => {
+
+    describe("passphrase", () => {
+      it("throws an error when supplied passphrase is not a string", () => {
+        expect(() => { config( { passphrase: 123 }) } ).to.throw("Passphrase must be a string");
+      });
+
+      it("does not throw when passphrase is a string", () => {
+        expect(() => { config( { passphrase: "seekrit" }) } ).to.not.throw();
+      });
+
+      it("does not throw when passphrase is not supplied", () => {
+        expect(() => { config( { }) } ).to.not.throw();
+      });
+    });
+
     context("pfx value is supplied without cert and key", () => {
       it("includes the value of `pfx`", () => {
         expect(config( { pfx: "apn.pfx" } )).to.have.property("pfx", "apn.pfx");
