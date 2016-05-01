@@ -193,7 +193,7 @@ describe("Notification", function() {
 
 				it("sets the aps.alert.title property", () => {
 					expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Welcome");
-				})
+				});
 			});
 
 			describe("setTitle", () => {
