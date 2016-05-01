@@ -11,21 +11,52 @@ describe("Notification", function() {
 	});
 
 	describe("constructor", () => {
-		it("accepts a pre-constructed payload", () => {
-			let payload = { "some": "payload" };
-			note = new Notification(payload);
+		it("accepts initialization values", () => {
+			let properties = { "priority": 5, "topic": "io.apn.node", "payload": { "foo": "bar" }, "badge": 5};
+			note = new Notification(properties);
 
-			expect(note.payload).to.deep.equal({ "some": "payload" });
+			expect(note.payload).to.deep.equal({"foo": "bar"});
+			expect(note.priority).to.equal(5);
+			expect(note.topic).to.equal("io.apn.node");
+			expect(compiledOutput()).to.have.deep.property("aps.badge", 5);
+		});
+	});
+
+	describe("rawPayload", () => {
+
+		it("is used as the JSON output", () => {
+			let payload = { "some": "payload" };
+			note = new Notification({ "rawPayload": payload });
+
+			expect(note.rawPayload).to.deep.equal({ "some": "payload" });
 			expect(compiledOutput()).to.deep.equal({ "some": "payload" });
 		});
 
-		it("retains default aps properties", () => {
+		it("does not get clobbered by aps accessors", () => {
 			let payload = { "some": "payload", "aps": {"alert": "Foo"}};
 
-			note = new Notification(payload);
+			note = new Notification({ "rawPayload": payload });
+			note.alertBody = "Bar";
 
-			expect(note.payload).to.deep.equal({ "some": "payload", "aps": {"alert": "Foo"}});
+			expect(note.rawPayload).to.deep.equal({ "some": "payload", "aps": {"alert": "Foo"}});
 			expect(compiledOutput()).to.deep.equal({ "some": "payload", "aps": {"alert": "Foo"}});
+		});
+
+
+		context("when passed in the notification constructor", function() {
+			beforeEach(function() {
+				note = new Notification({"rawPayload": {"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }}});
+			});
+
+			it("contains all original payload properties", function() {
+				expect(compiledOutput()).to.have.property("foo", "bar");
+				expect(compiledOutput()).to.have.property("baz", 1);
+			});
+
+			it("contains the correct aps properties", function() {
+				expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
+				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
+			});
 		});
 	});
 
@@ -49,22 +80,6 @@ describe("Notification", function() {
 
 			it("does not contain the aps properties", function() {
 				expect(compiledOutput()).to.not.have.property("aps");
-			});
-		});
-
-		context("when passed in the notification constructor", function() {
-			beforeEach(function() {
-				note = new Notification({"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }});
-			});
-
-			it("contains all original payload properties", function() {
-				expect(compiledOutput()).to.have.property("foo", "bar");
-				expect(compiledOutput()).to.have.property("baz", 1);
-			});
-
-			it("contains the correct aps properties", function() {
-				expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
-				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
 			});
 		});
 	});
