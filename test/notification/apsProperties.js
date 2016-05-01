@@ -151,7 +151,7 @@ describe("Notification", function() {
 				it("sets the aps.alert.loc-args property", () => {
 					expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
 						.that.deep.equals(["Hi there"]);
-				})
+				});
 			});
 
 			describe("setLocArgs", () => {
