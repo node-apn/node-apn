@@ -269,10 +269,16 @@ describe("Connection", function() {
 					setTimeout(() => {
 						fakes.endpointManager.getStream.reset();
 						fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[2]);
-						fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[3]);
-						fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[4]);
+						fakes.endpointManager.getStream.onCall(1).returns(null);
 						fakes.endpointManager.emit("wakeup");
-					}, 5);
+					}, 1);
+
+					setTimeout(() => {
+						fakes.endpointManager.getStream.reset();
+						fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[3]);
+						fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[4]);
+						fakes.endpointManager.emit("wakeup");
+					}, 2);
 				});
 
 				it("sends the correct device ID for each stream", () => {
