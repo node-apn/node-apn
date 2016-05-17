@@ -17,12 +17,12 @@ describe("Device", function() {
 		});
 
 		it("should return a Device object containing the correct token when given a hex string", function () {
-			expect(Device("<0123 4567 89AB CDEF>").toString()).to.equal("0123456789abcdef");
+			expect((new Device("<0123 4567 89AB CDEF>")).toString()).to.equal("0123456789abcdef");
 		});
 
 		it("should return a Device object containing the correct token when given a Buffer", function () {
 			var buf = new Buffer([1, 35, 69, 103, 137, 171, 205, 239]);
-			expect(Device(buf).toString()).to.equal("0123456789abcdef");
+			expect((new Device(buf).toString())).to.equal("0123456789abcdef");
 		});
 	});
 });

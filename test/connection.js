@@ -23,20 +23,20 @@ describe("Connection", function() {
 
 		context("called without `new`", () => {
 			it("returns a new instance", () => {
-				expect(Connection()).to.be.an.instanceof(Connection);
+				expect((new Connection())).to.be.an.instanceof(Connection);
 			});
 		});
 
 		it("prepares the configuration with passed options", () => {
 			let options = { production: true };
-			Connection(options);
+			new Connection(options);
 
 			expect(fakes.config).to.be.calledWith(options);
 		});
 
 		describe("EndpointManager instance", function() {
 			it("is created", () => {
-				Connection();
+				new Connection();
 
 				expect(fakes.EndpointManager).to.be.calledOnce;
 				expect(fakes.EndpointManager).to.be.calledWithNew;
@@ -46,7 +46,7 @@ describe("Connection", function() {
 				const returnSentinel = { "configKey": "configValue"};
 				fakes.config.returns(returnSentinel);
 
-				Connection({});
+				new Connection({});
 				expect(fakes.EndpointManager).to.be.calledWith(returnSentinel);
 			});
 		});
@@ -253,7 +253,7 @@ describe("Connection", function() {
 					]);
 				});
 			});
-		
+
 			context("some streams return, others wake up later", () => {
 				let promise;
 
