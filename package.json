@@ -45,6 +45,13 @@
   "jshintConfig": {
     "node": true
   },
+  "eslintConfig": {
+    "ecmaVersion": 6,
+    "env": {
+      "es6": true,
+      "node": true
+    }
+  },
   "engines": {
     "node": ">= 4.0.0"
   },
