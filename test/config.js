@@ -17,17 +17,17 @@ describe("config", () => {
   it("supplies sensible defaults", () => {
     expect(config()).to.deep.equal({
       cert: "cert.pem",
-			key: "key.pem",
-			ca: null,
-			pfx: null,
-			passphrase: null,
-			production: false,
-			address: "api.sandbox.push.apple.com",
-			port: 443,
-			rejectUnauthorized: true,
-			connectTimeout: 10000,
-			connectionTimeout: 3600000,
-			connectionRetryLimit: 10,
+      key: "key.pem",
+      ca: null,
+      pfx: null,
+      passphrase: null,
+      production: false,
+      address: "api.sandbox.push.apple.com",
+      port: 443,
+      rejectUnauthorized: true,
+      connectTimeout: 10000,
+      connectionTimeout: 3600000,
+      connectionRetryLimit: 10,
     });
   });
 

@@ -157,7 +157,7 @@ describe("Endpoint", () => {
       beforeEach(() => {
         endpoint = new Endpoint({});
       });
-      
+
       describe("connection", () => {
         it("is created", () => {
           expect(fakes.protocol.Connection).to.have.been.calledWithNew;
@@ -286,7 +286,7 @@ describe("Endpoint", () => {
       sinon.stub(streams.decompressor, "pipe");
 
       sinon.spy(streams.socket, "write");
-      
+
       new Endpoint({});
     });
 
@@ -355,7 +355,7 @@ describe("Endpoint", () => {
         const endpoint = new Endpoint({});
         const wakeupSpy = sinon.spy();
         endpoint.on("wakeup", wakeupSpy);
-        
+
         streams.connection.emit("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", 5);
 
         expect(wakeupSpy).to.have.been.calledOnce;
