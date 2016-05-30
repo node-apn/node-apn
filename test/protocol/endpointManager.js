@@ -11,7 +11,7 @@ describe("Endpoint Manager", () => {
       Endpoint: sinon.stub(),
     };
 
-    const endpoint = new EventEmitter;
+    const endpoint = new EventEmitter();
     endpoint.createStream = sinon.stub().returns({"kind": "stream"});
 
     fakes.Endpoint.returns(endpoint);
@@ -109,6 +109,29 @@ describe("Endpoint Manager", () => {
         it("returns nil without reserving a stream");
       });
     });
+  });
+
+  describe("established connections", () => {
+    let endpoint;
+
+    beforeEach(() => {
+      const manager = new EndpointManager();
+      manager.getStream();
+
+      endpoint = fakes.Endpoint.returnValues[0];
+      endpoint.destroy = sinon.stub();
+    });
+
+    context("when an error occurs", () => {
+      beforeEach(() => {
+        endpoint.emit("error", new Error("this should be handled"));
+      });
+
+      it("is destroyed", () => {
+        expect(endpoint.destroy).to.be.called.once;
+      });
+    });
+
   });
 
   describe("wakeup event", () => {

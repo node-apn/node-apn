@@ -397,4 +397,19 @@ describe("Endpoint", () => {
       expect(stream).to.deep.equal(connectionStream);
     });
   });
+
+  describe("destroy", () => {
+    let endpoint;
+
+    beforeEach(() => {
+      endpoint = new Endpoint({});
+      streams.socket.destroy = sinon.stub();
+    });
+
+    it("destroys the underlying socket", () => {
+      endpoint.destroy();
+
+      expect(streams.socket.destroy).to.be.called.once;
+    });
+  });
 });
