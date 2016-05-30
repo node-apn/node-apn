@@ -8,13 +8,13 @@ describe("Endpoint Manager", () => {
 
   beforeEach(() => {
     fakes = {
-      Endpoint: sinon.stub(),
+      Endpoint: sinon.spy(function() {
+        const endpoint = new EventEmitter();
+        endpoint.destroy = sinon.spy();
+        endpoint.createStream = sinon.stub().returns({"kind": "stream"});
+        return endpoint;
+      }),
     };
-
-    const endpoint = new EventEmitter();
-    endpoint.createStream = sinon.stub().returns({"kind": "stream"});
-
-    fakes.Endpoint.returns(endpoint);
 
     EndpointManager = require("../../lib/protocol/endpointManager")(fakes);
   });
@@ -111,15 +111,14 @@ describe("Endpoint Manager", () => {
     });
   });
 
-  describe("established connections", () => {
+  describe("with one established connection", () => {
     let endpoint, manager;
 
     beforeEach(() => {
       manager = new EndpointManager();
       manager.getStream();
 
-      endpoint = fakes.Endpoint.returnValues[0];
-      endpoint.destroy = sinon.stub();
+      endpoint = fakes.Endpoint.firstCall.returnValue;
     });
 
     context("when an error occurs", () => {
@@ -132,29 +131,34 @@ describe("Endpoint Manager", () => {
       });
     });
 
-    context("when 3 consecutive endpoint errors occur", () => {
-      it("emits an error", (done) => {
-        manager.on("error", err => {
-          expect(err).to.match(/connection failed/i);
-          done();
+    context("when 2 consecutive endpoint errors occur", () => {
+      beforeEach(() => {
+        fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+
+        manager.getStream();
+        fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+      });
+
+      context("followed by another error", () => {
+        it("emits an error", (done) => {
+          manager.on("error", err => {
+            expect(err).to.match(/connection failed/i);
+            done();
+          });
+
+          manager.getStream();
+          fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
         });
+      });
 
-        const firstEndpoint = endpoint;
-        const secondEndpoint = new EventEmitter();
-        secondEndpoint.destroy = sinon.stub();
-        const thirdEndpoint = new EventEmitter();
-        thirdEndpoint.destroy = sinon.stub();
+      context("followed by a connect then another error", () => {
+        it("does not emit an error", () => {
+          manager.getStream();
+          fakes.Endpoint.lastCall.returnValue.emit("connect");
 
-        fakes.Endpoint.onSecondCall().returns(secondEndpoint);
-        fakes.Endpoint.onThirdCall().returns(thirdEndpoint);
-
-        firstEndpoint.emit("error", new Error("this should be handled"));
-
-        manager.getStream();
-        secondEndpoint.emit("error", new Error("this should be handled"));
-
-        manager.getStream();
-        thirdEndpoint.emit("error", new Error("this should be handled"));
+          manager.getStream();
+          fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+        });
       });
     });
   });
