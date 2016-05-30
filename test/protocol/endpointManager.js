@@ -24,7 +24,9 @@ describe("Endpoint Manager", () => {
 
     beforeEach(() => {
       fakes.Endpoint.reset();
-      manager = new EndpointManager();
+      manager = new EndpointManager({
+        "maxConnections": 2,
+      });
     });
 
     context("with no established endpoints", () => {
@@ -96,6 +98,14 @@ describe("Endpoint Manager", () => {
 
         it("returns null", () => {
           expect(manager.getStream()).to.be.null;
+        });
+
+        context("when there are fewer than `maxConnections` connections", () => {
+          it("creates an endpoint connection", () => {
+            manager.getStream();
+
+            expect(fakes.Endpoint).to.be.calledTwice;
+          });
         });
       });
     });
