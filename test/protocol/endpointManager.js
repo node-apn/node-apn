@@ -112,10 +112,10 @@ describe("Endpoint Manager", () => {
   });
 
   describe("established connections", () => {
-    let endpoint;
+    let endpoint, manager;
 
     beforeEach(() => {
-      const manager = new EndpointManager();
+      manager = new EndpointManager();
       manager.getStream();
 
       endpoint = fakes.Endpoint.returnValues[0];
@@ -132,6 +132,31 @@ describe("Endpoint Manager", () => {
       });
     });
 
+    context("when 3 consecutive endpoint errors occur", () => {
+      it("emits an error", (done) => {
+        manager.on("error", err => {
+          expect(err).to.match(/connection failed/i);
+          done();
+        });
+
+        const firstEndpoint = endpoint;
+        const secondEndpoint = new EventEmitter();
+        secondEndpoint.destroy = sinon.stub();
+        const thirdEndpoint = new EventEmitter();
+        thirdEndpoint.destroy = sinon.stub();
+
+        fakes.Endpoint.onSecondCall().returns(secondEndpoint);
+        fakes.Endpoint.onThirdCall().returns(thirdEndpoint);
+
+        firstEndpoint.emit("error", new Error("this should be handled"));
+
+        manager.getStream();
+        secondEndpoint.emit("error", new Error("this should be handled"));
+
+        manager.getStream();
+        thirdEndpoint.emit("error", new Error("this should be handled"));
+      });
+    });
   });
 
   describe("wakeup event", () => {
