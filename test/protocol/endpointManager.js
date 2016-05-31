@@ -152,7 +152,7 @@ describe("Endpoint Manager", () => {
 
     context("when `connectionRetryLimit` consecutive endpoint errors occur", () => {
       it("emits an error", (done) => {
-        const connectionRetryLimit = Math.floor(Math.random() * 5) % 5;
+        const connectionRetryLimit = (Math.floor(Math.random() * 3) % 3) + 2;
         const manager = new EndpointManager({
           "connectionRetryLimit": connectionRetryLimit,
           "maxConnections": 2,
