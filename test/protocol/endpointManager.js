@@ -32,7 +32,7 @@ describe("Endpoint Manager", () => {
 
     context("with no established endpoints", () => {
       it("creates an endpoint connection", () => {
-        const fakeConfig = { "sentinel": "config"};
+        const fakeConfig = { "sentinel": "config", "maxConnections": 3 };
 
         manager = new EndpointManager(fakeConfig);
         manager.getStream();
@@ -105,6 +105,18 @@ describe("Endpoint Manager", () => {
           it("creates an endpoint connection", () => {
             manager.getStream();
 
+            expect(fakes.Endpoint).to.be.calledTwice;
+          });
+        });
+
+        context("when there are already `maxConnections` connections", () => {
+          it("does not attempt to create a further endpoint connection", () => {
+            manager.getStream();
+            const secondEndpoint = fakes.Endpoint.lastCall.returnValue
+            secondEndpoint.availableStreamSlots = 0;
+            secondEndpoint.emit("connect");
+
+            manager.getStream();
             expect(fakes.Endpoint).to.be.calledTwice;
           });
         });

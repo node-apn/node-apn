@@ -28,6 +28,7 @@ describe("config", () => {
       connectTimeout: 10000,
       connectionTimeout: 3600000,
       connectionRetryLimit: 3,
+      maxConnections: 10,
     });
   });
 
