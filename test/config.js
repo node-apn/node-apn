@@ -27,7 +27,7 @@ describe("config", () => {
       rejectUnauthorized: true,
       connectTimeout: 10000,
       connectionTimeout: 3600000,
-      connectionRetryLimit: 10,
+      connectionRetryLimit: 3,
     });
   });
 
