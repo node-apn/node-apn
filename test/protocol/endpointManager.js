@@ -25,6 +25,7 @@ describe("Endpoint Manager", () => {
     beforeEach(() => {
       fakes.Endpoint.reset();
       manager = new EndpointManager({
+        "connectionRetryLimit": 3,
         "maxConnections": 2,
       });
     });
@@ -122,47 +123,53 @@ describe("Endpoint Manager", () => {
   });
 
   describe("with one established connection", () => {
-    let endpoint, manager;
-
-    beforeEach(() => {
-      manager = new EndpointManager();
-      manager.getStream();
-
-      endpoint = fakes.Endpoint.firstCall.returnValue;
-    });
 
     context("when an error occurs", () => {
       beforeEach(() => {
-        endpoint.emit("error", new Error("this should be handled"));
-      });
-
-      it("is destroyed", () => {
-        expect(endpoint.destroy).to.be.called.once;
-      });
-    });
-
-    context("when 2 consecutive endpoint errors occur", () => {
-      beforeEach(() => {
-        fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+        const manager = new EndpointManager({ "maxConnections": 3 });
 
         manager.getStream();
         fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
       });
 
-      context("followed by another error", () => {
-        it("emits an error", (done) => {
-          manager.on("error", err => {
-            expect(err).to.match(/connection failed/i);
-            done();
+      it("is destroyed", () => {
+        const endpoint = fakes.Endpoint.firstCall.returnValue;
+        expect(endpoint.destroy).to.be.called.once;
+      });
+    });
+
+    context("when `connectionRetryLimit` consecutive endpoint errors occur", () => {
+      it("emits an error", (done) => {
+        const connectionRetryLimit = Math.floor(Math.random() * 5) % 5;
+        const manager = new EndpointManager({
+          "connectionRetryLimit": connectionRetryLimit,
+          "maxConnections": 2,
+        });
+
+        for (let i = 0; i < connectionRetryLimit - 1; i++) {
+          manager.getStream();
+          fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+        }
+
+        manager.on("error", err => {
+          expect(err).to.match(/connection failed/i);
+          done();
+        });
+
+        manager.getStream();
+        fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+      });
+
+      context("when a connection is successful between the errors", () => {
+        it("does not emit an error", () => {
+          const manager = new EndpointManager({
+            "maxConnections": 2,
+            "connectionRetryLimit": 2,
           });
 
           manager.getStream();
           fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
-        });
-      });
 
-      context("followed by a connect then another error", () => {
-        it("does not emit an error", () => {
           manager.getStream();
           fakes.Endpoint.lastCall.returnValue.emit("connect");
 
@@ -179,7 +186,7 @@ describe("Endpoint Manager", () => {
       let wakeupSpy, endpoint;
 
       beforeEach(() => {
-        const manager = new EndpointManager();
+        const manager = new EndpointManager({ "maxConnections": 3 });
         manager.getStream();
 
         endpoint = fakes.Endpoint.firstCall.returnValue;
