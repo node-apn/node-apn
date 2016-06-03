@@ -124,12 +124,58 @@ describe("Endpoint Manager", () => {
     });
 
     context("with multiple endpoints", () => {
-      it("reserves streams by round-robin");
-      context("where next endpoint has no available slots", () => {
-        it("skips to endpoint with availablility");
+      let firstEndpoint, secondEndpoint;
+
+      beforeEach(() => {
+        firstEndpoint  = establishEndpoint(manager);
+        secondEndpoint = establishEndpoint(manager);
       });
+
+      it("reserves streams by round-robin", () => {
+        firstEndpoint.availableStreamSlots = 1;
+        secondEndpoint.availableStreamSlots = 1;
+
+        expect(manager.getStream()).to.not.be.null;
+        expect(manager.getStream()).to.not.be.null;
+        expect(firstEndpoint.createStream).to.be.calledOnce;
+        expect(secondEndpoint.createStream).to.be.calledOnce;
+      });
+
+      context("where next endpoint has no available slots", () => {
+        it("skips to endpoint with availablility", () => {
+          firstEndpoint.availableStreamSlots = 0;
+          secondEndpoint.availableStreamSlots = 1;
+
+          expect(manager.getStream()).to.not.be.null;
+          expect(firstEndpoint.createStream).to.not.be.called;
+          expect(secondEndpoint.createStream).to.be.calledOnce;
+        });
+      });
+
+      context("when one endpoint has one available slot", () => {
+        it("returns one stream", () => {
+          firstEndpoint.availableStreamSlots = 0;
+
+          secondEndpoint.availableStreamSlots = 1;
+          expect(manager.getStream()).to.not.be.null;
+
+          secondEndpoint.availableStreamSlots = 0;
+          expect(manager.getStream()).to.be.null;
+
+          expect(firstEndpoint.createStream).to.not.be.called;
+          expect(secondEndpoint.createStream).to.be.calledOnce;
+        });
+      });
+
       context("where no endpoints have available slots", () => {
-        it("returns nil without reserving a stream");
+        it("returns null without reserving a stream", () => {
+          firstEndpoint.availableStreamSlots = 0;
+          secondEndpoint.availableStreamSlots = 0;
+
+          expect(manager.getStream()).to.be.null;
+          expect(firstEndpoint.createStream).to.not.be.called;
+          expect(secondEndpoint.createStream).to.not.be.called;
+        });
       });
     });
   });
@@ -228,4 +274,12 @@ describe("Endpoint Manager", () => {
       });
     });
   });
+
+  function establishEndpoint(manager) {
+    manager.getStream();
+    let endpoint = fakes.Endpoint.lastCall.returnValue;
+    endpoint.availableStreamSlots = 0;
+    endpoint.emit("connect");
+    return endpoint;
+  }
 });
