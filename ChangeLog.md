@@ -1,5 +1,11 @@
 ## Changelog
 
+1.7.6:
+
+* Emit an error when retry limit is exceeded (#333)
+* Documentation fixes (#229, #343, #379)
+* Reinstate broken aps behaviour (#377)
+
 1.7.5:
 
 * Notification property improvements
