@@ -21,7 +21,7 @@ The UNIX timestamp representing when the notification should expire. This does n
 
 ### notification.priority
 
-From [Apples' Documentation][notificationFormat], Provide one of the following values:
+From [Apple's Documentation][notificationFormat], Provide one of the following values:
 
   * 10 - The push message is sent immediately. (Default)
     > The push notification must trigger an alert, sound, or badge on the device. It is an error use this priority for a push that contains only the content-available key.
@@ -112,5 +112,5 @@ Set the `url-args` property of the `aps` object.
 Attempt to automatically trim the notification alert text body to meet the payload size limit of 2048 bytes.
 
 [pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
-[notificationFormat]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW9 "The Binary Interface and Notification Format"
+[notificationFormat]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Appendixes/BinaryProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH106-SW8 "The Binary Interface and Notification Format"
 [webpayloaddocs]:https://developer.apple.com/library/prerelease/mac/documentation/NetworkingInternet/Conceptual/NotificationProgrammingGuideForWebsites/PushNotifications/PushNotifications.html#//apple_ref/doc/uid/TP40013225-CH3-SW12 "Configuring Safari Push Notifications"
