@@ -432,6 +432,12 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.badge");
       });
 
+      it("can be set to zero", function() {
+        note.badge = 0;
+
+        expect(compiledOutput()).to.have.deep.property("aps.badge", 0);
+      });
+
       it("cannot be set to a string", function() {
         note.badge = "hello";
 
