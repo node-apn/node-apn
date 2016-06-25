@@ -225,6 +225,29 @@ describe("Endpoint Manager", () => {
 
         expect(endpoint.createStream).to.not.be.called;
       });
+
+      it("does not affect a 'connecting' endpoint", () => {
+        fakes.Endpoint.reset();
+        manager = new EndpointManager({ "maxConnections": 3 });
+        manager.getStream();
+
+        endpoint = fakes.Endpoint.firstCall.returnValue
+        endpoint.emit("connect");
+
+        // Trigger creation of a second endpoint
+        manager.getStream();
+        let connectingEndpoint = fakes.Endpoint.secondCall.returnValue;
+        expect(connectingEndpoint).to.not.be.null;
+        expect(fakes.Endpoint).to.be.calledTwice;
+
+        // Error-out the first endpoint
+        endpoint.emit("error", new Error("this should be handled"));
+
+        // Ensure a third endpoint isn't created as the second is still connecting
+        manager.getStream();
+
+        expect(fakes.Endpoint).to.be.calledTwice;
+      });
     });
 
     context("when it ends", () => {
