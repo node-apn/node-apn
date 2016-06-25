@@ -304,6 +304,22 @@ describe("Endpoint Manager", () => {
         fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
       });
     });
+
+    context("when an error happens on a connected endpoint", () => {
+      it("does not contribute to reaching the limit", () => {
+        const manager = new EndpointManager({
+          "maxConnections": 2,
+          "connectionRetryLimit": 2,
+        });
+
+        manager.getStream();
+        fakes.Endpoint.lastCall.returnValue.emit("connect");
+        fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+
+        manager.getStream();
+        fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+      });
+    });
   });
 
   describe("wakeup event", () => {
