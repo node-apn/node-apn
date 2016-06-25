@@ -194,6 +194,22 @@ describe("Endpoint Manager", () => {
         const endpoint = fakes.Endpoint.firstCall.returnValue;
         expect(endpoint.destroy).to.be.called.once;
       });
+     });
+
+    context("when it ends", () => {
+      it("is no longer used for streams", () => {
+        const manager = new EndpointManager({ "maxConnections": 3 });
+
+        manager.getStream();
+        const endpoint = fakes.Endpoint.firstCall.returnValue
+        endpoint.availableStreamSlots = 5;
+
+        endpoint.emit("connect");
+        endpoint.emit("end");
+        manager.getStream();
+
+        expect(endpoint.createStream).to.not.be.called;
+      });
     });
 
     context("when `connectionRetryLimit` consecutive endpoint errors occur", () => {
