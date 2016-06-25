@@ -220,6 +220,11 @@ describe("Endpoint Manager", () => {
         expect(endpoint.destroy).to.be.called.once;
       });
 
+      it("is no longer used for streams", () => {
+        manager.getStream();
+
+        expect(endpoint.createStream).to.not.be.called;
+      });
     });
 
     context("when it ends", () => {
