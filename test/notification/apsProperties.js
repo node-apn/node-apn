@@ -516,6 +516,38 @@ describe("Notification", function() {
       });
     });
 
+    describe("mutable-content", function() {
+      it("defaults to undefined", function() {
+        expect(compiledOutput()).to.not.have.deep.property("aps.mutable\-content");
+      });
+
+      it("can be set to a boolean value", function() {
+        note.mutableContent = true;
+
+        expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
+      });
+
+      it("can be set to `1`", () => {
+        note.mutableContent = 1;
+
+        expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
+      });
+
+      it("can be set to undefined", function() {
+        note.mutableContent = true;
+        note.mutableContent = undefined;
+
+        expect(compiledOutput()).to.not.have.deep.property("aps.mutable\-content");
+      });
+
+      describe("setMutableContent", () => {
+        it("is chainable", () => {
+          expect(note.setMutableContent(true)).to.equal(note);
+          expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
+        });
+      });
+    });
+
     describe("mdm", function() {
       it("defaults to undefined", function() {
         expect(compiledOutput()).to.not.have.deep.property("mdm");
