@@ -9,7 +9,7 @@ As of version 1.2.0 it is possible to use a set of methods provided by Notificat
 
 For iOS 7 applications which support Silent Remote Notifications you can use the `note.contentAvailable` property. This is identical in functionality to  `note.newsstandAvailable` without the confusion of the "Newstand" terminology.
 
-A `Notification` enapsulates the data to be compiled down to JSON and pushed to a device. See the [payload documentation][pl] for more details. At present the total length of the payload accepted by Apple is 2048 bytes. 
+A `Notification` encapsulates the data to be compiled down to JSON and pushed to a device. See the [payload documentation][pl] for more details. At present the total length of the payload accepted by Apple is 2048 bytes. 
 
 ### notification.retryLimit
 
