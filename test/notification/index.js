@@ -42,6 +42,15 @@ describe("Notification", function() {
 			expect(compiledOutput()).to.deep.equal({ "some": "payload", "aps": {"alert": "Foo"}});
 		});
 
+		it("takes precedence over the `mdm` property", () => {
+			let payload = { "some": "payload" };
+
+			note = new Notification({ "rawPayload": payload });
+			note.mdm = "abcd";
+
+			expect(note.rawPayload).to.deep.equal({ "some": "payload" });
+			expect(compiledOutput()).to.deep.equal({ "some": "payload" });
+		});
 
 		context("when passed in the notification constructor", function() {
 			beforeEach(function() {
