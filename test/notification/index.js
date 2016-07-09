@@ -10,8 +10,8 @@ describe("Notification", function() {
 		note = new Notification();
 	});
 
-	describe("constructor", () => {
-		it("accepts initialization values", () => {
+	describe("constructor", function () {
+		it("accepts initialization values", function () {
 			let properties = { "priority": 5, "topic": "io.apn.node", "payload": { "foo": "bar" }, "badge": 5};
 			note = new Notification(properties);
 
@@ -22,9 +22,9 @@ describe("Notification", function() {
 		});
 	});
 
-	describe("rawPayload", () => {
+	describe("rawPayload", function () {
 
-		it("is used as the JSON output", () => {
+		it("is used as the JSON output", function () {
 			let payload = { "some": "payload" };
 			note = new Notification({ "rawPayload": payload });
 
@@ -32,7 +32,7 @@ describe("Notification", function() {
 			expect(compiledOutput()).to.deep.equal({ "some": "payload" });
 		});
 
-		it("does not get clobbered by aps accessors", () => {
+		it("does not get clobbered by aps accessors", function () {
 			let payload = { "some": "payload", "aps": {"alert": "Foo"}};
 
 			note = new Notification({ "rawPayload": payload });
@@ -42,7 +42,7 @@ describe("Notification", function() {
 			expect(compiledOutput()).to.deep.equal({ "some": "payload", "aps": {"alert": "Foo"}});
 		});
 
-		it("takes precedence over the `mdm` property", () => {
+		it("takes precedence over the `mdm` property", function () {
 			let payload = { "some": "payload" };
 
 			note = new Notification({ "rawPayload": payload });

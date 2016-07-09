@@ -32,8 +32,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.alert");
       });
 
-      describe("setAlert", () => {
-        it("is chainable", () => {
+      describe("setAlert", function () {
+        it("is chainable", function () {
           expect(note.setAlert("hello")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
         });
@@ -50,112 +50,112 @@ describe("Notification", function() {
         expect(typeof compiledOutput().aps.alert).to.equal("string");
       });
 
-      it("sets alert as a string by default", () => {
+      it("sets alert as a string by default", function () {
         note.body = "Hello, world";
         expect(compiledOutput()).to.have.deep.property("aps.alert", "Hello, world");
       });
 
-      context("alert is already an Object", () => {
-        beforeEach(() => {
+      context("alert is already an Object", function () {
+        beforeEach(function () {
           note.alert = {"body": "Existing Body"};
         });
 
-        it("reads the value from alert body", () => {
+        it("reads the value from alert body", function () {
           expect(note.body).to.equal("Existing Body");
         });
 
-        it("sets the value correctly", () => {
+        it("sets the value correctly", function () {
           note.body = "Hello, world";
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
         });
       });
 
-      describe("setBody", () => {
-        it("is chainable", () => {
+      describe("setBody", function () {
+        it("is chainable", function () {
           expect(note.setBody("hello")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
         });
       });
     });
 
-    describe("locKey", () => {
-      it("sets the aps.alert.loc-key property", () => {
+    describe("locKey", function () {
+      it("sets the aps.alert.loc-key property", function () {
         note.locKey = "hello_world";
         expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "hello_world");
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "launch-image": "test.png"};
           note.locKey = "hello_world";
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "launch-image": "test.png", "loc-key": "hello_world"});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Good Morning";
           note.locKey = "good_morning";
         });
 
-        it("retains the alert body correctly", () => {
+        it("retains the alert body correctly", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Good Morning");
         });
 
-        it("sets the aps.alert.loc-key property", () => {
+        it("sets the aps.alert.loc-key property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "good_morning");
         });
       });
 
-      describe("setLocKey", () => {
-        it("is chainable", () => {
+      describe("setLocKey", function () {
+        it("is chainable", function () {
           expect(note.setLocKey("good_morning")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "good_morning");
         });
       });
     });
 
-    describe("locArgs", () => {
-      it("sets the aps.alert.loc-args property", () => {
+    describe("locArgs", function () {
+      it("sets the aps.alert.loc-args property", function () {
         note.locArgs = ["arg1", "arg2"];
         expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
           .that.deep.equals(["arg1", "arg2"]);
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "launch-image": "test.png"};
           note.locArgs = ["Hi there"];
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "launch-image": "test.png", "loc-args": ["Hi there"]});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Hello, world";
           note.locArgs = ["Hi there"];
         });
 
-        it("retains the alert body", () => {
+        it("retains the alert body", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
         });
 
-        it("sets the aps.alert.loc-args property", () => {
+        it("sets the aps.alert.loc-args property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
             .that.deep.equals(["Hi there"]);
         });
       });
 
-      describe("setLocArgs", () => {
-        it("is chainable", () => {
+      describe("setLocArgs", function () {
+        it("is chainable", function () {
           expect(note.setLocArgs(["Robert"])).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
             .that.deep.equals(["Robert"]);
@@ -163,125 +163,125 @@ describe("Notification", function() {
       });
     });
 
-    describe("title", () => {
-      it("sets the aps.alert.title property", () => {
+    describe("title", function () {
+      it("sets the aps.alert.title property", function () {
         note.title = "node-apn";
         expect(compiledOutput()).to.have.deep.property("aps.alert.title", "node-apn");
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "launch-image": "test.png"};
           note.title = "node-apn";
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "launch-image": "test.png", "title": "node-apn"});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Hello, world";
           note.title = "Welcome";
         });
 
-        it("retains the alert body", () => {
+        it("retains the alert body", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
         });
 
-        it("sets the aps.alert.title property", () => {
+        it("sets the aps.alert.title property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Welcome");
         });
       });
 
-      describe("setTitle", () => {
-        it("is chainable", () => {
+      describe("setTitle", function () {
+        it("is chainable", function () {
           expect(note.setTitle("Bienvenue")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Bienvenue");
         });
       });
     });
 
-    describe("titleLocKey", () => {
-      it("sets the aps.alert.title-loc-key property", () => {
+    describe("titleLocKey", function () {
+      it("sets the aps.alert.title-loc-key property", function () {
         note.titleLocKey = "Warning";
         expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "Warning");
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "launch-image": "test.png"};
           note.titleLocKey = "Warning";
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "launch-image": "test.png", "title-loc-key": "Warning"});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Hello, world";
           note.titleLocKey = "Warning";
         });
 
-        it("retains the alert body correctly", () => {
+        it("retains the alert body correctly", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
         });
 
-        it("sets the aps.alert.title-loc-key property", () => {
+        it("sets the aps.alert.title-loc-key property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "Warning");
         });
       });
 
-      describe("setAlert", () => {
-        it("is chainable", () => {
+      describe("setAlert", function () {
+        it("is chainable", function () {
           expect(note.setTitleLocKey("greeting")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "greeting");
         });
       });
     });
 
-    describe("titleLocArgs", () => {
-      it("sets the aps.alert.title-loc-args property", () => {
+    describe("titleLocArgs", function () {
+      it("sets the aps.alert.title-loc-args property", function () {
         note.titleLocArgs = ["arg1", "arg2"];
         expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
           .that.deep.equals(["arg1", "arg2"]);
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "launch-image": "test.png"};
           note.titleLocArgs = ["Hi there"];
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "launch-image": "test.png", "title-loc-args": ["Hi there"]});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Hello, world";
           note.titleLocArgs = ["Hi there"];
         });
 
-        it("retains the alert body", () => {
+        it("retains the alert body", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
         });
 
-        it("sets the aps.alert.title-loc-args property", () => {
+        it("sets the aps.alert.title-loc-args property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
             .that.deep.equals(["Hi there"]);
         })
       });
 
-      describe("setTitleLocArgs", () => {
-        it("is chainable", () => {
+      describe("setTitleLocArgs", function () {
+        it("is chainable", function () {
           expect(note.setTitleLocArgs(["iPhone 6s"])).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
             .that.deep.equals(["iPhone 6s"]);
@@ -289,125 +289,125 @@ describe("Notification", function() {
       });
     });
 
-    describe("action", () => {
-      it("sets the aps.alert.action property", () => {
+    describe("action", function () {
+      it("sets the aps.alert.action property", function () {
         note.action = "View";
         expect(compiledOutput()).to.have.deep.property("aps.alert.action", "View");
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "launch-image": "test.png"};
           note.action = "View";
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "launch-image": "test.png", "action": "View"});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Alert";
           note.action = "Investigate";
         });
 
-        it("retains the alert body", () => {
+        it("retains the alert body", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Alert");
         });
 
-        it("sets the aps.alert.action property", () => {
+        it("sets the aps.alert.action property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Investigate");
         })
       });
 
-      describe("setAction", () => {
-        it("is chainable", () => {
+      describe("setAction", function () {
+        it("is chainable", function () {
           expect(note.setAction("Reply")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Reply");
         });
       });
     });
 
-    describe("actionLocKey", () => {
-      it("sets the aps.alert.action-loc-key property", () => {
+    describe("actionLocKey", function () {
+      it("sets the aps.alert.action-loc-key property", function () {
         note.actionLocKey = "reply_title";
         expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "reply_title");
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "launch-image": "test.png"};
           note.actionLocKey = "reply_title";
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "launch-image": "test.png", "action-loc-key": "reply_title"});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Hello, world";
           note.actionLocKey = "ignore_title";
         });
 
-        it("retains the alert body correctly", () => {
+        it("retains the alert body correctly", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
         });
 
-        it("sets the aps.alert.action-loc-key property", () => {
+        it("sets the aps.alert.action-loc-key property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "ignore_title");
         });
       });
 
-      describe("setActionLocKey", () => {
-        it("is chainable", () => {
+      describe("setActionLocKey", function () {
+        it("is chainable", function () {
           expect(note.setActionLocKey("ignore_title")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "ignore_title");
         });
       });
     });
 
-    describe("launchImage", () => {
-      it("sets the aps.alert.launch-image property", () => {
+    describe("launchImage", function () {
+      it("sets the aps.alert.launch-image property", function () {
         note.launchImage = "testLaunch.png";
         expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image")
           .that.deep.equals("testLaunch.png");
       });
 
-      context("alert is already an object", () => {
-        beforeEach(() => {
+      context("alert is already an object", function () {
+        beforeEach(function () {
           note.alert = {body: "Test", "title-loc-key": "node-apn"};
           note.launchImage = "apnLaunch.png";
         });
 
-        it("contains all expected properties", () => {
+        it("contains all expected properties", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert")
             .that.deep.equals({body: "Test", "title-loc-key": "node-apn", "launch-image": "apnLaunch.png"});
         });
       });
 
-      context("alert is already a string", () => {
-        beforeEach(() => {
+      context("alert is already a string", function () {
+        beforeEach(function () {
           note.alert = "Hello, world";
           note.launchImage = "apnLaunch.png";
         });
 
-        it("retains the alert body", () => {
+        it("retains the alert body", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
         });
 
-        it("sets the aps.alert.launch-image property", () => {
+        it("sets the aps.alert.launch-image property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image")
             .that.deep.equals("apnLaunch.png");
         })
       });
 
-      describe("setLaunchImage", () => {
-        it("is chainable", () => {
+      describe("setLaunchImage", function () {
+        it("is chainable", function () {
           expect(note.setLaunchImage("remoteLaunch.png")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image", "remoteLaunch.png");
         });
@@ -444,8 +444,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.badge");
       });
 
-      describe("setBadge", () => {
-        it("is chainable", () => {
+      describe("setBadge", function () {
+        it("is chainable", function () {
           expect(note.setBadge(7)).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.badge", 7);
         });
@@ -476,8 +476,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.sound");
       });
 
-      describe("setSound", () => {
-        it("is chainable", () => {
+      describe("setSound", function () {
+        it("is chainable", function () {
           expect(note.setSound("bee.caf")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.sound", "bee.caf");
         });
@@ -495,7 +495,7 @@ describe("Notification", function() {
         expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
       });
 
-      it("can be set to `1`", () => {
+      it("can be set to `1`", function () {
         note.contentAvailable = 1;
 
         expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
@@ -508,8 +508,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
       });
 
-      describe("setContentAvailable", () => {
-        it("is chainable", () => {
+      describe("setContentAvailable", function () {
+        it("is chainable", function () {
           expect(note.setContentAvailable(true)).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
         });
@@ -527,7 +527,7 @@ describe("Notification", function() {
         expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
       });
 
-      it("can be set to `1`", () => {
+      it("can be set to `1`", function () {
         note.mutableContent = 1;
 
         expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
@@ -540,8 +540,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.mutable\-content");
       });
 
-      describe("setMutableContent", () => {
-        it("is chainable", () => {
+      describe("setMutableContent", function () {
+        it("is chainable", function () {
           expect(note.setMutableContent(true)).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
         });
@@ -573,8 +573,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.any.keys("aps");
       });
 
-      describe("setMdm", () => {
-        it("is chainable", () => {
+      describe("setMdm", function () {
+        it("is chainable", function () {
           expect(note.setMdm("hello")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("mdm", "hello");
         });
@@ -600,8 +600,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
       });
 
-      describe("setUrlArgs", () => {
-        it("is chainable", () => {
+      describe("setUrlArgs", function () {
+        it("is chainable", function () {
           expect(note.setUrlArgs(["A318", "BA001"])).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.url\-args")
             .that.deep.equals(["A318", "BA001"]);
@@ -625,8 +625,8 @@ describe("Notification", function() {
         expect(compiledOutput()).to.not.have.deep.property("aps.category");
       });
 
-      describe("setCategory", () => {
-        it("is chainable", () => {
+      describe("setCategory", function () {
+        it("is chainable", function () {
           expect(note.setCategory("reminder")).to.equal(note);
           expect(compiledOutput()).to.have.deep.property("aps.category", "reminder");
         });

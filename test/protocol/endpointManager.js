@@ -3,10 +3,10 @@
 const sinon = require("sinon");
 const EventEmitter = require("events");
 
-describe("Endpoint Manager", () => {
+describe("Endpoint Manager", function () {
   let fakes, EndpointManager;
 
-  beforeEach(() => {
+  beforeEach(function () {
     fakes = {
       Endpoint: sinon.spy(function() {
         const endpoint = new EventEmitter();
@@ -19,10 +19,10 @@ describe("Endpoint Manager", () => {
     EndpointManager = require("../../lib/protocol/endpointManager")(fakes);
   });
 
-  describe("get stream", () => {
+  describe("get stream", function () {
     let manager;
 
-    beforeEach(() => {
+    beforeEach(function () {
       fakes.Endpoint.reset();
       manager = new EndpointManager({
         "connectionRetryLimit": 3,
@@ -30,15 +30,15 @@ describe("Endpoint Manager", () => {
       });
     });
 
-    context("with no established endpoints", () => {
-      it("creates an endpoint connection", () => {
+    context("with no established endpoints", function () {
+      it("creates an endpoint connection", function () {
         manager.getStream();
 
         expect(fakes.Endpoint).to.be.calledOnce;
         expect(fakes.Endpoint).to.be.calledWithNew;
       });
 
-      it("passes configuration through to endpoint initialiser", () => {
+      it("passes configuration through to endpoint initialiser", function () {
         const fakeConfig = { "sentinel": "config", "maxConnections": 3 };
         const manager = new EndpointManager(fakeConfig);
 
@@ -47,26 +47,26 @@ describe("Endpoint Manager", () => {
         expect(fakes.Endpoint).to.be.calledWith(fakeConfig);
       });
 
-      describe("created endpoint", () => {
-        context("error occurs before connect", () => {
-          beforeEach(() => {
+      describe("created endpoint", function () {
+        context("error occurs before connect", function () {
+          beforeEach(function () {
             manager.getStream();
             fakes.Endpoint.firstCall.returnValue.emit("error", new Error("this should be handled"));
           });
 
-          it("is destroyed", () => {
+          it("is destroyed", function () {
             const endpoint = fakes.Endpoint.firstCall.returnValue;
             expect(endpoint.destroy).to.be.called.once;
           });
         });
       });
 
-      it("returns null", () => {
+      it("returns null", function () {
         expect(manager.getStream()).to.be.null;
       });
 
-      context("with an endpoint already connecting", () => {
-        it("does not create a new Endpoint", () => {
+      context("with an endpoint already connecting", function () {
+        it("does not create a new Endpoint", function () {
           manager.getStream();
 
           fakes.Endpoint.reset();
@@ -75,7 +75,7 @@ describe("Endpoint Manager", () => {
           expect(fakes.Endpoint).to.not.be.called;
         });
 
-        it("returns null", () => {
+        it("returns null", function () {
           manager.getStream();
 
           expect(manager.getStream()).to.be.null;
@@ -83,27 +83,27 @@ describe("Endpoint Manager", () => {
       });
     });
 
-    context("with an established endpoint", () => {
+    context("with an established endpoint", function () {
       let endpoint;
 
-      beforeEach(() => {
+      beforeEach(function () {
         manager.getStream();
         endpoint = fakes.Endpoint.returnValues[0];
         endpoint.emit("connect");
       });
 
-      context("when there are available slots", () => {
-        beforeEach(() => {
+      context("when there are available slots", function () {
+        beforeEach(function () {
           endpoint.availableStreamSlots = 5;
         });
 
-        it("calls createStream on the endpoint", () => {
+        it("calls createStream on the endpoint", function () {
           manager.getStream();
 
           expect(endpoint.createStream).to.have.been.calledOnce;
         });
 
-        it("returns the endpoints created stream", () => {
+        it("returns the endpoints created stream", function () {
           const sentinel = new Object;
           endpoint.createStream.returns(sentinel);
 
@@ -111,25 +111,25 @@ describe("Endpoint Manager", () => {
         });
       });
 
-      context("when there are no available stream slots", () => {
-        beforeEach(() => {
+      context("when there are no available stream slots", function () {
+        beforeEach(function () {
           endpoint.availableStreamSlots = 0;
         });
 
-        it("returns null", () => {
+        it("returns null", function () {
           expect(manager.getStream()).to.be.null;
         });
 
-        context("when there are fewer than `maxConnections` connections", () => {
-          it("creates an endpoint connection", () => {
+        context("when there are fewer than `maxConnections` connections", function () {
+          it("creates an endpoint connection", function () {
             manager.getStream();
 
             expect(fakes.Endpoint).to.be.calledTwice;
           });
         });
 
-        context("when there are already `maxConnections` connections", () => {
-          it("does not attempt to create a further endpoint connection", () => {
+        context("when there are already `maxConnections` connections", function () {
+          it("does not attempt to create a further endpoint connection", function () {
             manager.getStream();
             const secondEndpoint = fakes.Endpoint.lastCall.returnValue
             secondEndpoint.availableStreamSlots = 0;
@@ -142,15 +142,15 @@ describe("Endpoint Manager", () => {
       });
     });
 
-    context("with multiple endpoints", () => {
+    context("with multiple endpoints", function () {
       let firstEndpoint, secondEndpoint;
 
-      beforeEach(() => {
+      beforeEach(function () {
         firstEndpoint  = establishEndpoint(manager);
         secondEndpoint = establishEndpoint(manager);
       });
 
-      it("reserves streams by round-robin", () => {
+      it("reserves streams by round-robin", function () {
         firstEndpoint.availableStreamSlots = 1;
         secondEndpoint.availableStreamSlots = 1;
 
@@ -160,8 +160,8 @@ describe("Endpoint Manager", () => {
         expect(secondEndpoint.createStream).to.be.calledOnce;
       });
 
-      context("where next endpoint has no available slots", () => {
-        it("skips to endpoint with availablility", () => {
+      context("where next endpoint has no available slots", function () {
+        it("skips to endpoint with availablility", function () {
           firstEndpoint.availableStreamSlots = 0;
           secondEndpoint.availableStreamSlots = 1;
 
@@ -171,8 +171,8 @@ describe("Endpoint Manager", () => {
         });
       });
 
-      context("when one endpoint has one available slot", () => {
-        it("returns one stream", () => {
+      context("when one endpoint has one available slot", function () {
+        it("returns one stream", function () {
           firstEndpoint.availableStreamSlots = 0;
 
           secondEndpoint.availableStreamSlots = 1;
@@ -186,8 +186,8 @@ describe("Endpoint Manager", () => {
         });
       });
 
-      context("where no endpoints have available slots", () => {
-        it("returns null without reserving a stream", () => {
+      context("where no endpoints have available slots", function () {
+        it("returns null without reserving a stream", function () {
           firstEndpoint.availableStreamSlots = 0;
           secondEndpoint.availableStreamSlots = 0;
 
@@ -199,10 +199,10 @@ describe("Endpoint Manager", () => {
     });
   });
 
-  describe("with one established endpoint", () => {
+  describe("with one established endpoint", function () {
     let endpoint, manager;
 
-    beforeEach(() => {
+    beforeEach(function () {
       manager = new EndpointManager({ "maxConnections": 3 });
       manager.getStream();
 
@@ -211,22 +211,22 @@ describe("Endpoint Manager", () => {
       endpoint.emit("connect");
     });
 
-    context("when an error occurs", () => {
-      beforeEach(() => {
+    context("when an error occurs", function () {
+      beforeEach(function () {
         endpoint.emit("error", new Error("this should be handled"));
       });
 
-      it("is destroyed", () => {
+      it("is destroyed", function () {
         expect(endpoint.destroy).to.be.called.once;
       });
 
-      it("is no longer used for streams", () => {
+      it("is no longer used for streams", function () {
         manager.getStream();
 
         expect(endpoint.createStream).to.not.be.called;
       });
 
-      it("does not affect a 'connecting' endpoint", () => {
+      it("does not affect a 'connecting' endpoint", function () {
         fakes.Endpoint.reset();
         manager = new EndpointManager({ "maxConnections": 3 });
         manager.getStream();
@@ -250,12 +250,12 @@ describe("Endpoint Manager", () => {
       });
     });
 
-    context("when it ends", () => {
-      beforeEach(() => {
+    context("when it ends", function () {
+      beforeEach(function () {
         endpoint.emit("end");
       });
 
-      it("is no longer used for streams", () => {
+      it("is no longer used for streams", function () {
         manager.getStream();
 
         expect(endpoint.createStream).to.not.be.called;
@@ -263,9 +263,9 @@ describe("Endpoint Manager", () => {
     });
   });
 
-  describe("`connectionRetryLimit` option", () => {
-    context("when the configured number of connections fail", () => {
-      it("emits an error", (done) => {
+  describe("`connectionRetryLimit` option", function () {
+    context("when the configured number of connections fail", function () {
+      it("emits an error", function(done) {
         const connectionRetryLimit = (Math.floor(Math.random() * 3) % 3) + 2;
         const manager = new EndpointManager({
           "connectionRetryLimit": connectionRetryLimit,
@@ -287,8 +287,8 @@ describe("Endpoint Manager", () => {
       });
     });
 
-    context("when a connection is successful between the failed connections", () => {
-      it("does not emit an error", () => {
+    context("when a connection is successful between the failed connections", function () {
+      it("does not emit an error", function () {
         const manager = new EndpointManager({
           "maxConnections": 2,
           "connectionRetryLimit": 2,
@@ -305,8 +305,8 @@ describe("Endpoint Manager", () => {
       });
     });
 
-    context("when an error happens on a connected endpoint", () => {
-      it("does not contribute to reaching the limit", () => {
+    context("when an error happens on a connected endpoint", function () {
+      it("does not contribute to reaching the limit", function () {
         const manager = new EndpointManager({
           "maxConnections": 2,
           "connectionRetryLimit": 2,
@@ -322,12 +322,12 @@ describe("Endpoint Manager", () => {
     });
   });
 
-  describe("wakeup event", () => {
+  describe("wakeup event", function () {
 
-    context("when an endpoint wakes up", () => {
+    context("when an endpoint wakes up", function () {
       let wakeupSpy, endpoint;
 
-      beforeEach(() => {
+      beforeEach(function () {
         const manager = new EndpointManager({ "maxConnections": 3 });
         manager.getStream();
 
@@ -337,8 +337,8 @@ describe("Endpoint Manager", () => {
         manager.on("wakeup", wakeupSpy);
       });
 
-      context("with slots available", () => {
-        it("is emitted", () => {
+      context("with slots available", function () {
+        it("is emitted", function () {
           endpoint.availableStreamSlots = 5;
 
           endpoint.emit("wakeup");
@@ -347,8 +347,8 @@ describe("Endpoint Manager", () => {
         });
       });
 
-      context("with no slots available", () => {
-        it("doesn't emit", () => {
+      context("with no slots available", function () {
+        it("doesn't emit", function () {
           endpoint.availableStreamSlots = 0;
 
           endpoint.emit("wakeup");

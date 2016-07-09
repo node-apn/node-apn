@@ -2,7 +2,7 @@
 
 const sinon = require("sinon");
 
-describe("config", () => {
+describe("config", function () {
   let config, fakes;
 
   beforeEach(function() {
@@ -14,7 +14,7 @@ describe("config", () => {
     config = require("../lib/config")(fakes);
   });
 
-  it("supplies sensible defaults", () => {
+  it("supplies sensible defaults", function () {
     expect(config()).to.deep.equal({
       cert: "cert.pem",
       key: "key.pem",
@@ -32,7 +32,7 @@ describe("config", () => {
     });
   });
 
-  describe("address configuration", () => {
+  describe("address configuration", function () {
     let originalEnv;
 
     before(function() {
@@ -81,79 +81,79 @@ describe("config", () => {
     });
   });
 
-  describe("credentials", () => {
+  describe("credentials", function () {
 
-    describe("passphrase", () => {
-      it("throws an error when supplied passphrase is not a string", () => {
-        expect(() => { config( { passphrase: 123 }) } ).to.throw("Passphrase must be a string");
+    describe("passphrase", function () {
+      it("throws an error when supplied passphrase is not a string", function () {
+        expect(() => config({ passphrase: 123 }) ).to.throw("Passphrase must be a string");
       });
 
-      it("does not throw when passphrase is a string", () => {
-        expect(() => { config( { passphrase: "seekrit" }) } ).to.not.throw();
+      it("does not throw when passphrase is a string", function () {
+        expect(() => config({ passphrase: "seekrit" }) ).to.not.throw();
       });
 
-      it("does not throw when passphrase is not supplied", () => {
-        expect(() => { config( { }) } ).to.not.throw();
+      it("does not throw when passphrase is not supplied", function () {
+        expect(() => config({ }) ).to.not.throw();
       });
     });
 
-    context("pfx value is supplied without cert and key", () => {
-      it("includes the value of `pfx`", () => {
+    context("pfx value is supplied without cert and key", function () {
+      it("includes the value of `pfx`", function () {
         expect(config( { pfx: "apn.pfx" } )).to.have.property("pfx", "apn.pfx");
       });
 
-      it("does not include a value for `cert`", () => {
+      it("does not include a value for `cert`", function () {
         expect(config( { pfx: "apn.pfx" }).cert).to.be.undefined;
       });
 
-      it("does not include a value for `key`", () => {
+      it("does not include a value for `key`", function () {
         expect(config( { pfx: "apn.pfx" }).key).to.be.undefined;
       });
     });
 
-    context("pfx value is supplied along with a cert and key", () => {
-      it("includes the value of `pfx`", () => {
+    context("pfx value is supplied along with a cert and key", function () {
+      it("includes the value of `pfx`", function () {
         expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" } )).to.have.property("pfx", "apn.pfx");
       });
 
-      it("does not include a value for `cert`", () => {
+      it("does not include a value for `cert`", function () {
         expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" })).to.have.property("cert", "cert.pem");
       });
 
-      it("does not include a value for `key`", () => {
+      it("does not include a value for `key`", function () {
         expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" })).to.have.property("key", "key.pem");
       });
     });
 
-    context("pfxData value is supplied without cert and key", () => {
-      it("includes the value of `pfxData`", () => {
+    context("pfxData value is supplied without cert and key", function () {
+      it("includes the value of `pfxData`", function () {
         expect(config( { pfxData: "apnData" } )).to.have.property("pfxData", "apnData");
       });
 
-      it("does not include a value for `cert`", () => {
+      it("does not include a value for `cert`", function () {
         expect(config( { pfxData: "apnData" } ).cert).to.be.undefined;
       });
 
-      it("does not include a value for `key`", () => {
+      it("does not include a value for `key`", function () {
         expect(config( { pfxData: "apnData" }).key).to.be.undefined;
       });
     });
 
-    context("pfxData value is supplied along with a cert and key", () => {
-      it("includes the value of `pfxData`", () => {
+    context("pfxData value is supplied along with a cert and key", function () {
+      it("includes the value of `pfxData`", function () {
         expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" } )).to.have.property("pfxData", "apnData");
       });
 
-      it("does not include a value for `cert`", () => {
+      it("does not include a value for `cert`", function () {
         expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" })).to.have.property("cert", "cert.pem");
       });
 
-      it("does not include a value for `key`", () => {
+      it("does not include a value for `key`", function () {
         expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" })).to.have.property("key", "key.pem");
       });
     });
 
-    it("loads and validates the credentials", () => {
+    it("loads and validates the credentials", function () {
       fakes.prepareCredentials.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData"});
 
       let configuration = config({});
@@ -163,16 +163,16 @@ describe("config", () => {
     });
   });
 
-  context("a null config value is passed", () => {
-    it("should log a message with `debug`", () => {
+  context("a null config value is passed", function () {
+    it("should log a message with `debug`", function () {
       config( { address: null } );
 
       expect(fakes.debug).to.be.calledWith("Option [address] is null. This may cause unexpected behaviour.");
     });
   });
 
-  context("a config value is undefined", () => {
-    it("should log a message with `debug`", () => {
+  context("a config value is undefined", function () {
+    it("should log a message with `debug`", function () {
       config( { anOption: undefined } );
 
       expect(fakes.debug).to.be.calledWith("Option [anOption] is undefined. This may cause unexpected behaviour.");

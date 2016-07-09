@@ -5,7 +5,7 @@ const sinon = require("sinon");
 describe("prepare", function () {
   let fakes, prepare;
 
-  beforeEach(() => {
+  beforeEach(function () {
     fakes = {
       load: sinon.stub(),
       parse: sinon.stub(),

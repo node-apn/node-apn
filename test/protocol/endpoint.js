@@ -12,10 +12,10 @@ const bunyanLogger = sinon.match({
   child: sinon.match.func
 });
 
-describe("Endpoint", () => {
+describe("Endpoint", function () {
   let fakes, streams, Endpoint;
 
-  beforeEach(() => {
+  beforeEach(function () {
     fakes = {
       tls: {
         connect: sinon.stub(),
@@ -57,20 +57,20 @@ describe("Endpoint", () => {
     Endpoint = require("../../lib/protocol/endpoint")(fakes);
   });
 
-  describe("connect", () => {
-    describe("tls socket", () => {
+  describe("connect", function () {
+    describe("tls socket", function () {
 
-      it("is created", () => {
+      it("is created", function () {
         new Endpoint({});
 
         expect(fakes.tls.connect).to.be.calledOnce;
       });
 
-      describe("connection parameters", () => {
+      describe("connection parameters", function () {
 
-        context("all supplied", () => {
+        context("all supplied", function () {
 
-          beforeEach(() => {
+          beforeEach(function () {
             new Endpoint({
               address: "localtest", host: "127.0.0.1", port: 443,
               pfx: "pfxData", cert: "certData",
@@ -78,7 +78,7 @@ describe("Endpoint", () => {
             });
           });
 
-          it("includes the host and port and servername", () => {
+          it("includes the host and port and servername", function () {
             expect(fakes.tls.connect).to.be.calledWith(sinon.match({
               host: "127.0.0.1",
               port: 443,
@@ -86,13 +86,13 @@ describe("Endpoint", () => {
             }));
           });
 
-          it("includes the ALPNProtocols", () => {
+          it("includes the ALPNProtocols", function () {
             expect(fakes.tls.connect).to.be.calledWith(sinon.match({
               ALPNProtocols: ["h2"]
             }));
           });
 
-          it("includes the credentials", () => {
+          it("includes the credentials", function () {
             expect(fakes.tls.connect).to.be.calledWith(sinon.match({
               pfx: "pfxData",
               cert: "certData",
@@ -102,8 +102,8 @@ describe("Endpoint", () => {
           });
         });
 
-        context("host is not omitted", () => {
-            it("falls back on 'address'", () => {
+        context("host is not omitted", function () {
+            it("falls back on 'address'", function () {
               new Endpoint({
                 address: "localtest", port: 443
               });
@@ -117,8 +117,8 @@ describe("Endpoint", () => {
         });
       });
 
-      context("connection established", () => {
-        it("writes the HTTP/2 prelude", () => {
+      context("connection established", function () {
+        it("writes the HTTP/2 prelude", function () {
           sinon.spy(streams.socket, "write");
 
           new Endpoint({});
@@ -130,7 +130,7 @@ describe("Endpoint", () => {
           expect(streams.socket.write.firstCall).to.be.calledWith(HTTP2_PRELUDE);
         });
 
-        it("emits 'connect' event", () => {
+        it("emits 'connect' event", function () {
           const endpoint = new Endpoint({});
           let connect = sinon.spy();
 
@@ -140,7 +140,7 @@ describe("Endpoint", () => {
         });
       });
 
-      it("bubbles error events", () => {
+      it("bubbles error events", function () {
         const endpoint = new Endpoint({});
         const errorSpy = sinon.spy();
         endpoint.on("error", errorSpy);
@@ -151,20 +151,20 @@ describe("Endpoint", () => {
       });
     });
 
-    describe("HTTP/2 layer", () => {
+    describe("HTTP/2 layer", function () {
       let endpoint;
 
-      beforeEach(() => {
+      beforeEach(function () {
         endpoint = new Endpoint({});
       });
 
-      describe("connection", () => {
-        it("is created", () => {
+      describe("connection", function () {
+        it("is created", function () {
           expect(fakes.protocol.Connection).to.have.been.calledWithNew;
           expect(fakes.protocol.Connection).to.have.been.calledOnce;
         });
 
-        it("is passed the correct parameters", () => {
+        it("is passed the correct parameters", function () {
 
           // Empty bunyan logger
           expect(fakes.protocol.Connection).to.have.been.calledWith(bunyanLogger);
@@ -173,7 +173,7 @@ describe("Endpoint", () => {
           expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match.any, 1);
         });
 
-        it("bubbles error events", () => {
+        it("bubbles error events", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
@@ -183,17 +183,17 @@ describe("Endpoint", () => {
         });
       });
 
-      describe("serializer", () => {
-        it("is created", () => {
+      describe("serializer", function () {
+        it("is created", function () {
           expect(fakes.protocol.Serializer).to.have.been.calledWithNew;
           expect(fakes.protocol.Serializer).to.have.been.calledOnce;
         });
 
-        it("is passed the logger", () => {
+        it("is passed the logger", function () {
           expect(fakes.protocol.Serializer).to.have.been.calledWith(bunyanLogger);
         });
 
-        it("bubbles error events", () => {
+        it("bubbles error events", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
@@ -203,17 +203,17 @@ describe("Endpoint", () => {
         });
       });
 
-      describe("deserializer", () => {
-        it("is created", () => {
+      describe("deserializer", function () {
+        it("is created", function () {
           expect(fakes.protocol.Deserializer).to.have.been.calledWithNew;
           expect(fakes.protocol.Deserializer).to.have.been.calledOnce;
         });
 
-        it("is passed the logger", () => {
+        it("is passed the logger", function () {
           expect(fakes.protocol.Deserializer).to.have.been.calledWith(bunyanLogger);
         });
 
-        it("bubbles error events", () => {
+        it("bubbles error events", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
@@ -223,23 +223,23 @@ describe("Endpoint", () => {
         });
       });
 
-      describe("compressor", () => {
-        it("is created", () => {
+      describe("compressor", function () {
+        it("is created", function () {
           expect(fakes.protocol.Compressor).to.have.been.calledWithNew;
           expect(fakes.protocol.Compressor).to.have.been.calledOnce;
         });
 
-        it("is passed the correct parameters", () => {
+        it("is passed the correct parameters", function () {
           expect(fakes.protocol.Compressor).to.have.been.calledWith(bunyanLogger);
           expect(fakes.protocol.Compressor).to.have.been.calledWith(sinon.match.any, "REQUEST");
         });
 
-        it("handles HEADER_TABLE_SIZE settings update", () => {
+        it("handles HEADER_TABLE_SIZE settings update", function () {
           streams.connection.emit("RECEIVING_SETTINGS_HEADER_TABLE_SIZE", 1000);
           expect(streams.compressor.setTableSizeLimit).to.have.been.calledWith(1000);
         });
 
-        it("bubbles error events", () => {
+        it("bubbles error events", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
@@ -249,23 +249,23 @@ describe("Endpoint", () => {
         });
       });
 
-      describe("decompressor", () => {
-        it("is created", () => {
+      describe("decompressor", function () {
+        it("is created", function () {
           expect(fakes.protocol.Decompressor).to.have.been.calledWithNew;
           expect(fakes.protocol.Decompressor).to.have.been.calledOnce;
         });
 
-        it("is passed the correct parameters", () => {
+        it("is passed the correct parameters", function () {
           expect(fakes.protocol.Decompressor).to.have.been.calledWith(bunyanLogger);
           expect(fakes.protocol.Decompressor).to.have.been.calledWith(sinon.match.any, "RESPONSE");
         });
 
-        it("handles HEADER_TABLE_SIZE settings acknowledgement", () => {
+        it("handles HEADER_TABLE_SIZE settings acknowledgement", function () {
           streams.connection.emit("ACKNOWLEDGED_SETTINGS_HEADER_TABLE_SIZE", 1000);
           expect(streams.decompressor.setTableSizeLimit).to.have.been.calledWith(1000);
         });
 
-        it("bubbles error events", () => {
+        it("bubbles error events", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
@@ -277,9 +277,9 @@ describe("Endpoint", () => {
     });
   });
 
-  describe("stream behaviour", () => {
+  describe("stream behaviour", function () {
 
-    beforeEach(() => {
+    beforeEach(function () {
       sinon.stub(streams.serializer, "pipe");
       sinon.stub(streams.deserializer, "pipe");
       sinon.stub(streams.compressor, "pipe");
@@ -290,37 +290,37 @@ describe("Endpoint", () => {
       new Endpoint({});
     });
 
-    it("pipes the tls socket to the deserializer", () => {
+    it("pipes the tls socket to the deserializer", function () {
       expect(streams.socket.pipe).to.be.calledWith(streams.deserializer);
       expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
     });
 
-    it("pipes the serializer to the tls socket", () => {
+    it("pipes the serializer to the tls socket", function () {
       expect(streams.serializer.pipe).to.be.calledWith(streams.socket);
       expect(streams.socket.pipe).to.be.calledAfter(streams.socket.write);
     });
 
-    it("pipes the connection to the compressor", () => {
+    it("pipes the connection to the compressor", function () {
       expect(streams.connection.pipe).to.be.calledWith(streams.compressor);
     });
 
-    it("pipes the compressor to the serializer", () => {
+    it("pipes the compressor to the serializer", function () {
       expect(streams.compressor.pipe).to.be.calledWith(streams.serializer);
     });
 
-    it("pipes the deserializer to the decompressor", () => {
+    it("pipes the deserializer to the decompressor", function () {
       expect(streams.deserializer.pipe).to.be.calledWith(streams.decompressor);
     });
 
-    it("pipes the decompressor to the connection", () => {
+    it("pipes the decompressor to the connection", function () {
       expect(streams.decompressor.pipe).to.be.calledWith(streams.connection);
     });
   });
 
-  describe("available stream slots", () => {
+  describe("available stream slots", function () {
     let endpoint;
 
-    beforeEach(() => {
+    beforeEach(function () {
       endpoint = new Endpoint({});
       streams.connection.createStream = sinon.stub().returns(new stream.PassThrough());
 
@@ -329,17 +329,17 @@ describe("Endpoint", () => {
       expect(endpoint.availableStreamSlots).to.equal(5);
     });
 
-    it("reflects the received settings value", () => {
+    it("reflects the received settings value", function () {
       streams.connection.emit("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", 1024);
       expect(endpoint.availableStreamSlots).to.equal(1024);
     });
 
-    it("reduces when a stream is created", () => {
+    it("reduces when a stream is created", function () {
       endpoint.createStream();
       expect(endpoint.availableStreamSlots).to.equal(4);
     });
 
-    it("increases when a stream ends", () => {
+    it("increases when a stream ends", function () {
       const stream = endpoint.createStream();
 
       stream.emit("end");
@@ -348,10 +348,10 @@ describe("Endpoint", () => {
   });
 
 
-  describe("`wakeup` event", () => {
+  describe("`wakeup` event", function () {
 
-    context("when max concurrent streams limit updates", () => {
-      it("emits", () => {
+    context("when max concurrent streams limit updates", function () {
+      it("emits", function () {
         const endpoint = new Endpoint({});
         const wakeupSpy = sinon.spy();
         endpoint.on("wakeup", wakeupSpy);
@@ -362,8 +362,8 @@ describe("Endpoint", () => {
       });
     });
 
-    context("when stream ends", () => {
-      it("emits", () => {
+    context("when stream ends", function () {
+      it("emits", function () {
         const endpoint = new Endpoint({});
         const wakeupSpy = sinon.spy();
         endpoint.on("wakeup", wakeupSpy);
@@ -376,21 +376,21 @@ describe("Endpoint", () => {
     });
   });
 
-  describe("createStream", () => {
+  describe("createStream", function () {
     let endpoint;
 
-    beforeEach(() => {
+    beforeEach(function () {
       streams.connection.createStream = sinon.stub().returns(new stream.PassThrough());
       endpoint = new Endpoint({});
     });
 
-    it("calls createStream on the connection", () => {
+    it("calls createStream on the connection", function () {
       endpoint.createStream();
 
       expect(streams.connection.createStream).to.have.been.calledOnce;
     });
 
-    it("passes the return value from the connection", () => {
+    it("passes the return value from the connection", function () {
       let stream = endpoint.createStream();
       let connectionStream = streams.connection.createStream.firstCall.returnValue;
 
@@ -398,15 +398,15 @@ describe("Endpoint", () => {
     });
   });
 
-  describe("destroy", () => {
+  describe("destroy", function () {
     let endpoint;
 
-    beforeEach(() => {
+    beforeEach(function () {
       endpoint = new Endpoint({});
       streams.socket.destroy = sinon.stub();
     });
 
-    it("destroys the underlying socket", () => {
+    it("destroys the underlying socket", function () {
       endpoint.destroy();
 
       expect(streams.socket.destroy).to.be.called.once;

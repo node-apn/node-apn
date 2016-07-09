@@ -7,7 +7,7 @@ const EventEmitter = require("events");
 describe("Connection", function() {
   let fakes, Connection;
 
-  beforeEach(() => {
+  beforeEach(function () {
     fakes = {
       config: sinon.stub(),
       EndpointManager: sinon.stub(),
@@ -21,13 +21,13 @@ describe("Connection", function() {
 
   describe("constructor", function () {
 
-    context("called without `new`", () => {
-      it("returns a new instance", () => {
+    context("called without `new`", function () {
+      it("returns a new instance", function () {
         expect(Connection()).to.be.an.instanceof(Connection);
       });
     });
 
-    it("prepares the configuration with passed options", () => {
+    it("prepares the configuration with passed options", function () {
       let options = { production: true };
       Connection(options);
 
@@ -35,14 +35,14 @@ describe("Connection", function() {
     });
 
     describe("EndpointManager instance", function() {
-      it("is created", () => {
+      it("is created", function () {
         Connection();
 
         expect(fakes.EndpointManager).to.be.calledOnce;
         expect(fakes.EndpointManager).to.be.calledWithNew;
       });
 
-      it("is passed the prepared configuration", () => {
+      it("is passed the prepared configuration", function () {
         const returnSentinel = { "configKey": "configValue"};
         fakes.config.returns(returnSentinel);
 
@@ -52,40 +52,40 @@ describe("Connection", function() {
     });
   });
 
-  describe("pushNotification", () => {
+  describe("pushNotification", function () {
 
-    beforeEach(() => {
+    beforeEach(function () {
       fakes.config.returnsArg(0);
       fakes.endpointManager.getStream = sinon.stub();
 
       fakes.EndpointManager.returns(fakes.endpointManager);
     });
 
-    describe("single notification behaviour", () => {
+    describe("single notification behaviour", function () {
 
-      context("a single stream is available", () => {
+      context("a single stream is available", function () {
         let connection;
 
-        context("transmission succeeds", () => {
-          beforeEach( () => {
+        context("transmission succeeds", function () {
+          beforeEach( function () {
             connection = new Connection( { address: "testapi" } );
 
             fakes.stream = new FakeStream("abcd1234", "200");
             fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
           });
 
-          it("attempts to acquire one stream", () => {
+          it("attempts to acquire one stream", function () {
             return connection.pushNotification(notificationDouble(), "abcd1234")
-              .then(() => {
+              .then(function () {
                 expect(fakes.endpointManager.getStream).to.be.calledOnce;
               });
           });
 
-          describe("headers", () => {
+          describe("headers", function () {
 
-            it("sends the required HTTP/2 headers", () => {
+            it("sends the required HTTP/2 headers", function () {
               return connection.pushNotification(notificationDouble(), "abcd1234")
-                .then(() => {
+                .then(function () {
                   expect(fakes.stream.headers).to.be.calledWithMatch( {
                     ":scheme": "https",
                     ":method": "POST",
@@ -95,16 +95,16 @@ describe("Connection", function() {
                 });
             });
 
-            it("does not include apns headers when not required", () => {
+            it("does not include apns headers when not required", function () {
               return connection.pushNotification(notificationDouble(), "abcd1234")
-                .then(() => {
+                .then(function () {
                   ["apns-id", "apns-priority", "apns-expiration", "apns-topic"].forEach( header => {
                     expect(fakes.stream.headers).to.not.be.calledWithMatch(sinon.match.has(header));
                   });
                 });
             });
 
-            it("sends the notification-specific apns headers when specified", () => {
+            it("sends the notification-specific apns headers when specified", function () {
               let notification = notificationDouble();
 
               notification.headers.returns({
@@ -115,7 +115,7 @@ describe("Connection", function() {
               });
 
               return connection.pushNotification(notification, "abcd1234")
-                .then(() => {
+                .then(function () {
                   expect(fakes.stream.headers).to.be.calledWithMatch( {
                     "apns-id": "123e4567-e89b-12d3-a456-42665544000",
                     "apns-priority": 5,
@@ -126,30 +126,30 @@ describe("Connection", function() {
             });
           });
 
-          it("writes the notification data to the pipe", () => {
+          it("writes the notification data to the pipe", function () {
             return connection.pushNotification(notificationDouble(), "abcd1234")
-              .then(() => {
+              .then(function () {
                 expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
               });
           });
 
-          it("ends the stream", () => {
+          it("ends the stream", function () {
             return connection.pushNotification(notificationDouble(), "abcd1234")
-              .then(() => {
+              .then(function () {
                 expect(() => fakes.stream.write("ended?")).to.throw("write after end");
               });
           });
 
-          it("resolves with the device token in the sent array", () => {
+          it("resolves with the device token in the sent array", function () {
             return expect(connection.pushNotification(notificationDouble(), "abcd1234"))
               .to.become({ sent: [{"device": "abcd1234"}], failed: []});
           });
         });
 
-        context("error occurs", () => {
+        context("error occurs", function () {
           let promise;
 
-          beforeEach(() => {
+          beforeEach(function () {
             const connection = new Connection( { address: "testapi" } );
 
             fakes.stream = new FakeStream("abcd1234", "400", { "reason" : "BadDeviceToken" });
@@ -158,16 +158,16 @@ describe("Connection", function() {
             promise = connection.pushNotification(notificationDouble(), "abcd1234");
           });
 
-          it("resolves with the device token, status code and response in the failed array", () => {
+          it("resolves with the device token, status code and response in the failed array", function () {
             return expect(promise).to.eventually.deep.equal({ sent: [], failed: [{"device": "abcd1234", "status": "400", "response": { "reason" : "BadDeviceToken" }}]});
           });
         });
       });
 
-      context("no new stream is returned but the endpoint later wakes up", () => {
+      context("no new stream is returned but the endpoint later wakes up", function () {
         let notification, promise;
 
-        beforeEach( done => {
+        beforeEach( function () {
           const connection = new Connection( { address: "testapi" } );
 
           fakes.stream = new FakeStream("abcd1234", "200");
@@ -181,10 +181,10 @@ describe("Connection", function() {
 
           fakes.endpointManager.emit("wakeup");
 
-          promise.then( () => done(), done );
+          return promise;
         });
 
-        it("sends the required headers to the newly available stream", () => {
+        it("sends the required headers to the newly available stream", function () {
           expect(fakes.stream.headers).to.be.calledWithMatch( {
             ":scheme": "https",
             ":method": "POST",
@@ -193,15 +193,15 @@ describe("Connection", function() {
           });
         });
 
-        it("writes the notification data to the pipe", () => {
+        it("writes the notification data to the pipe", function () {
           expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notification.compile())));
         });
       });
     });
 
-    context("when 5 tokens are passed", () => {
+    context("when 5 tokens are passed", function () {
 
-      beforeEach(() => {
+      beforeEach(function () {
           fakes.streams = [
             new FakeStream("abcd1234", "200"),
             new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
@@ -211,10 +211,10 @@ describe("Connection", function() {
           ];
       });
 
-      context("streams are always returned", () => {
+      context("streams are always returned", function () {
         let promise;
 
-        beforeEach( done => {
+        beforeEach( function () {
           const connection = new Connection( { address: "testapi" } );
 
           fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
@@ -224,10 +224,11 @@ describe("Connection", function() {
           fakes.endpointManager.getStream.onCall(4).returns(fakes.streams[4]);
 
           promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
-          promise.then( () => done(), done);
+
+          return promise;
         });
 
-        it("sends the required headers for each stream", () => {
+        it("sends the required headers for each stream", function () {
           expect(fakes.streams[0].headers).to.be.calledWithMatch( { ":path": "/3/device/abcd1234" } );
           expect(fakes.streams[1].headers).to.be.calledWithMatch( { ":path": "/3/device/adfe5969" } );
           expect(fakes.streams[2].headers).to.be.calledWithMatch( { ":path": "/3/device/abcd1335" } );
@@ -235,17 +236,17 @@ describe("Connection", function() {
           expect(fakes.streams[4].headers).to.be.calledWithMatch( { ":path": "/3/device/aabbc788" } );
         });
 
-        it("writes the notification data for each stream", () => {
+        it("writes the notification data for each stream", function () {
           fakes.streams.forEach( stream => {
             expect(stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
           });
         });
 
-        it("resolves with the sent notifications", () => {
+        it("resolves with the sent notifications", function () {
           return expect(promise.get("sent")).to.eventually.deep.equal([{device: "abcd1234"}, {device: "bcfe4433"}]);
         });
 
-        it("resolves with the device token, status code and response of the unsent notifications", () => {
+        it("resolves with the device token, status code and response of the unsent notifications", function () {
           return expect(promise.get("failed")).to.eventually.deep.equal([
             { device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
             { device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
@@ -254,34 +255,35 @@ describe("Connection", function() {
         });
       });
 
-      context("some streams return, others wake up later", () => {
+      context("some streams return, others wake up later", function () {
         let promise;
 
-        beforeEach( done => {
+        beforeEach( function() {
           const connection = new Connection( { address: "testapi" } );
 
           fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
           fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
 
           promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
-          promise.then( () => done(), done);
 
-          setTimeout(() => {
+          setTimeout(function () {
             fakes.endpointManager.getStream.reset();
             fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[2]);
             fakes.endpointManager.getStream.onCall(1).returns(null);
             fakes.endpointManager.emit("wakeup");
           }, 1);
 
-          setTimeout(() => {
+          setTimeout(function () {
             fakes.endpointManager.getStream.reset();
             fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[3]);
             fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[4]);
             fakes.endpointManager.emit("wakeup");
           }, 2);
+
+          return promise;
         });
 
-        it("sends the correct device ID for each stream", () => {
+        it("sends the correct device ID for each stream", function () {
           expect(fakes.streams[0].headers).to.be.calledWithMatch({":path": "/3/device/abcd1234"});
           expect(fakes.streams[1].headers).to.be.calledWithMatch({":path": "/3/device/adfe5969"});
           expect(fakes.streams[2].headers).to.be.calledWithMatch({":path": "/3/device/abcd1335"});
@@ -289,17 +291,17 @@ describe("Connection", function() {
           expect(fakes.streams[4].headers).to.be.calledWithMatch({":path": "/3/device/aabbc788"});
         });
 
-        it("writes the notification data for each stream", () => {
+        it("writes the notification data for each stream", function () {
           fakes.streams.forEach( stream => {
             expect(stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notificationDouble().compile())));
           });
         });
 
-        it("resolves with the sent notifications", () => {
+        it("resolves with the sent notifications", function () {
           return expect(promise.get("sent")).to.eventually.deep.equal([{device: "abcd1234"}, {device: "bcfe4433"}]);
         });
 
-        it("resolves with the device token, status code and response of the unsent notifications", () => {
+        it("resolves with the device token, status code and response of the unsent notifications", function () {
           return expect(promise.get("failed")).to.eventually.deep.equal([
             { device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
             { device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
