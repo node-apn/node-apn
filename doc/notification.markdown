@@ -164,12 +164,10 @@ A UNIX timestamp when the notification should expire. If the notification cannot
 
 #### notification.priority
 
-From [Apples' Documentation][notificationFormat], Provide one of the following values:
+Provide one of the following values:
 
   * `10` - The push notification is sent to the device immediately. (Default)
     > The push notification must trigger an alert, sound, or badge on the device. It is an error use this priority for a push that contains only the `content-available` key.
   * `5` - The push message is sent at a time that conserves power on the device receiving it.
 
-[pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
-[notificationFormat]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW9 "The Binary Interface and Notification Format"
-[webpayloaddocs]:https://developer.apple.com/library/prerelease/mac/documentation/NetworkingInternet/Conceptual/NotificationProgrammingGuideForWebsites/PushNotifications/PushNotifications.html#//apple_ref/doc/uid/TP40013225-CH3-SW12 "Configuring Safari Push Notifications"
+[pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html "Local and Push Notification Programming Guide: Apple Push Notification Service"
