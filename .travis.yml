@@ -2,6 +2,7 @@ language: node_js
 node_js:
 - v4.0.0
 - v5.0.0
+- v6.0.0
 after_success:
 - npm install -g istanbul
 - npm install coveralls
@@ -15,3 +16,4 @@ deploy:
     secure: W4yhYfQUhyhOOG/nUwYXr2DgIv8Kp/pzyUMtWc2garnHLPMvaMY+w/0NzKC06/UmApiJdRalWDNNDqNJAl2G22Hs/eHVpAelHejzQw3BY26QW71tTCPQR3Cv7r6gDBUN2o9rxjlJt+vpbJR1wEoFRnwn3d6298zDw+fzjlM+Wvo=
   on:
     tags: true
+    node: 6.0.0
