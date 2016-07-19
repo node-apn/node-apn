@@ -1,5 +1,11 @@
 ## Changelog
 
+1.7.7:
+
+* Fix Documentation URL (#393)
+* Prevent `badge: 0` sending `badge: undefined` (#394)
+* Avoid error, when deferredConnection is null (#397)
+
 1.7.6:
 
 * Emit an error when retry limit is exceeded (#333)
