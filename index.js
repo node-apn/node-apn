@@ -47,7 +47,10 @@ const Connection = require("./lib/connection")({
 
 const Notification = require("./lib/notification");
 
+const token = require("./lib/token");
+
 module.exports = {
 	Connection,
 	Notification,
+  token,
 };
