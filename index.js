@@ -40,9 +40,13 @@ const EndpointManager = require("./lib/protocol/endpointManager")({
 	Endpoint,
 });
 
+const Client = require("./lib/client")({
+  config,
+  EndpointManager,
+});
+
 const Connection = require("./lib/connection")({
-	config,
-	EndpointManager,
+  Client,
 });
 
 const Notification = require("./lib/notification");
