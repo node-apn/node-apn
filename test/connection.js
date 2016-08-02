@@ -56,6 +56,13 @@ describe("Connection", function() {
           fakes.client.write.onCall(0).returns(Promise.resolve({ device: "abcd1234" }));
         });
 
+        it("invokes the writer withe correct `this`", function () {
+          return connection.pushNotification(notificationDouble(), "abcd1234")
+            .then(function () {
+              expect(fakes.client.write).to.be.calledOn(fakes.client);
+            });
+        });
+
         it("writes the notification to the client once", function () {
           return connection.pushNotification(notificationDouble(), "abcd1234")
             .then(function () {
