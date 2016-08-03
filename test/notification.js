@@ -680,7 +680,7 @@ describe("Notification", function() {
 
 			describe("with contentAvailable property disabled", function() {
 				it("does not set the 'content-available' flag", function() {
-          note.alert = "message";
+					note.alert = "message";
 					note.contentAvailable = false;
 
 					expect(note.toJSON().aps["content-available"]).to.be.undefined;
@@ -697,7 +697,7 @@ describe("Notification", function() {
 
 			describe("with mutableContent property disabled", function() {
 				it("does not set the 'mutable-content' flag", function() {
-          note.alert = "message";
+					note.alert = "message";
 					note.mutableContent = false;
 
 					expect(note.toJSON().aps["mutable-content"]).to.be.undefined;
@@ -707,7 +707,7 @@ describe("Notification", function() {
 			describe("with newsstandAvailable property", function() {
 				it("sets the 'content-available' flag", function() {
 					note.contentAvailable = true;
-
+					
 					expect(note.toJSON().aps["content-available"]).to.eql(1);
 				});
 			});
