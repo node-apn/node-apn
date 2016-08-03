@@ -268,7 +268,7 @@ describe("Connection", function() {
 
 		it("loadCredentialss the module", function(done) {
 			var connection = Connection({ pfx: "myCredentials.pfx" });
-			return connection.createSocket().finally(function() {
+			connection.createSocket().finally(function() {
 				expect(connection.loadCredentials).to.have.been.calledOnce;
 				done();
 			});
