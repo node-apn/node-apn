@@ -4,8 +4,8 @@ const sinon = require("sinon");
 const stream = require("stream");
 const EventEmitter = require("events");
 
-describe("Connection", function() {
-  let fakes, Connection;
+describe("Provider", function() {
+  let fakes, Provider;
 
   beforeEach(function () {
     fakes = {
@@ -16,20 +16,20 @@ describe("Connection", function() {
     fakes.Client.returns(fakes.client);
     fakes.client.write = sinon.stub();
 
-    Connection = require("../lib/connection")(fakes);
+    Provider = require("../lib/provider")(fakes);
   });
 
   describe("constructor", function () {
 
     context("called without `new`", function () {
       it("returns a new instance", function () {
-        expect(Connection()).to.be.an.instanceof(Connection);
+        expect(Provider()).to.be.an.instanceof(Provider);
       });
     });
 
     describe("Client instance", function() {
       it("is created", function () {
-        Connection();
+        Provider();
 
         expect(fakes.Client).to.be.calledOnce;
         expect(fakes.Client).to.be.calledWithNew;
@@ -38,7 +38,7 @@ describe("Connection", function() {
       it("is passed the options", function () {
         const options = { "configKey": "configValue"};
 
-        Connection(options);
+        Provider(options);
         expect(fakes.Client).to.be.calledWith(options);
       });
     });
@@ -47,24 +47,24 @@ describe("Connection", function() {
   describe("pushNotification", function () {
 
     describe("single notification behaviour", function () {
-      let connection;
+      let provider;
 
       context("transmission succeeds", function () {
         beforeEach( function () {
-          connection = new Connection( { address: "testapi" } );
+          provider = new Provider( { address: "testapi" } );
 
           fakes.client.write.onCall(0).returns(Promise.resolve({ device: "abcd1234" }));
         });
 
         it("invokes the writer withe correct `this`", function () {
-          return connection.pushNotification(notificationDouble(), "abcd1234")
+          return provider.pushNotification(notificationDouble(), "abcd1234")
             .then(function () {
               expect(fakes.client.write).to.be.calledOn(fakes.client);
             });
         });
 
         it("writes the notification to the client once", function () {
-          return connection.pushNotification(notificationDouble(), "abcd1234")
+          return provider.pushNotification(notificationDouble(), "abcd1234")
             .then(function () {
               const notification = notificationDouble();
               const builtNotification = {
@@ -77,7 +77,7 @@ describe("Connection", function() {
         });
 
         it("resolves with the device token in the sent array", function () {
-          return expect(connection.pushNotification(notificationDouble(), "abcd1234"))
+          return expect(provider.pushNotification(notificationDouble(), "abcd1234"))
             .to.become({ sent: [{"device": "abcd1234"}], failed: []});
         });
       });
@@ -86,10 +86,10 @@ describe("Connection", function() {
         let promise;
 
         beforeEach(function () {
-          const connection = new Connection( { address: "testapi" } );
+          const provider = new Provider( { address: "testapi" } );
 
           fakes.client.write.onCall(0).returns(Promise.resolve({ device: "abcd1234", status: "400", response: { reason: "BadDeviceToken" }}));
-          promise = connection.pushNotification(notificationDouble(), "abcd1234");
+          promise = provider.pushNotification(notificationDouble(), "abcd1234");
         });
 
         it("resolves with the device token, status code and response in the failed array", function () {
@@ -114,7 +114,7 @@ describe("Connection", function() {
         let promise;
 
         beforeEach( function () {
-          const connection = new Connection( { address: "testapi" } );
+          const provider = new Provider( { address: "testapi" } );
 
           fakes.client.write.onCall(0).returns(fakes.resolutions[0]);
           fakes.client.write.onCall(1).returns(fakes.resolutions[1]);
@@ -122,7 +122,7 @@ describe("Connection", function() {
           fakes.client.write.onCall(3).returns(fakes.resolutions[3]);
           fakes.client.write.onCall(4).returns(fakes.resolutions[4]);
 
-          promise = connection.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
+          promise = provider.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
 
           return promise;
         });
@@ -150,4 +150,3 @@ function notificationDouble() {
     compile: function() { return JSON.stringify(this.payload); }
   };
 }
-
