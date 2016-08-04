@@ -172,6 +172,51 @@ describe("Notification", function() {
 			});
 		});
 
+		describe("mutable-content property", function() {
+			it("defaults to undefined", function() {
+				expect(note.mutableContent).to.be.undefined;
+			});
+
+			it("can be set to `1` with a boolean value", function() {
+				note.mutableContent = true;
+				expect(note.mutableContent).to.equal(1);
+			});
+
+			it("resets the `compiled` flag when enabled", function() {
+				note.compiled = true;
+				note.mutableContent = true;
+				expect(note.compiled).to.be.false;
+			});
+
+			it("resets the `compiled` flag when disabled", function() {
+				note.compiled = true;
+				note.mutableContent = false;
+				expect(note.compiled).to.be.false;
+			});
+
+			it("can be set to undefined", function() {
+				note.mutableContent = true;
+				note.mutableContent = undefined;
+				expect(note.mutableContent).to.be.undefined;
+			});
+
+			it("can be set to `1`", function() {
+				note.mutableContent = 1;
+				expect(typeof note.mutableContent).to.equal("number");
+			});
+
+			it("cannot be set to a string", function() {
+				note.mutableContent = "true";
+				expect(note.mutableContent).to.be.undefined;
+			});
+
+			it("can be disabled", function() {
+				note.mutableContent = false;
+				expect(note.mutableContent).to.be.undefined;
+			});
+
+		});
+
 		describe("mdm property", function() {
 			it("defaults to undefined", function() {
 				expect(note.mdm).to.be.undefined;
@@ -338,7 +383,7 @@ describe("Notification", function() {
 					note.trim();
 					expect(note.length()).to.equal(2048);
 				});
-				
+
 				it("trims notification alert body to reduce payload to maximum length", function () {
 					note.alert = {
 						body: longText
@@ -397,7 +442,7 @@ describe("Notification", function() {
 					note.trim(trimLength);
 					expect(note.alert).to.equal("\n\n");
 				});
-				
+
 				it("leaves escaped escape character intact", function() {
 					note.alert = "test\\ message";
 					note.trim(26);
@@ -467,7 +512,7 @@ describe("Notification", function() {
 
 					expect(note.length()).to.equal(48);
 				});
-				
+
 				it("correctly empties the string", function() {
 					note.alert = Buffer([0x3D, 0xD8, 0x03, 0xDE, 0x3D, 0xD8, 0x1E, 0xDE]).toString(note.encoding);
 					var trimLength = note.length() - 8;
@@ -628,17 +673,34 @@ describe("Notification", function() {
 			describe("with contentAvailable property", function() {
 				it("sets the 'content-available' flag", function() {
 					note.contentAvailable = true;
-					
+
 					expect(note.toJSON().aps["content-available"]).to.eql(1);
 				});
 			});
 
 			describe("with contentAvailable property disabled", function() {
 				it("does not set the 'content-available' flag", function() {
-          note.alert = "message";
+					note.alert = "message";
 					note.contentAvailable = false;
-					
+
 					expect(note.toJSON().aps["content-available"]).to.be.undefined;
+				});
+			});
+
+			describe("with mutableContent property", function() {
+				it("sets the 'mutable-content' flag", function() {
+					note.mutableContent = true;
+
+					expect(note.toJSON().aps["mutable-content"]).to.eql(1);
+				});
+			});
+
+			describe("with mutableContent property disabled", function() {
+				it("does not set the 'mutable-content' flag", function() {
+					note.alert = "message";
+					note.mutableContent = false;
+
+					expect(note.toJSON().aps["mutable-content"]).to.be.undefined;
 				});
 			});
 

@@ -263,7 +263,7 @@ describe("Feedback", function() {
 
 		it("loads credentials", function(done) {
 			var feedback = Feedback({ pfx: "myCredentials.pfx" });
-			return feedback.createSocket().finally(function() {
+			feedback.createSocket().finally(function() {
 				expect(feedback.loadCredentials).to.have.been.calledOnce;
 				done();
 			});
