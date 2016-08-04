@@ -44,7 +44,7 @@ describe("Provider", function() {
     });
   });
 
-  describe("pushNotification", function () {
+  describe("send", function () {
 
     describe("single notification behaviour", function () {
       let provider;
@@ -57,14 +57,14 @@ describe("Provider", function() {
         });
 
         it("invokes the writer withe correct `this`", function () {
-          return provider.pushNotification(notificationDouble(), "abcd1234")
+          return provider.send(notificationDouble(), "abcd1234")
             .then(function () {
               expect(fakes.client.write).to.be.calledOn(fakes.client);
             });
         });
 
         it("writes the notification to the client once", function () {
-          return provider.pushNotification(notificationDouble(), "abcd1234")
+          return provider.send(notificationDouble(), "abcd1234")
             .then(function () {
               const notification = notificationDouble();
               const builtNotification = {
@@ -77,7 +77,7 @@ describe("Provider", function() {
         });
 
         it("resolves with the device token in the sent array", function () {
-          return expect(provider.pushNotification(notificationDouble(), "abcd1234"))
+          return expect(provider.send(notificationDouble(), "abcd1234"))
             .to.become({ sent: [{"device": "abcd1234"}], failed: []});
         });
       });
@@ -89,7 +89,7 @@ describe("Provider", function() {
           const provider = new Provider( { address: "testapi" } );
 
           fakes.client.write.onCall(0).returns(Promise.resolve({ device: "abcd1234", status: "400", response: { reason: "BadDeviceToken" }}));
-          promise = provider.pushNotification(notificationDouble(), "abcd1234");
+          promise = provider.send(notificationDouble(), "abcd1234");
         });
 
         it("resolves with the device token, status code and response in the failed array", function () {
@@ -122,7 +122,7 @@ describe("Provider", function() {
           fakes.client.write.onCall(3).returns(fakes.resolutions[3]);
           fakes.client.write.onCall(4).returns(fakes.resolutions[4]);
 
-          promise = provider.pushNotification(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
+          promise = provider.send(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
 
           return promise;
         });
