@@ -1,5 +1,9 @@
 ## Changelog
 
+1.7.8:
+
+* Add support for Mutable Content (#413)
+
 1.7.7:
 
 * Fix Documentation URL (#393)
