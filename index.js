@@ -45,7 +45,7 @@ const Client = require("./lib/client")({
   EndpointManager,
 });
 
-const Connection = require("./lib/connection")({
+const Provider = require("./lib/provider")({
   Client,
 });
 
@@ -54,7 +54,7 @@ const Notification = require("./lib/notification");
 const token = require("./lib/token");
 
 module.exports = {
-	Connection,
+	Provider,
 	Notification,
   token,
 };
