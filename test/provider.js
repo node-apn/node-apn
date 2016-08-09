@@ -15,6 +15,7 @@ describe("Provider", function() {
 
     fakes.Client.returns(fakes.client);
     fakes.client.write = sinon.stub();
+    fakes.client.shutdown = sinon.stub();
 
     Provider = require("../lib/provider")(fakes);
   });
@@ -139,6 +140,15 @@ describe("Provider", function() {
           ]);
         });
       });
+    });
+  });
+
+  describe("shutdown", function () {
+    it("invokes shutdown on the client", function () { 
+      let provider = new Provider({});
+      provider.shutdown();
+
+      expect(fakes.client.shutdown).to.be.calledOnce;
     });
   });
 });

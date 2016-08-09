@@ -15,6 +15,7 @@ describe("Client", function () {
     };
 
     fakes.EndpointManager.returns(fakes.endpointManager);
+    fakes.endpointManager.shutdown = sinon.stub();
 
     Client = require("../lib/client")(fakes);
   });
@@ -305,6 +306,71 @@ describe("Client", function () {
               { device: "bcfe4433"},
               { device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" } },
           ]);
+        });
+      });
+    });
+  });
+
+  describe("shutdown", function () {
+    beforeEach(function () {
+      fakes.config.returnsArg(0);
+      fakes.endpointManager.getStream = sinon.stub();
+
+      fakes.EndpointManager.returns(fakes.endpointManager);
+    });
+
+    context("with no pending notifications", function () {
+      it("invokes shutdown on endpoint manager", function () {
+        let client = new Client();
+        client.shutdown();
+
+        expect(fakes.endpointManager.shutdown).to.be.calledOnce;
+      });
+    });
+
+    context("with pending notifications", function () {
+      it("invokes shutdown on endpoint manager after queue drains", function () {
+        let client = new Client({ address: "none" });
+
+        fakes.streams = [
+          new FakeStream("abcd1234", "200"),
+          new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
+          new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
+          new FakeStream("bcfe4433", "200"),
+          new FakeStream("aabbc788", "413", { reason: "PayloadTooLarge" }),
+        ];
+
+        fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+        fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+
+        let promises = Promise.all([
+          client.write(builtNotification(), "abcd1234"),
+          client.write(builtNotification(), "adfe5969"),
+          client.write(builtNotification(), "abcd1335"),
+          client.write(builtNotification(), "bcfe4433"),
+          client.write(builtNotification(), "aabbc788"),
+        ]);
+
+        client.shutdown();
+
+        expect(fakes.endpointManager.shutdown).to.not.be.called;
+
+        setTimeout(function () {
+          fakes.endpointManager.getStream.reset();
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[2]);
+          fakes.endpointManager.getStream.onCall(1).returns(null);
+          fakes.endpointManager.emit("wakeup");
+        }, 1);
+
+        setTimeout(function () {
+          fakes.endpointManager.getStream.reset();
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[3]);
+          fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[4]);
+          fakes.endpointManager.emit("wakeup");
+        }, 2);
+
+        return promises.then( () => {
+          expect(fakes.endpointManager.shutdown).to.have.been.called;
         });
       });
     });

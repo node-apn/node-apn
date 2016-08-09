@@ -359,6 +359,24 @@ describe("Endpoint Manager", function () {
     });
   });
 
+  describe("shutdown", function () {
+
+    it("calls `close` on all established endpoints", function () {
+      const manager = new EndpointManager({ maxConnections: 3 });
+
+      let firstEndpoint  = establishEndpoint(manager);
+      let secondEndpoint = establishEndpoint(manager);
+
+      firstEndpoint.close = sinon.stub();
+      secondEndpoint.close = sinon.stub();
+
+      manager.shutdown();
+
+      expect(firstEndpoint.close).to.have.been.calledOnce;
+      expect(firstEndpoint.close).to.have.been.calledOnce;
+    });
+  });
+
   function establishEndpoint(manager) {
     manager.getStream();
     let endpoint = fakes.Endpoint.lastCall.returnValue;

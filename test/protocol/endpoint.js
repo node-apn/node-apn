@@ -398,6 +398,38 @@ describe("Endpoint", function () {
     });
   });
 
+  describe("close", function () {
+    context("when there are no acquired streams", function () {
+      it("calls close on the connection", function () {
+        const endpoint = new Endpoint({});
+
+        streams.connection.emit("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", 5);
+        streams.connection.close = sinon.stub();
+
+        endpoint.close();
+        expect(streams.connection.close).to.have.been.calledOnce;
+      });
+    });
+
+    context("when there is an acquired stream", function () {
+      it("waits until all streams are closed to call close on the connection", function () {
+        const endpoint = new Endpoint({});
+
+        streams.connection.createStream = sinon.stub().returns(new stream.PassThrough());
+        streams.connection.emit("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", 5);
+
+        const createdStream = endpoint.createStream();
+        streams.connection.close = sinon.stub();
+
+        endpoint.close();
+        expect(streams.connection.close).to.have.not.been.called;
+
+        createdStream.emit("end");
+        expect(streams.connection.close).to.have.been.calledOnce;
+      });
+    });
+  });
+
   describe("destroy", function () {
     let endpoint;
 
