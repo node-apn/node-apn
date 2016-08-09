@@ -131,7 +131,7 @@ describe("Endpoint Manager", function () {
         context("when there are already `maxConnections` connections", function () {
           it("does not attempt to create a further endpoint connection", function () {
             manager.getStream();
-            const secondEndpoint = fakes.Endpoint.lastCall.returnValue
+            const secondEndpoint = fakes.Endpoint.lastCall.returnValue;
             secondEndpoint.availableStreamSlots = 0;
             secondEndpoint.emit("connect");
 
@@ -206,7 +206,7 @@ describe("Endpoint Manager", function () {
       manager = new EndpointManager({ "maxConnections": 3 });
       manager.getStream();
 
-      endpoint = fakes.Endpoint.firstCall.returnValue
+      endpoint = fakes.Endpoint.firstCall.returnValue;
       endpoint.availableStreamSlots = 5;
       endpoint.emit("connect");
     });

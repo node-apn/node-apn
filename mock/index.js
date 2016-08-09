@@ -1,7 +1,5 @@
 "use strict";
 
-const sinon = require("sinon");
-
 const Client = require("./client")();
 
 const Provider = require("../lib/provider")({

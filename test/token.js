@@ -46,12 +46,12 @@ describe("token", function () {
     });
 
     it("throws when input is too short", function () {
-      const input = new Buffer("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19", "hex")
+      const input = new Buffer("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19", "hex");
       expect(function () { token(input) }).to.throw(/invalid length/);
     });
 
     it("throws when input is too long", function () {
-      const input = new Buffer("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19c788", "hex")
+      const input = new Buffer("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19c788", "hex");
       expect(function () { token(input) }).to.throw(/invalid length/);
     });
   });

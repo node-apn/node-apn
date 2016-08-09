@@ -1,13 +1,13 @@
 "use strict";
 
-module.exports = function(dependencies) {
+module.exports = function() {
 
-  function Client(options) {
+  function Client() {
   }
 
   Client.prototype.write = function mockWrite() {
-    return {}
-  }
+    return {};
+  };
 
-  return Client
+  return Client;
 };

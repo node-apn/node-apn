@@ -1,7 +1,6 @@
 "use strict";
 
 const sinon = require("sinon");
-const stream = require("stream");
 const EventEmitter = require("events");
 
 describe("Provider", function() {
