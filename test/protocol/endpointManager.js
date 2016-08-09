@@ -375,13 +375,28 @@ describe("Endpoint Manager", function () {
       expect(firstEndpoint.close).to.have.been.calledOnce;
       expect(firstEndpoint.close).to.have.been.calledOnce;
     });
+
+    it("aborts pending endpoint connects", function () {
+      const manager = new EndpointManager({ maxConnections: 3 });
+
+      const connectingEndpoint = establishEndpoint(manager, true);
+
+      connectingEndpoint.close = sinon.stub();
+
+      manager.shutdown();
+
+      expect(connectingEndpoint.close).to.have.been.calledOnce;
+    });
   });
 
-  function establishEndpoint(manager) {
+  function establishEndpoint(manager, skipConnect) {
     manager.getStream();
     let endpoint = fakes.Endpoint.lastCall.returnValue;
     endpoint.availableStreamSlots = 0;
-    endpoint.emit("connect");
+
+    if (!skipConnect) {
+      endpoint.emit("connect");
+    }
     return endpoint;
   }
 });
