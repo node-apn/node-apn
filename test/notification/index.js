@@ -135,6 +135,14 @@ describe("Notification", function() {
 				expect(note.headers()).to.have.property("apns-topic", "io.apn.node");
 			});
 		});
+
+    context("collapseId is set", function () {
+      it("contains the apns-collapse-id header", function () {
+        note.collapseId = "io.apn.collapse";
+
+        expect(note.headers()).to.have.property("apns-collapse-id", "io.apn.collapse");
+      });
+    });
 	});
 
 	describe("compile", function() {
