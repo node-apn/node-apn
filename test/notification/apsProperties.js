@@ -204,6 +204,46 @@ describe("Notification", function() {
       });
     });
 
+    describe("subtitle", function () {
+      it("sets the aps.alert.subtitle property", function () {
+        note.subtitle = "node-apn";
+        expect(compiledOutput()).to.have.deep.property("aps.alert.subtitle", "node-apn");
+      });
+
+      context("alert is already an object", function () {
+        beforeEach(function () {
+          note.alert = {body: "Test", "launch-image": "test.png"};
+          note.subtitle = "node-apn";
+        });
+
+        it("contains all expected properties", function () {
+          expect(compiledOutput()).to.have.deep.property("aps.alert")
+            .that.deep.equals({body: "Test", "launch-image": "test.png", "subtitle": "node-apn"});
+        });
+      });
+
+      context("alert is already a string", function () {
+        beforeEach(function () {
+          note.alert = "Hello, world";
+          note.subtitle = "Welcome";
+        });
+
+        it("retains the alert body", function () {
+          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+        });
+
+        it("sets the aps.alert.subtitle property", function () {
+          expect(compiledOutput()).to.have.deep.property("aps.alert.subtitle", "Welcome");
+        });
+      });
+
+      describe("setSubtitle", function () {
+        it("is chainable", function () {
+          expect(note.setSubtitle("Bienvenue")).to.equal(note);
+          expect(compiledOutput()).to.have.deep.property("aps.alert.subtitle", "Bienvenue");
+        });
+      });
+    });
     describe("titleLocKey", function () {
       it("sets the aps.alert.title-loc-key property", function () {
         note.titleLocKey = "Warning";
