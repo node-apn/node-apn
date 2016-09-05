@@ -151,8 +151,54 @@ describe("Client", function () {
           promise = client.write(builtNotification(), "abcd1234");
         });
 
-        it("resolves with the device token, status code and response in the failed array", function () {
+        it("resolves with the device token, status code and response", function () {
           return expect(promise).to.eventually.deep.equal({ status: "400", device: "abcd1234", response: { reason: "BadDeviceToken" }});
+        });
+      });
+
+      context("stream error occurs", function () {
+        let promise;
+
+        beforeEach(function () {
+          const client = new Client( { address: "testapi" } );
+          fakes.stream = new stream.Transform({
+            transform: function(chunk, encoding, callback) {}
+          });
+          fakes.stream.headers = sinon.stub();
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+          promise = client.write(builtNotification(), "abcd1234");
+        });
+
+        context("passing an Error", function () {
+          beforeEach(function () {
+            fakes.stream.emit("error", new Error("stream error"));
+          });
+
+          it("resolves with an object containing the device token", function () {
+            return expect(promise).to.eventually.have.property("device", "abcd1234");
+          });
+
+          it("resolves with an object containing a wrapped error", function () {
+            return Promise.all([
+                expect(promise).to.eventually.have.property("error").and.to.be.an.instanceOf(Error),
+                expect(promise.get("error")).to.eventually.match(/apn write failed/),
+                expect(promise.get("error").call("cause")).to.eventually.be.an.instanceOf(Error).and.match(/stream error/)
+            ])
+          });
+        });
+
+        context("passing a string", function () {
+          it("resolves with the device token and a wrapped error", function () {
+            fakes.stream.emit("error", "stream error");
+            return Promise.all([
+                expect(promise).to.eventually.have.property("device", "abcd1234"),
+                expect(promise.get("error")).to.eventually.match(/apn write failed/),
+                expect(promise.get("error")).to.eventually.match(/stream error/),
+                expect(promise).to.eventually.have.property("error").and.to.be.an.instanceOf(Error)
+            ]);
+          });
         });
       });
     });
