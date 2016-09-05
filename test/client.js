@@ -126,9 +126,10 @@ describe("Client", function () {
         });
 
         it("ends the stream", function () {
+          sinon.spy(fakes.stream, "end");
           return client.write(builtNotification(), "abcd1234")
             .then(function () {
-              expect(() => fakes.stream.write("ended?")).to.throw("write after end");
+              expect(fakes.stream.end).to.be.calledOnce;
             });
         });
 
