@@ -1,5 +1,30 @@
 ## Changelog
 
+1.7.8:
+
+* Add support for Mutable Content (#413)
+
+1.7.7:
+
+* Fix Documentation URL (#393)
+* Prevent `badge: 0` sending `badge: undefined` (#394)
+* Avoid error, when deferredConnection is null (#397)
+
+1.7.6:
+
+* Emit an error when retry limit is exceeded (#333)
+* Documentation fixes (#229, #343, #379)
+* Reinstate broken aps behaviour (#377)
+
+1.7.5:
+
+* Notification property improvements
+* Round-robin all open sockets when sending notifications
+* `minConnections` option
+* Prevent crashing when cancelling feedback multiple times (#307)
+* Fix connection.shutdown behaviour (#299)
+* Small doc improvements
+
 1.7.4:
 
 * Notification trim fixes. (#220)

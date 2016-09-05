@@ -66,4 +66,4 @@ The documentation on [The Feedback Service][feedback] explains how you should us
 
 Typically you should record the timestemp when a device registers with your service along with the token and update it every time your app re-registers the token. When the feedback service returns a token with an associated timestamp which is newer than that stored by you then you should disable, or remove, the token from your system and stop sending notifications to it.
 
-[feedback]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3 "The Feedback Service"
+[feedback]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Appendixes/BinaryProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH106-SW4 "The Feedback Service"
