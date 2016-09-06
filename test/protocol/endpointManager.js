@@ -278,7 +278,8 @@ describe("Endpoint Manager", function () {
         }
 
         manager.on("error", err => {
-          expect(err).to.match(/connection failed/i);
+          expect(err).to.match(/endpoint error/i);
+          expect(err.cause()).to.match(/this should be handled/i);
           done();
         });
 
