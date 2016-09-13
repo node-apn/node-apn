@@ -156,6 +156,35 @@ describe("Client", function () {
         });
       });
 
+      context("stream ends without completing request", function () {
+        let promise;
+
+        beforeEach(function () {
+          const client = new Client( { address: "testapi" } );
+          fakes.stream = new stream.Transform({
+            transform: function(chunk, encoding, callback) {}
+          });
+          fakes.stream.headers = sinon.stub();
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+          promise = client.write(builtNotification(), "abcd1234");
+
+          fakes.stream.push(null);
+        });
+
+        it("resolves with an object containing the device token", function () {
+          return expect(promise).to.eventually.have.property("device", "abcd1234");
+        });
+
+        it("resolves with an object containing an error", function () {
+          return Promise.all([
+              expect(promise).to.eventually.have.property("error").and.to.be.an.instanceOf(Error),
+              expect(promise.get("error")).to.eventually.match(/stream ended unexpectedly/),
+          ]);
+        });
+      });
+
       context("stream error occurs", function () {
         let promise;
 
