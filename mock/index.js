@@ -7,7 +7,7 @@ const Provider = require("../lib/provider")({
 });
 
 const Notification = require("../lib/notification");
-const token = require("./lib/token");
+const token = require("../lib/token");
 
 module.exports = {
   Provider,
