@@ -260,6 +260,21 @@ describe("Endpoint Manager", function () {
 
         expect(endpoint.createStream).to.not.be.called;
       });
+
+      it("triggers a wakeup", function (done) {
+        fakes.Endpoint.reset();
+        manager = new EndpointManager({ "maxConnections": 3 });
+        manager.getStream();
+
+        endpoint = fakes.Endpoint.firstCall.returnValue
+        endpoint.emit("connect");
+
+        manager.on("wakeup", function() {
+          done();
+        });
+
+        endpoint.emit("end");
+      });
     });
   });
 
