@@ -337,25 +337,13 @@ describe("Endpoint Manager", function () {
         wakeupSpy = sinon.spy();
         manager.on("wakeup", wakeupSpy);
       });
+      
+      it("is emitted", function () {
+        endpoint.availableStreamSlots = 5;
 
-      context("with slots available", function () {
-        it("is emitted", function () {
-          endpoint.availableStreamSlots = 5;
+        endpoint.emit("wakeup");
 
-          endpoint.emit("wakeup");
-
-          expect(wakeupSpy).to.be.called;
-        });
-      });
-
-      context("with no slots available", function () {
-        it("doesn't emit", function () {
-          endpoint.availableStreamSlots = 0;
-
-          endpoint.emit("wakeup");
-
-          expect(wakeupSpy).to.not.be.called;
-        });
+        expect(wakeupSpy).to.be.called;
       });
     });
   });
