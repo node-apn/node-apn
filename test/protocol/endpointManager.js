@@ -199,7 +199,7 @@ describe("Endpoint Manager", function () {
     });
   });
 
-  describe("with one established endpoint", function () {
+  context("with one established endpoint", function () {
     let endpoint, manager;
 
     beforeEach(function () {
@@ -303,11 +303,13 @@ describe("Endpoint Manager", function () {
 
         manager.getStream();
         fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+
+        // Should not trigger an unhandled 'error' event
       });
     });
 
     context("when an error happens on a connected endpoint", function () {
-      it("does not contribute to reaching the limit", function () {
+      it("does not contribute to reaching the limit", function (done) {
         const manager = new EndpointManager({
           "maxConnections": 2,
           "connectionRetryLimit": 2,
@@ -319,6 +321,17 @@ describe("Endpoint Manager", function () {
 
         manager.getStream();
         fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+
+        manager.on("error", err => {
+          expect(err).to.match(/endpoint error/i);
+          expect(err.cause()).to.match(/this should be emitted/i);
+          done();
+        });
+
+        manager.getStream();
+        fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be emitted"));
+
+        expect(fakes.Endpoint).to.be.calledThrice;
       });
     });
   });
