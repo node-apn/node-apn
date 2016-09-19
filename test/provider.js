@@ -98,15 +98,16 @@ describe("Provider", function() {
       });
     });
 
-    context("when 5 tokens are passed", function () {
+    context("when multiple tokens are passed", function () {
 
       beforeEach(function () {
           fakes.resolutions = [
-            Promise.resolve({ device: "abcd1234" }),
-            Promise.resolve({ device: "adfe5969", status: "400", response: { reason: "MissingTopic" }}),
-            Promise.resolve({ device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }}),
-            Promise.resolve({ device: "bcfe4433" }),
-            Promise.resolve({ device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }}),
+            { device: "abcd1234" },
+            { device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
+            { device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
+            { device: "bcfe4433" },
+            { device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }},
+            { device: "fbcde238", error: new Error("connection failed") },
           ];
       });
 
@@ -116,13 +117,11 @@ describe("Provider", function() {
         beforeEach( function () {
           const provider = new Provider( { address: "testapi" } );
 
-          fakes.client.write.onCall(0).returns(fakes.resolutions[0]);
-          fakes.client.write.onCall(1).returns(fakes.resolutions[1]);
-          fakes.client.write.onCall(2).returns(fakes.resolutions[2]);
-          fakes.client.write.onCall(3).returns(fakes.resolutions[3]);
-          fakes.client.write.onCall(4).returns(fakes.resolutions[4]);
+          for(let i=0; i < fakes.resolutions.length; i++) {
+            fakes.client.write.onCall(i).returns(Promise.resolve(fakes.resolutions[i])); 
+          }
 
-          promise = provider.send(notificationDouble(), ["abcd1234", "adfe5969", "abcd1335", "bcfe4433", "aabbc788"]);
+          promise = provider.send(notificationDouble(), fakes.resolutions.map( res => res.device ));
 
           return promise;
         });
@@ -133,12 +132,13 @@ describe("Provider", function() {
           });
         });
 
-        it("resolves with the device token, status code and response of the unsent notifications", function () {
+        it("resolves with the device token, status code and response or error of the unsent notifications", function () {
           return promise.then( (response) => {
             expect(response.failed).to.deep.equal([
               { device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
               { device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
               { device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }},
+              { device: "fbcde238", error: new Error("connection failed") },
             ]);
           });
         });
