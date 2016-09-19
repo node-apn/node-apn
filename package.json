@@ -30,8 +30,7 @@
     "debug": "^2.2.0",
     "http2": "https://github.com/argon/node-http2#master",
     "node-forge": "^0.6.20",
-    "verror": "*",
-    "bluebird": "*"
+    "verror": "*"
   },
   "devDependencies": {
     "chai": "3.x",

@@ -128,15 +128,19 @@ describe("Provider", function() {
         });
 
         it("resolves with the sent notifications", function () {
-          return expect(promise.get("sent")).to.eventually.deep.equal([{device: "abcd1234"}, {device: "bcfe4433"}]);
+          return promise.then( (response) => {
+            expect(response.sent).to.deep.equal([{device: "abcd1234"}, {device: "bcfe4433"}]);
+          });
         });
 
         it("resolves with the device token, status code and response of the unsent notifications", function () {
-          return expect(promise.get("failed")).to.eventually.deep.equal([
-            { device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
-            { device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
-            { device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }},
-          ]);
+          return promise.then( (response) => {
+            expect(response.failed).to.deep.equal([
+              { device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
+              { device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
+              { device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }},
+            ]);
+          });
         });
       });
     });

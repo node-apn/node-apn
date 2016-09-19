@@ -178,10 +178,11 @@ describe("Client", function () {
         });
 
         it("resolves with an object containing an error", function () {
-          return Promise.all([
-              expect(promise).to.eventually.have.property("error").and.to.be.an.instanceOf(Error),
-              expect(promise.get("error")).to.eventually.match(/stream ended unexpectedly/),
-          ]);
+          return promise.then( (response) => {
+            expect(response).to.have.property("error");
+            expect(response.error).to.be.an.instanceOf(Error);
+            expect(response.error).to.match(/stream ended unexpectedly/);
+          });
         });
       });
 
@@ -210,23 +211,23 @@ describe("Client", function () {
           });
 
           it("resolves with an object containing a wrapped error", function () {
-            return Promise.all([
-                expect(promise).to.eventually.have.property("error").and.to.be.an.instanceOf(Error),
-                expect(promise.get("error")).to.eventually.match(/apn write failed/),
-                expect(promise.get("error").call("cause")).to.eventually.be.an.instanceOf(Error).and.match(/stream error/)
-            ])
+            return promise.then( (response) => {
+              expect(response.error).to.be.an.instanceOf(Error);
+              expect(response.error).to.match(/apn write failed/);
+              expect(response.error.cause()).to.be.an.instanceOf(Error).and.match(/stream error/);
+            });
           });
         });
 
         context("passing a string", function () {
-          it("resolves with the device token and a wrapped error", function () {
+          it("resolves with the device token and an error", function () {
             fakes.stream.emit("error", "stream error");
-            return Promise.all([
-                expect(promise).to.eventually.have.property("device", "abcd1234"),
-                expect(promise.get("error")).to.eventually.match(/apn write failed/),
-                expect(promise.get("error")).to.eventually.match(/stream error/),
-                expect(promise).to.eventually.have.property("error").and.to.be.an.instanceOf(Error)
-            ]);
+            return promise.then( (response) => {
+                expect(response).to.have.property("device", "abcd1234");
+                expect(response.error).to.to.be.an.instanceOf(Error);
+                expect(response.error).to.match(/apn write failed/);
+                expect(response.error).to.match(/stream error/);
+            });
           });
         });
       });
