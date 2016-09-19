@@ -87,9 +87,7 @@ describe("Endpoint Manager", function () {
       let endpoint;
 
       beforeEach(function () {
-        manager.getStream();
-        endpoint = fakes.Endpoint.returnValues[0];
-        endpoint.emit("connect");
+        endpoint = establishEndpoint(manager);
       });
 
       context("when there are available slots", function () {
@@ -130,10 +128,7 @@ describe("Endpoint Manager", function () {
 
         context("when there are already `maxConnections` connections", function () {
           it("does not attempt to create a further endpoint connection", function () {
-            manager.getStream();
-            const secondEndpoint = fakes.Endpoint.lastCall.returnValue;
-            secondEndpoint.availableStreamSlots = 0;
-            secondEndpoint.emit("connect");
+            const secondEndpoint = establishEndpoint(manager);
 
             manager.getStream();
             expect(fakes.Endpoint).to.be.calledTwice;
@@ -204,11 +199,8 @@ describe("Endpoint Manager", function () {
 
     beforeEach(function () {
       manager = new EndpointManager({ "maxConnections": 3 });
-      manager.getStream();
-
-      endpoint = fakes.Endpoint.firstCall.returnValue;
+      endpoint = establishEndpoint(manager);
       endpoint.availableStreamSlots = 5;
-      endpoint.emit("connect");
     });
 
     context("when an error occurs", function () {
@@ -229,10 +221,7 @@ describe("Endpoint Manager", function () {
       it("does not affect a 'connecting' endpoint", function () {
         fakes.Endpoint.reset();
         manager = new EndpointManager({ "maxConnections": 3 });
-        manager.getStream();
-
-        endpoint = fakes.Endpoint.firstCall.returnValue
-        endpoint.emit("connect");
+        endpoint = establishEndpoint(manager);
 
         // Trigger creation of a second endpoint
         manager.getStream();
@@ -264,10 +253,7 @@ describe("Endpoint Manager", function () {
       it("triggers a wakeup", function (done) {
         fakes.Endpoint.reset();
         manager = new EndpointManager({ "maxConnections": 3 });
-        manager.getStream();
-
-        endpoint = fakes.Endpoint.firstCall.returnValue
-        endpoint.emit("connect");
+        endpoint = establishEndpoint(manager);
 
         manager.on("wakeup", function() {
           done();
@@ -373,10 +359,8 @@ describe("Endpoint Manager", function () {
 
       beforeEach(function () {
         const manager = new EndpointManager({ "maxConnections": 3 });
-        manager.getStream();
+        endpoint = establishEndpoint(manager);
 
-        endpoint = fakes.Endpoint.firstCall.returnValue;
-        endpoint.emit("connect");
         wakeupSpy = sinon.spy();
         manager.on("wakeup", wakeupSpy);
       });
