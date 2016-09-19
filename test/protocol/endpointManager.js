@@ -265,7 +265,7 @@ describe("Endpoint Manager", function () {
   });
 
   describe("`connectionRetryLimit` option", function () {
-    let connectionRetryLimit, manager, error;
+    let connectionRetryLimit, manager;
 
     beforeEach(function () {
       connectionRetryLimit = (Math.floor(Math.random() * 3) % 3) + 2;
@@ -273,20 +273,26 @@ describe("Endpoint Manager", function () {
         "connectionRetryLimit": connectionRetryLimit,
         "maxConnections": 2,
       });
-      manager.on("error", err => {
-        error = err;
-      });
-      error = null;
     });
 
     context("with no established endpoints", function () {
       context("when the configured number of connections fail", function () {
+        let error;
 
         beforeEach(function () {
-          for (let i = 0; i < connectionRetryLimit; i++) {
+          for (let i = 0; i < connectionRetryLimit - 1; i++) {
             manager.getStream();
             fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
           }
+
+          error = null;
+          // Only allow an error after the limit is reached
+          manager.on("error", err => {
+            error = err;
+          });
+
+          manager.getStream();
+          fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
         });
 
         it("emits an error", function() {
