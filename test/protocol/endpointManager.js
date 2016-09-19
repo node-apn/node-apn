@@ -58,6 +58,30 @@ describe("Endpoint Manager", function () {
             const endpoint = fakes.Endpoint.firstCall.returnValue;
             expect(endpoint.destroy).to.be.called.once;
           });
+
+          it("emits wakeup", function (){
+            let endpoint = establishEndpoint(manager, true);
+
+            let wakeupSpy = sinon.spy();
+            manager.on("wakeup", wakeupSpy);
+
+            endpoint.emit("error", new Error("this should be handled"));
+            expect(wakeupSpy).to.be.calledOnce;
+          });
+
+          it("allows immediate reconnect in the wakeup event", function (done) {
+            let endpoint = establishEndpoint(manager, true);
+
+            manager.on("wakeup", function() {
+              let endpoint = establishEndpoint(manager, true);
+
+              expect(endpoint).to.not.be.null;
+
+              done();
+            });
+
+            endpoint.emit("error", new Error("this should be handled"));
+          });
         });
       });
 
