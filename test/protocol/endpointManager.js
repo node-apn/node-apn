@@ -311,6 +311,62 @@ describe("Endpoint Manager", function () {
       });
     });
 
+    context("with an established endpoint", function() {
+      let establishedEndpoint;
+
+      beforeEach(function () {
+        establishedEndpoint = establishEndpoint(manager);
+      })
+
+      context("when the configured number of connections fail", function () {
+        it("does not emit an error", function() {
+          manager.on("error", function() {
+            throw err;
+          });
+
+          for (let i = 0; i < connectionRetryLimit; i++) {
+            manager.getStream();
+            fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+          }
+        });
+      });
+
+      context("when the endpoint ends after some failed connections", function () {
+        beforeEach(function () {
+          for (let i = 0; i < connectionRetryLimit - 1; i++) {
+            manager.getStream();
+            fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+          }
+          establishedEndpoint.emit("end");
+        });
+
+        context("when the configured number of connections fail", function () {
+          let error;
+
+          beforeEach(function () {
+            for (let i = 0; i < connectionRetryLimit - 1; i++) {
+              manager.getStream();
+              fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+            }
+
+            error = null;
+            // Only allow an error after the limit is reached
+            manager.on("error", err => {
+              error = err;
+            });
+
+            manager.getStream();
+              fakes.Endpoint.lastCall.returnValue.emit("error", new Error("this should be handled"));
+          });
+
+          it("emits an error", function() {
+            expect(error).to.match(/endpoint error/i);
+            expect(error.cause()).to.match(/this should be handled/i);
+          });
+        });
+      });
+    });
+
     context("when a connection is successful between the failed connections", function () {
       it("does not emit an error", function () {
         const manager = new EndpointManager({
