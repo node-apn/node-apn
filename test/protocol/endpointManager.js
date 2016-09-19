@@ -478,7 +478,13 @@ describe("Endpoint Manager", function () {
   });
 
   function establishEndpoint(manager, skipConnect) {
+    let callCount = fakes.Endpoint.callCount;
     manager.getStream();
+
+    if(fakes.Endpoint.callCount != callCount + 1) {
+      return null
+    }
+
     let endpoint = fakes.Endpoint.lastCall.returnValue;
     endpoint.availableStreamSlots = 0;
 
