@@ -385,6 +385,42 @@ describe("Client", function () {
           ]);
         });
       });
+
+      context("connection fails", function () {
+        let promises;
+
+        beforeEach( function() {
+          const client = new Client( { address: "testapi" } );
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+
+          promises = Promise.all([
+            client.write(builtNotification(), "abcd1234"),
+            client.write(builtNotification(), "adfe5969"),
+            client.write(builtNotification(), "abcd1335"),
+          ]);
+
+          setTimeout(function () {
+            fakes.endpointManager.getStream.reset();
+            fakes.endpointManager.emit("error", new Error("endpoint failed"));
+          }, 1);
+
+          return promises;
+        });
+
+        it("resolves with 1 success", function () {
+          return promises.then( response => {
+            expect(response[0]).to.deep.equal({ device: "abcd1234" });
+          });
+        });
+
+        it("resolves with 2 errors", function () {
+          return promises.then( response => {
+            expect(response[1]).to.deep.equal({ device: "adfe5969", error: new Error("endpoint failed") });
+            expect(response[2]).to.deep.equal({ device: "abcd1335", error: new Error("endpoint failed") });
+          })
+        })
+      });
     });
   });
 
