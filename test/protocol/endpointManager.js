@@ -204,7 +204,12 @@ describe("Endpoint Manager", function () {
     });
 
     context("when an error occurs", function () {
+      let wakeupSpy;
+
       beforeEach(function () {
+        wakeupSpy = sinon.spy();
+        manager.on("wakeup", wakeupSpy);
+        
         endpoint.emit("error", new Error("this should be handled"));
       });
 
@@ -216,6 +221,10 @@ describe("Endpoint Manager", function () {
         manager.getStream();
 
         expect(endpoint.createStream).to.not.be.called;
+      });
+
+      it("emits an wakeup event", function (){
+        expect(wakeupSpy).to.be.calledOnce;
       });
 
       it("does not affect a 'connecting' endpoint", function () {
