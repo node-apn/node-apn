@@ -175,13 +175,15 @@ describe("Endpoint", function () {
           expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match.any, 1);
         });
 
-        it("bubbles error events", function () {
+        it("bubbles error events after wrapping", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
           streams.connection.emit("error", "this should be bubbled");
 
-          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+          expect(errorSpy).to.have.been.calledOnce;
+          expect(errorSpy.firstCall.args[0]).to.be.an.instanceOf(Error);
+          expect(errorSpy.firstCall.args[0]).to.match(/connection error: this should be bubbled/);
         });
       });
 
@@ -412,16 +414,16 @@ describe("Endpoint", function () {
     });
 
     context("connection error", function () {
-      it("emits the error from all active streams", function () {
-        let error = new Error("socket failed");
-        streams.connection.emit("error", error);
+      it("emits an error with the code from all active streams", function () {
+        streams.connection.emit("error", "PROTOCOL_ERROR");
 
-        return expect(Promise.all(promises)).to.eventually.deep.equal([
-          error, error, error,
-        ]);
+        return Promise.all(promises).then( responses => {
+          expect(responses[0]).to.be.an.instanceOf(Error).and.match(/connection error: PROTOCOL_ERROR/);
+          expect(responses[1]).to.be.an.instanceOf(Error).and.match(/connection error: PROTOCOL_ERROR/);
+          expect(responses[2]).to.be.an.instanceOf(Error).and.match(/connection error: PROTOCOL_ERROR/);
+        });
       });
     });
-    
   });
 
   describe("`wakeup` event", function () {
