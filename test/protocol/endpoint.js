@@ -44,6 +44,8 @@ describe("Endpoint", function () {
     sinon.stub(streams.socket, "pipe");
     sinon.stub(streams.connection, "pipe");
 
+    streams.connection._allocateId = sinon.stub();
+
     streams.compressor.setTableSizeLimit = sinon.spy();
     streams.decompressor.setTableSizeLimit = sinon.spy();
 
@@ -388,6 +390,12 @@ describe("Endpoint", function () {
       endpoint.createStream();
 
       expect(streams.connection.createStream).to.have.been.calledOnce;
+    });
+
+    it("allocates a stream ID", function () {
+      let stream = endpoint.createStream();
+
+      expect(streams.connection._allocateId).to.be.calledWith(stream);
     });
 
     it("passes the return value from the connection", function () {
