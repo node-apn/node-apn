@@ -349,6 +349,80 @@ describe("Endpoint", function () {
     });
   });
 
+  describe("error occurrence", function () {
+    let promises;
+
+    beforeEach(function () {
+      let endpoint = new Endpoint({});
+      endpoint.on("error", () => {})
+
+      streams.connection._streamIds = [];
+
+      // Stream 0 is an active case and should not triggered
+      streams.connection._streamIds[0] = new stream.PassThrough();
+
+      promises = [];
+      function erroringStream() {
+        let s = new stream.PassThrough();
+        promises.push(new Promise( resolve => {
+          s.on("error", function(err) {
+            resolve(err);
+          });
+        }));
+
+        return s;
+      }
+
+      streams.connection._streamIds[5] = erroringStream();
+      streams.connection._streamIds[6] = erroringStream();
+      streams.connection._streamIds[8] = erroringStream();
+    });
+
+    context("socket error", function () {
+      it("emits the error from all active streams", function () {
+        let error = new Error("socket failed");
+        streams.socket.emit("error", error);
+
+        return expect(Promise.all(promises)).to.eventually.deep.equal([
+          error, error, error,
+        ]);
+      });
+
+      it("emits the stream errors with setImmediate", function (){
+        // setImmediate happens on the next run loop but after any I/O
+        // We need to ensure that client streams don't get caught in
+        // limbo between being created and having error handlers attached
+        // which happens after a Promise.then. Native promises use process.nextTick
+        // however bluebird uses setImmediate, so to be safe we must delay as
+        // late as possible.
+
+        let immediateSpy = sinon.spy();
+        setImmediate(immediateSpy);
+
+        let error = new Error("socket failed");
+        streams.socket.emit("error", error);
+
+        let streamSpy = sinon.spy();
+        streams.connection._streamIds[5].on("error", streamSpy);
+
+        return Promise.all(promises).then(() => {
+          expect(streamSpy).to.be.calledAfter(immediateSpy);
+        });
+      });
+    });
+
+    context("connection error", function () {
+      it("emits the error from all active streams", function () {
+        let error = new Error("socket failed");
+        streams.connection.emit("error", error);
+
+        return expect(Promise.all(promises)).to.eventually.deep.equal([
+          error, error, error,
+        ]);
+      });
+    });
+    
+  });
 
   describe("`wakeup` event", function () {
 
