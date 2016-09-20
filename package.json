@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "http2": "https://github.com/argon/node-http2#master",
+    "http2": "https://github.com/argon/node-http2#apn",
     "node-forge": "^0.6.20",
     "verror": "*"
   },
