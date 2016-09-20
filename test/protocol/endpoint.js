@@ -175,15 +175,13 @@ describe("Endpoint", function () {
           expect(fakes.protocol.Connection).to.have.been.calledWith(sinon.match.any, 1);
         });
 
-        it("bubbles error events after wrapping", function () {
+        it("bubbles error events with label", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
           streams.connection.emit("error", "this should be bubbled");
 
-          expect(errorSpy).to.have.been.calledOnce;
-          expect(errorSpy.firstCall.args[0]).to.be.an.instanceOf(Error);
-          expect(errorSpy.firstCall.args[0]).to.match(/connection error: this should be bubbled/);
+          expect(errorSpy).to.have.been.calledWith("connection error: this should be bubbled");
         });
       });
 
@@ -197,13 +195,13 @@ describe("Endpoint", function () {
           expect(fakes.protocol.Serializer).to.have.been.calledWith(bunyanLogger);
         });
 
-        it("bubbles error events", function () {
+        it("bubbles error events with label", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
           streams.serializer.emit("error", "this should be bubbled");
 
-          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+          expect(errorSpy).to.have.been.calledWith("serializer error: this should be bubbled");
         });
       });
 
@@ -217,13 +215,13 @@ describe("Endpoint", function () {
           expect(fakes.protocol.Deserializer).to.have.been.calledWith(bunyanLogger);
         });
 
-        it("bubbles error events", function () {
+        it("bubbles error events with label", function () {
           const errorSpy = sinon.spy();
           endpoint.on("error", errorSpy);
 
           streams.deserializer.emit("error", "this should be bubbled");
 
-          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+          expect(errorSpy).to.have.been.calledWith("deserializer error: this should be bubbled");
         });
       });
 
@@ -249,7 +247,7 @@ describe("Endpoint", function () {
 
           streams.compressor.emit("error", "this should be bubbled");
 
-          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+          expect(errorSpy).to.have.been.calledWith("compressor error: this should be bubbled");
         });
       });
 
@@ -275,7 +273,7 @@ describe("Endpoint", function () {
 
           streams.decompressor.emit("error", "this should be bubbled");
 
-          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+          expect(errorSpy).to.have.been.calledWith("decompressor error: this should be bubbled");
         });
       });
     });
@@ -418,9 +416,9 @@ describe("Endpoint", function () {
         streams.connection.emit("error", "PROTOCOL_ERROR");
 
         return Promise.all(promises).then( responses => {
-          expect(responses[0]).to.be.an.instanceOf(Error).and.match(/connection error: PROTOCOL_ERROR/);
-          expect(responses[1]).to.be.an.instanceOf(Error).and.match(/connection error: PROTOCOL_ERROR/);
-          expect(responses[2]).to.be.an.instanceOf(Error).and.match(/connection error: PROTOCOL_ERROR/);
+          expect(responses[0]).to.match(/connection error: PROTOCOL_ERROR/);
+          expect(responses[1]).to.match(/connection error: PROTOCOL_ERROR/);
+          expect(responses[2]).to.match(/connection error: PROTOCOL_ERROR/);
         });
       });
     });
