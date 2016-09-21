@@ -4,7 +4,9 @@
 and you are encouraged to read the full documentation to understand the
 implications. If you have used v1.7 or earlier then hopefully you will find
 the overview below helpful to understand the changes you will need to make to
-your application to make the most of Apple's new protocol. It's worth it!
+your application to make the most of Apple's new protocol.
+
+It's worth it!
 
 ## Overview
 
@@ -13,6 +15,7 @@ your application to make the most of Apple's new protocol. It's worth it!
 * `apn.Device` has been removed - all tokens are now hex-encoded strings
 * `apn.token` is provided to validate tokens and convert from `Buffer` if 
   necessary
+* Notifications are now required to have an associated `topic`
 * `pushNotification(notification, tokens)` is now simply, `send(notification, recipients)`
 * `send` returns a promise which will be fulfilled when all notifications have
   been sent
@@ -47,6 +50,7 @@ function setup() {
 func sendNotification(user) {
     let note = new apn.Notification();
     note.alert = "Hello " + user.name;
+    note.topic = "io.github.node-apn.test"
 
     connection.set(note, user.token).then( (response) => {
         response.sent.forEach( (token) => {
