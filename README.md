@@ -40,7 +40,7 @@ node-apn
 
 ## Quick Start
 
-This is readme as a brief introduction, please refer to the documentation in `doc/` for more details.
+This is readme is a brief introduction, please refer to the full [documentation](doc/apn.markdown) in `doc/` for more details.
 
 If you have previously used v1.x and wish to learn more about what's changed in v2.0, please see [What's New](doc/whats-new.markdown)
 
