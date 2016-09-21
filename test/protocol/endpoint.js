@@ -384,8 +384,8 @@ describe("Endpoint", function () {
       }
 
       streams.connection._streamIds[5] = erroringStream();
-      streams.connection._streamIds[6] = erroringStream();
-      streams.connection._streamIds[8] = erroringStream();
+      streams.connection._streamIds[7] = erroringStream();
+      streams.connection._streamIds[9] = erroringStream();
     });
 
     context("socket error", function () {
