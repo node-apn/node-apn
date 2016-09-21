@@ -152,7 +152,7 @@ describe("Endpoint Manager", function () {
 
         context("when there are already `maxConnections` connections", function () {
           it("does not attempt to create a further endpoint connection", function () {
-            const secondEndpoint = establishEndpoint(manager);
+            establishEndpoint(manager);
 
             manager.getStream();
             expect(fakes.Endpoint).to.be.calledTwice;
@@ -505,7 +505,7 @@ describe("Endpoint Manager", function () {
     let callCount = fakes.Endpoint.callCount;
     manager.getStream();
 
-    if(fakes.Endpoint.callCount != callCount + 1) {
+    if(fakes.Endpoint.callCount !== callCount + 1) {
       return null
     }
 

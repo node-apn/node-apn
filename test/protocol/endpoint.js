@@ -563,7 +563,6 @@ describe("Endpoint", function () {
       });
 
       context("some streams are unprocessed", function () {
-        let promises;
 
         beforeEach(function () {
           streams.connection._streamIds = [];
