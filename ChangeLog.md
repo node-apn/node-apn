@@ -1,5 +1,21 @@
 ## Changelog
 
+2.0.0:
+
+* HTTP/2 Provider API (#277)
+* `apn.Connection` has been renamed to `apn.Provider`
+* `apn.Feedback` has been removed
+* `apn.Device` has been removed - all tokens are now hex-encoded strings
+* `apn.token` is provided to validate tokens and convert from `Buffer` if 
+  necessary
+* Notifications are now required to have an associated `topic`
+* `pushNotification(notification, tokens)` is now simply, `send(notification, recipients)`
+* `send` returns a promise which will be fulfilled when all notifications have
+  been sent (#362)
+* Reliable Delivery (#168)
+* Ability to mock `apn.Provider` behaviour
+* Notification can be created in a "finished" state (#240)
+
 1.7.8:
 
 * Add support for Mutable Content (#413)

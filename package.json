@@ -1,7 +1,7 @@
 {
   "name": "apn",
   "description": "An interface to the Apple Push Notification service for Node.js",
-  "version": "2.0.0-alpha1",
+  "version": "2.0.0",
   "author": "Andrew Naylor <argon@mkbot.net>",
   "contributors": [
     {
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "http2": "https://github.com/argon/node-http2#apn",
+    "http2": "https://github.com/argon/node-http2#apn-2.0.0",
     "node-forge": "^0.6.20",
     "verror": "*"
   },
