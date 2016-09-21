@@ -25,7 +25,7 @@ describe("config", function () {
       address: "api.sandbox.push.apple.com",
       port: 443,
       rejectUnauthorized: true,
-      connectionRetryLimit: 3,
+      connectionRetryLimit: 10,
     });
   });
 
