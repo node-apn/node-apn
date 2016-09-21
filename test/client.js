@@ -186,6 +186,38 @@ describe("Client", function () {
         });
       });
 
+      context("stream is unprocessed", function () {
+        let promise;
+
+        beforeEach(function () {
+          const client = new Client( { address: "testapi" } );
+          fakes.stream = new stream.PassThrough();
+          fakes.stream.headers = sinon.stub();
+
+          fakes.secondStream = FakeStream("abcd1234", "200");
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+          fakes.endpointManager.getStream.onCall(1).returns(fakes.secondStream);
+
+          promise = client.write(builtNotification(), "abcd1234");
+          
+          setImmediate(() => {
+            fakes.stream.emit("unprocessed");
+          });
+        });
+
+        it("attempts to resend on a new stream", function (done) {
+          setImmediate(() => {
+            expect(fakes.endpointManager.getStream).to.be.calledTwice;
+            done();
+          });
+        });
+
+        it("fulfills the promise", function () {
+          return expect(promise).to.eventually.deep.equal({ device: "abcd1234" });
+        });
+      });
+
       context("stream error occurs", function () {
         let promise;
 
