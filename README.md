@@ -43,16 +43,16 @@ This is intended as a brief introduction, please refer to the documentation in `
 ### Load in the module
 
 ```javascript
-	var apn = require('apn');
+var apn = require('apn');
 ```
 
 ### Connecting
 Create a new connection to the Apple Push Notification provider API, passing a dictionary of options to the constructor. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running.
 
 ```javascript
-	var options = { };
+var options = { };
 
-	var apnProvider = new apn.Provider(options);
+var apnProvider = new apn.Provider(options);
 ```
 
 By default, the provider will connect to the sandbox unless the environment variable `NODE_ENV=production` is set.
@@ -65,33 +65,33 @@ Help with preparing the key and certificate files for connection can be found in
 To send a notification you will first need a token from your app as a string
 
 ```javascript
-	let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
+let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
 ```
 
 Create a notification object, configuring it with the relevant parameters (See the [payload documentation][pl] for more details.)
 
 ```javascript
-	var note = new apn.Notification();
-	
-	note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
-	note.badge = 3;
-	note.sound = "ping.aiff";
-	note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
-	note.payload = {'messageFrom': 'John Appleseed'};
+var note = new apn.Notification();
+
+note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+note.badge = 3;
+note.sound = "ping.aiff";
+note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
+note.payload = {'messageFrom': 'John Appleseed'};
 ```
 
 Send the notification to the API with `pushNotification`, which returns a promise.
 
 ```javascript
-	apnProvider.pushNotification(note, deviceToken).then( (result) => {
-		// see documentation for an explanation of result
-	});
+apnProvider.pushNotification(note, deviceToken).then( (result) => {
+	// see documentation for an explanation of result
+});
 ```
 
 This will result in the the following notification payload being sent to the device
 
 ```json
- 	{"messageFrom":"John Appelseed","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
+{"messageFrom":"John Appelseed","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
 ```
 
 You should only create one `Provider` per-process for each certificate/key pair you have. You do not need to create a new `Provider` for each notification. If you are only sending notifications to one app then there is no need for more than one `Provider`.
