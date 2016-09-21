@@ -1,24 +1,22 @@
-#node-apn
+[<p align="center"><img src="doc/logo.png" alt="node-apn" width="450" height="138"></p>][node-apn]
+
+node-apn
+========
 
 > A Node.js module for interfacing with the Apple Push Notification service.
-
-[![NPM][npm-image] ][npm-url]
 
 [![Build status][ci-image] ][ci-url]
 [![Code coverage][coverage-image]][coverage-url]
 [![Codacy][codacy-image]][codacy-url]
-
 [![dependencies][dependencies-image]][dependencies-url]
 [![devdependencies][devdependencies-image]][devdependencies-url]
 
-[![Issue Stats][issuestats-pr-image]][issuestats-url]
-[![Issue Stats][issuestats-image]][issuestats-url]
-
+[logo]:doc/logo.png
 [npm-image]:https://nodei.co/npm/apn.png?downloads=true
 [npm-url]:https://npmjs.com/package/apn
-[ci-image]:https://travis-ci.org/argon/node-apn.png?branch=master
+[ci-image]:https://travis-ci.org/argon/node-apn.png?branch=develop
 [ci-url]:https://travis-ci.org/argon/node-apn
-[coverage-image]:https://coveralls.io/repos/argon/node-apn/badge.svg?branch=master
+[coverage-image]:https://coveralls.io/repos/argon/node-apn/badge.svg?branch=develop
 [coverage-url]:https://coveralls.io/r/argon/node-apn
 [codacy-image]:https://www.codacy.com/project/badge/e7735fbe0db244f3b310657d0dabaa11
 [codacy-url]:https://www.codacy.com/public/argon/node-apn
@@ -28,29 +26,17 @@
 [devdependencies-image]:https://david-dm.org/argon/node-apn/dev-status.png
 [devdependencies-url]:https://david-dm.org/argon/node-apn#info=devDependencies
 
-[issuestats-image]:http://issuestats.com/github/argon/node-apn/badge/issue
-[issuestats-pr-image]:http://issuestats.com/github/argon/node-apn/badge/pr
-[issuestats-url]:http://issuestats.com/github/argon/node-apn
-
 ## Features
 
-- Fast
+- Based on HTTP/2 based provider API
 - Maintains a connection to the server to maximise notification batching and throughput.
-- Enhanced binary interface support, with error handling
-- Automatically sends unsent notifications if an error occurs
-- Feedback service support
-- Complies with all best practises laid out by Apple
+- Automatically resends unsent notifications if an error occurs
 
 ## Installation
 
-Via [npm][]:
+[npm][] is the preferred installation method:
 
 	$ npm install apn
-	
-As a submodule of your project (you will also need to install [q][q])
-
-	$ git submodule add http://github.com/argon/node-apn.git apn
-	$ git submodule update --init
 
 ## Quick Start
 
@@ -58,73 +44,61 @@ This is intended as a brief introduction, please refer to the documentation in `
 
 ### Load in the module
 
-	var apn = require('apn');
-
-### Connecting
-Create a new connection to the APN gateway server, passing a dictionary of options to the constructor. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running.
-
 ```javascript
-	var options = { };
-
-	var apnConnection = new apn.Connection(options);
+var apn = require('apn');
 ```
 
-By default, if the environment variable `NODE_ENV=production` is set, the module will connect to the production gateway. Otherwise it will connect to the sandbox. This along with many other settings can be overriden with the options object.
+### Connecting
+Create a new connection to the Apple Push Notification provider API, passing a dictionary of options to the constructor. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running.
+
+```javascript
+var options = { };
+
+var apnProvider = new apn.Provider(options);
+```
+
+By default, the provider will connect to the sandbox unless the environment variable `NODE_ENV=production` is set.
 
 For more information about configuration options consult the [documentation](doc/connection.markdown).
 
 Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
 
 ### Sending a notification
-To send a notification first create a `Device` object. Pass it the device token as either a hexadecimal string, or alternatively as a `Buffer` object containing the token in binary form.
+To send a notification you will first need a token from your app as a string
 
-	var myDevice = new apn.Device(token);
+```javascript
+let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
+```
 
-Next, create a notification object, set the relevant parameters (See the [payload documentation][pl] for more details.) and use the `pushNotification` method on the connection to send it.
+Create a notification object, configuring it with the relevant parameters (See the [payload documentation][pl] for more details.)
 
-	var note = new apn.Notification();
-	
-	note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
-	note.badge = 3;
-	note.sound = "ping.aiff";
-	note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
-	note.payload = {'messageFrom': 'Caroline'};
-	
-	apnConnection.pushNotification(note, myDevice);
+```javascript
+var note = new apn.Notification();
 
-The above options will compile the following dictionary to send to the device:
+note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+note.badge = 3;
+note.sound = "ping.aiff";
+note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
+note.payload = {'messageFrom': 'John Appleseed'};
+```
 
-	{"messageFrom":"Caroline","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
+Send the notification to the API with `pushNotification`, which returns a promise.
 
-You should only create one `Connection` per-process for each certificate/key pair you have. You do not need to create a new `Connection` for each notification. If you are only sending notifications to one app then there is no need for more than one `Connection`, if throughput is a problem then look at the `maxConnections` property.
+```javascript
+apnProvider.pushNotification(note, deviceToken).then( (result) => {
+	// see documentation for an explanation of result
+});
+```
 
-### Setting up the feedback service
+This will result in the the following notification payload being sent to the device
 
-Apple recommends checking the feedback service periodically for a list of devices for which there were failed delivery attempts.
+```json
+{"messageFrom":"John Appelseed","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
+```
 
-Using the `Feedback` object it is possible to periodically query the server for the list. Many of the options are similar to that of `Connection`, including the authentication configuration. It is recomended that you share the same configuration object between Connection and Feedback instances to ensure they stay in sync.
+You should only create one `Provider` per-process for each certificate/key pair you have. You do not need to create a new `Provider` for each notification. If you are only sending notifications to one app then there is no need for more than one `Provider`.
 
-Attach a listener to the `feedback` event to receive the output as two arguments, the `time` returned by the server (epoch time) and a `Buffer` object containing the device token - this event will be emitted for each device separately. Alternatively you can enable the `batchFeedback` option and the `feedback` event will provide an array of objects containing `time` and `device` properties.
-
-	var options = {
-		"batchFeedback": true,
-		"interval": 300
-	};
-
-	var feedback = new apn.Feedback(options);
-	feedback.on("feedback", function(devices) {
-		devices.forEach(function(item) {
-			// Do something with item.device and item.time;
-		});
-	});
-
-By specifying a time interval (in seconds) `Feedback` will periodically query the service without further intervention.
-
-More information about the feedback service can be found in the [feedback service documentation][fs].
-
-## Debugging
-
-If you experience difficulties sending notifications or using the feedback service you can enable debug messages within the library by running your application with `DEBUG=apn` or `DEBUG=apnfb` set as an environment variable.
+## Troubleshooting
 
 You are encouraged to read the extremely informative [Troubleshooting Push Notifications][tn2265] Tech Note in the first instance, in case your query is answered there.
 
@@ -132,17 +106,17 @@ You are encouraged to read the extremely informative [Troubleshooting Push Notif
 
 If you have any questions or difficulties working with the module, the [node-apn Google group][googlegroup] should be your first port of call. 
 
-Please include as much detail as possible - especially debug logs, if the problem is reproducible sample code is also extremely helpful. GitHub Issues should only be created for verified problems and enhancements, this will allow them to be tracked more easily.
+Please include as much detail as possible - especially debug logs. If the problem is reproducible, sample code is also extremely helpful. GitHub Issues should only be created for verified problems and enhancements, this will allow them to be tracked more easily.
 
 ## Resources
 
-* [Local and Push Notification Programming Guide: Apple Push Notification Service][pl]
+* [Local and Push Notification Programming Guide: APNs Provider API][pl]
 * [Apple Technical Note: Troubleshooting Push Notifications][tn2265]
 * [List of Projects, Applications and Companies Using Node-apn][pacapn]
 
 ## Credits
 
-Written and maintained by [Andrew Naylor][andrewnaylor].
+Created by [Andrew Naylor][argon]
 
 Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnlarsen], [Mike P][mypark], [Greg Bergé][neoziro], [Asad ur Rehman][AsadR], [Nebojsa Sabovic][nsabovic], [Alberto Gimeno][gimenete], [Randall Tombaugh][rwtombaugh], [Michael Stewart][thegreatmichael], [Olivier Louvignes][mgcrea], [porsager][porsager], [Craig Hockenberry][chockenberry]
 
@@ -150,31 +124,29 @@ Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnla
 
 Released under the MIT License
 
-Copyright (c) 2013 Andrew Naylor
+> Copyright (c) 2013 Andrew Naylor
+> 
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to deal
+> in the Software without restriction, including without limitation the rights
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, and to permit persons to whom the Software is
+> furnished to do so, subject to the following conditions:
+> 
+> The above copyright notice and this permission notice shall be included in
+> all copies or substantial portions of the Software.
+> 
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+[npm]: https://npmjs.org
+[node-apn]: https://github.com/argon/node-apn
 [certificateWiki]:https://github.com/argon/node-apn/wiki/Preparing-Certificates "Preparing Certificates"
-[errors]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4 "The Binary Interface and Notification Formats"
-[pl]: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
-[fs]: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Appendixes/BinaryProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH106-SW4 "The Feedback Service"
+[pl]: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1 "Local and Push Notification Programming Guide: APNs Provider API"
 [tn2265]: http://developer.apple.com/library/ios/#technotes/tn2265/_index.html "Troubleshooting Push Notifications"
 [googlegroup]:https://groups.google.com/group/node-apn "node-apn Google Group"
 [pacapn]:https://github.com/argon/node-apn/wiki/Projects,-Applications,-and-Companies-Using-Node-apn "List of Projects, Applications and Companies Using Node-apn"
-[andrewnaylor]: http://andrewnaylor.co.uk
-[bnoordhuis]: http://bnoordhuis.nl
-[npm]: https://npmjs.org
-[bobrik]: http://bobrik.name
+[argon]: https://github.com/argon
+[bobrik]: https://github.com/bobrik
 [dgthistle]: https://github.com/dgthistle
 [keithnlarsen]: https://github.com/keithnlarsen
 [mypark]: https://github.com/mypark
@@ -186,6 +158,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [thegreatmichael]: https://github.com/thegreatmichael
 [mgcrea]: https://github.com/mgcrea
 [porsager]: https://github.com/porsager
-[q]: https://github.com/kriskowal/q
 [chockenberry]: https://github.com/chockenberry
 

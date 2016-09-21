@@ -1,14 +1,60 @@
-exports.Connection = require("./lib/connection");
-exports.connection = exports.Connection;
+const debug = require("debug")("apn");
 
-exports.Device = require("./lib/device");
-exports.device = exports.Device;
+const parse = require("./lib/credentials/parse")({
+	parsePkcs12:  require("./lib/credentials/parsePkcs12"),
+	parsePemKey:  require("./lib/credentials/parsePemKey"),
+	parsePemCert: require("./lib/credentials/parsePemCertificate"),
+});
 
-exports.Errors = require("./lib/errors");
-exports.error = exports.Errors;
+const prepareCredentials = require("./lib/credentials/prepare")({
+	load: require("./lib/credentials/load"),
+	parse,
+	validate: require("./lib/credentials/validate"),
+	logger: debug,
+});
 
-exports.Feedback = require("./lib/feedback");
-exports.feedback = exports.Feedback;
+const config = require("./lib/config")({
+	debug,
+	prepareCredentials,
+});
 
-exports.Notification = require("./lib/notification");
-exports.notification = exports.Notification;
+const tls = require("tls");
+
+const framer     = require("http2/lib/protocol/framer");
+const compressor = require("http2/lib/protocol/compressor");
+
+const protocol = {
+	Serializer:   framer.Serializer,
+	Deserializer: framer.Deserializer,
+	Compressor:   compressor.Compressor,
+	Decompressor: compressor.Decompressor,
+	Connection:   require("http2/lib/protocol/connection").Connection,
+};
+
+const Endpoint = require("./lib/protocol/endpoint")({
+	tls,
+	protocol,
+});
+
+const EndpointManager = require("./lib/protocol/endpointManager")({
+	Endpoint,
+});
+
+const Client = require("./lib/client")({
+  config,
+  EndpointManager,
+});
+
+const Provider = require("./lib/provider")({
+  Client,
+});
+
+const Notification = require("./lib/notification");
+
+const token = require("./lib/token");
+
+module.exports = {
+	Provider,
+	Notification,
+  token,
+};

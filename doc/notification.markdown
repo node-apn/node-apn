@@ -1,116 +1,173 @@
-## apn.Notification([payload])
-
-Returns a new `Notification` object. You can optionally pass in an object representing the payload, or configure properties on the returned object. See below.
-
-
 ## Class: apn.Notification
 
-As of version 1.2.0 it is possible to use a set of methods provided by Notification object (`setAlertText`, `setActionLocKey`, `setLocKey`, `setLocArgs`, `setLaunchImage`) to aid the creation of the alert parameters. For applications which provide Newsstand capability there is a new boolean parameter `note.newsstandAvailable` to specify `content-available` in the payload.
+A `Notification` enapsulates data to be sent to a device and handles JSON encoding for transmission. See the [payload documentation][pl] for more details.
 
-For iOS 7 applications which support Silent Remote Notifications you can use the `note.contentAvailable` property. This is identical in functionality to  `note.newsstandAvailable` without the confusion of the "Newstand" terminology.
+### Initialization
 
-A `Notification` encapsulates the data to be compiled down to JSON and pushed to a device. See the [payload documentation][pl] for more details. At present the total length of the payload accepted by Apple is 2048 bytes. 
+When initializing a `Notification` you can optionally pass an object to pre-populate properties as they are defined below.
 
-### notification.retryLimit
+```javascript
+let notification = new apn.Notification({
+  alert: "Hello, world!",
+  sound: "chime.caf",
+  mutableContent: 1,
+  payload: {
+    "sender": "node-apn",
+  },
+});
+```
 
-The maximum number of retries which should be performed when sending a notification if an error occurs. A value of 0 will only allow one attempt at sending (0 retries). Set to -1 to disable (default).
+### Payload
 
-### notification.expiry
+#### `notification.payload`
 
-The UNIX timestamp representing when the notification should expire. This does not contribute to the 2048 byte payload size limit. An expiry of 0 indicates that the notification expires immediately.
+This `Object` is JSON encoded and sent as the notification payload. When properties have been set on `notification.aps` (either directly or with convenience setters) these are added to the `payload` just before it is sent. If `payload` already contains an `aps` property it is replaced.
 
-### notification.priority
+**Example:**
 
-From [Apple's Documentation][notificationFormat], Provide one of the following values:
+```javascript
+let notification = new apn.Notification();
 
-  * 10 - The push message is sent immediately. (Default)
-    > The push notification must trigger an alert, sound, or badge on the device. It is an error use this priority for a push that contains only the content-available key.
-  * 5 - The push message is sent at a time that conserves power on the device receiving it.
+notification.payload = {
+  from: "node-apn",
+  source: "web",
+};
 
-### notification.encoding
+notification.body = "Hello, world!";
+```
 
-The encoding to use when transmitting the notification to APNS, defaults to `utf8`. `utf16le` is also possible but as each character is represented by a minimum of 2 bytes, will at least halve the possible payload size. If in doubt leave as default.
+**Output:**
 
-### notification.payload
+```json
+{
+  "from":"node-apn",
+  "source":"web",
+  "aps":{
+    "alert":"Hello, world!"
+  }
+}
+```
 
-This object represents the root JSON object that you can add custom information for your application to. The properties below will only be added to the payload (under `aps`) when the notification is prepared for sending.
+#### `notification.rawPayload`
 
-### notification.badge
+If supplied this payload will be encoded and transmitted as-is. The convenience setters will have no effect on the JSON output.
 
-The value to specify for `payload.aps.badge`
+**Example:**
 
-### notification.sound
+```javascript
+let notification = new apn.Notification();
 
-The value to specify for `payload.aps.sound`
+notification.rawPayload = {
+  from: "node-apn",
+  source: "web",
+  aps: {
+    "content-available": 1
+  }
+};
 
-### notification.alert
+notification.body = "Hello, world!";
+```
 
-The value to specify for `payload.aps.alert` can be either a `String` or an `Object` as outlined by the payload documentation.
+**Output:**
 
-### notification.category
+```json
+{
+  "from":"node-apn",
+  "source":"web",
+  "aps":{
+    "content-available":1
+  }
+}
+```
 
-The value to specify for `payload.aps.category` for use with custom actions.
+### Convenience Setters
 
-### notification.contentAvailable
+The setters below provide a cleaner way to set properties defined by the Apple Push Notification Service (APNS).
 
-Set the `content-available` property of the `aps` object.
+This table shows the name of the setter, with the key-path of the underlying property it maps to and the expected value type.
 
-### notification.mdm
+| Setter Name         | Target Property             | Type                |
+|---------------------|-----------------------------|---------------------|
+| `alert`             | `aps.alert`                 | `String` or `Object`|
+| `body`              | `aps.alert.body`            | `String`            |
+| `locKey`            | `aps.alert.loc-key`         | `String`            |
+| `locArgs`           | `aps.alert.loc-args`        | `String`            |
+| `title`             | `aps.alert.title`           | `String`            |
+| `titleLocKey`       | `aps.alert.title-loc-key`   | `String`            |
+| `titleLocArgs`      | `aps.alert.title-loc-args`  | `Array`             |
+| `action`            | `aps.alert.action`          | `String`            |
+| `actionLocKey`      | `aps.alert.action-loc-key`  | `String`            |
+| `launchImage`       | `aps.launch-image`          | `String`            |
+| `badge`             | `aps.badge`                 | `Number`            |
+| `sound`             | `aps.sound`                 | `String`            |
+| `contentAvailable`  | `aps.content-available`     | `1`                 |
+| `mutableContent`    | `aps.mutable-content`       | `1`                 |
+| `urlArgs`           | `aps.url-args`              | `Array`             |
+| `category`          | `aps.category`              | `String`            |
+| `mdm`               | `mdm`                       | `String`            |
 
-The value to specify for the `mdm` field where applicable.
+When the notification is transmitted these properties will be added to the output before encoding.
 
-### notification.urlArgs
+For each convenience setter there is also a chainable method which invokes the setter and returns `this`. These are predictably named: `propertyName -> setPropertyName()`.
 
-The value to specify for `payload.aps['url-args']`. This used for Safari Push Notifications and should be an array of values in accordance with the [Web Payload Documentation][webpayloaddocs].
+It is also possible to set properties directly on `aps` if the setters above do not meet your needs.
 
-### notification.truncateAtWordEnd
+**Example:**
+```javascript
+let notification    = new apn.Notification();
 
-When this parameter is set and `notification#trim()` is called it will attempt to truncate the string at the nearest space.
+/// Convenience setter
+notification.body   = "Hello, world!";
+notification.title  = "node-apn";
+notification.badge  = 10;
 
-### notification.setAlertText(alert)
+/// Chainable setter
+notification.setAction("npm install")
+            .setMutableContent(1);
 
-Set the `aps.alert` text body. This will use the most space-efficient means.
+/// Direct `aps` property access
+notification.aps.category = "nodejs";
+```
 
-### notification.setAlertTitle(alertTitle)
+**Output:**
 
-Set the `title` property of the `aps.alert` object - used with Safari Push Notifications
+```json
+{
+  "aps":{
+    "alert":{
+      "body":"Hello, world!",
+      "title":"node-apn",
+      "action":"npm install",
+      "mutable-content": 1
+    },
+    "badge":10,
+    "category":"nodejs"
+  }
+}
+```
 
-### notification.setAlertAction(alertAction)
+### Properties
 
-Set the `action` property of the `aps.alert` object - used with Safari Push Notifications
+The properties below are sent alongside the notification as configuration and do not form part of the JSON payload. As such, they are not counted against the payload size limit.
 
-### notification.setActionLocKey(key)
+#### notification.topic
 
-Set the `action-loc-key` property of the `aps.alert` object.
+_Required_: The destination topic for the notification.
 
-### notification.setLocKey(key)
+#### notification.id
 
-Set the `loc-key` property of the `aps.alert` object.
+A UUID to identify the notification with APNS. If an `id` is not supplied, APNS will generate one automatically. If an error occurs the response will contain the `id`. This property populates the `apns-id` header.
 
-### notification.setLocArgs(args)
+#### notification.expiry
 
-Set the `loc-args` property of the `aps.alert` object.
+A UNIX timestamp when the notification should expire. If the notification cannot be delivered to the device, APNS will retry until it expires. An expiry of `0` indicates that the notification expires immediately, therefore no retries will be attempted.
 
-### notification.setLaunchImage(image)
+#### notification.priority
 
-Set the `launch-image` property of the `aps.alert` object.
+Provide one of the following values:
 
-### notification.setMDM(mdm)
+  * `10` - The push notification is sent to the device immediately. (Default)
+    > The push notification must trigger an alert, sound, or badge on the device. It is an error use this priority for a push that contains only the `content-available` key.
+  * `5` - The push message is sent at a time that conserves power on the device receiving it.
 
-Set the `mdm` property on the payload.
-
-### notification.setContentAvailable(available)
-
-Set the `content-available` property of the `aps` object.
-
-### notification.setUrlArgs(urlArgs)
-
-Set the `url-args` property of the `aps` object.
-
-### notification.trim()
-
-Attempt to automatically trim the notification alert text body to meet the payload size limit of 2048 bytes.
-
-[pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1 "Local and Push Notification Programming Guide: Apple Push Notification Service"
-[notificationFormat]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Appendixes/BinaryProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH106-SW8 "The Binary Interface and Notification Format"
-[webpayloaddocs]:https://developer.apple.com/library/prerelease/mac/documentation/NetworkingInternet/Conceptual/NotificationProgrammingGuideForWebsites/PushNotifications/PushNotifications.html#//apple_ref/doc/uid/TP40013225-CH3-SW12 "Configuring Safari Push Notifications"
+[pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html "Local and Push Notification Programming Guide: Apple Push Notification Service"
