@@ -333,13 +333,8 @@ describe("Endpoint Manager", function () {
           expect(error.cause()).to.match(/this should be handled/i);
         });
 
-        describe("getStream", function () {
-          it("will not attempt to create any further connections", function () {
-            fakes.Endpoint.reset();
-            expect(manager.getStream()).to.be.null;
-
-            expect(fakes.Endpoint).to.not.be.called;
-          });
+        it("resets the failure count", function () {
+          expect(manager._connectionFailures).to.equal(0);
         });
       });
     });
