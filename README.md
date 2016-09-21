@@ -1,5 +1,7 @@
-[<img src="doc/logo.png" alt="nodeapn" width="450" height="138">][node-apn]
+[<p align="center"><img src="doc/logo.png" alt="nodeapn" width="450" height="138"></p>][node-apn]
 
+node-apn
+========
 
 > A Node.js module for interfacing with the Apple Push Notification service.
 
