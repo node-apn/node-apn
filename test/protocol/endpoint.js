@@ -379,46 +379,78 @@ describe("Endpoint", function () {
     });
 
     context("socket error", function () {
-      it("emits the error from all active streams", function () {
+      it("emits the error from all active streams after close", function () {
         let error = new Error("socket failed");
         streams.socket.emit("error", error);
+        streams.socket.emit("close", true);
 
         return expect(Promise.all(promises)).to.eventually.deep.equal([
           error, error, error,
         ]);
-      });
-
-      it("emits the stream errors with setImmediate", function (){
-        // setImmediate happens on the next run loop but after any I/O
-        // We need to ensure that client streams don't get caught in
-        // limbo between being created and having error handlers attached
-        // which happens after a Promise.then. Native promises use process.nextTick
-        // however bluebird uses setImmediate, so to be safe we must delay as
-        // late as possible.
-
-        let immediateSpy = sinon.spy();
-        setImmediate(immediateSpy);
-
-        let error = new Error("socket failed");
-        streams.socket.emit("error", error);
-
-        let streamSpy = sinon.spy();
-        streams.connection._streamIds[5].on("error", streamSpy);
-
-        return Promise.all(promises).then(() => {
-          expect(streamSpy).to.be.calledAfter(immediateSpy);
-        });
       });
     });
 
     context("connection error", function () {
       it("emits an error with the code from all active streams", function () {
         streams.connection.emit("error", "PROTOCOL_ERROR");
+        streams.socket.emit("close", false);
 
         return Promise.all(promises).then( responses => {
           expect(responses[0]).to.match(/connection error: PROTOCOL_ERROR/);
           expect(responses[1]).to.match(/connection error: PROTOCOL_ERROR/);
           expect(responses[2]).to.match(/connection error: PROTOCOL_ERROR/);
+        });
+      });
+    });
+
+    context("serializer error", function () {
+      it("emits an error with the code from all active streams", function () {
+        streams.serializer.emit("error", "PROTOCOL_ERROR");
+        streams.socket.emit("close", false);
+
+        return Promise.all(promises).then( responses => {
+          expect(responses[0]).to.match(/serializer error: PROTOCOL_ERROR/);
+          expect(responses[1]).to.match(/serializer error: PROTOCOL_ERROR/);
+          expect(responses[2]).to.match(/serializer error: PROTOCOL_ERROR/);
+        });
+      });
+    });
+
+    context("compressor error", function () {
+      it("emits an error with the code from all active streams", function () {
+        streams.compressor.emit("error", "PROTOCOL_ERROR");
+        streams.socket.emit("close", false);
+
+        return Promise.all(promises).then( responses => {
+          expect(responses[0]).to.match(/compressor error: PROTOCOL_ERROR/);
+          expect(responses[1]).to.match(/compressor error: PROTOCOL_ERROR/);
+          expect(responses[2]).to.match(/compressor error: PROTOCOL_ERROR/);
+        });
+      });
+    });
+
+    context("deserializer error", function () {
+      it("emits an error with the code from all active streams", function () {
+        streams.deserializer.emit("error", "PROTOCOL_ERROR");
+        streams.socket.emit("close", false);
+
+        return Promise.all(promises).then( responses => {
+          expect(responses[0]).to.match(/deserializer error: PROTOCOL_ERROR/);
+          expect(responses[1]).to.match(/deserializer error: PROTOCOL_ERROR/);
+          expect(responses[2]).to.match(/deserializer error: PROTOCOL_ERROR/);
+        });
+      });
+    });
+
+    context("decompressor error", function () {
+      it("emits an error with the code from all active streams", function () {
+        streams.decompressor.emit("error", "PROTOCOL_ERROR");
+        streams.socket.emit("close", false);
+
+        return Promise.all(promises).then( responses => {
+          expect(responses[0]).to.match(/decompressor error: PROTOCOL_ERROR/);
+          expect(responses[1]).to.match(/decompressor error: PROTOCOL_ERROR/);
+          expect(responses[2]).to.match(/decompressor error: PROTOCOL_ERROR/);
         });
       });
     });
