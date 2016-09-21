@@ -368,7 +368,7 @@ describe("Endpoint", function () {
 
       streams.connection._streamIds = [];
 
-      // Stream 0 is an active case and should not triggered
+      // Stream 0 is an exception and should not triggered
       streams.connection._streamIds[0] = new stream.PassThrough();
 
       promises = [];
