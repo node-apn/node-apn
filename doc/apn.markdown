@@ -2,16 +2,60 @@
 
 node-apn provides a non-blocking, fully managed interface to push notifications to iOS devices using the Apple Push Notification System.
 
-To use the APN Module one must `require('apn')`.
+To being using the APN Module simply `let apn = require('apn')`.
 
-If you are not familiar with how the Apple Push Notificaion System (APNS) works, it is recommended that you read the [Local and Push Notification Programming Guide][pg] in particular the section on [A Push Notification and Its Path][pnpath].
+If you are not familiar with how the Apple Push Notificaion System (APNS) works, it is recommended that you read the [Local and Push Notification Programming Guide][programming-guide], in particular the section on [The Path of a Remote Notification][push-path].
 
+## The Basics
 
-### Sending a Push Notification
+### Provider
 
-Sending push notifications is as simple as creating a new connection to APNS using the `Connection` class which should be configured, at minimum, with your applications' certificate and private key. The `Connection` class manages underlying sockets automatically.
+Sending push notifications starts with creating a connection to APNS using the `apn.Provider` class. This must be configured with your applications' certificate and private key. The `apn.Provider` will manage underlying sockets automatically. You will never need more than one `apn.Provider` for each application, per-process. They should always be reused rather than recreated to achieve the best possible performance.
 
-Pushing a notification to a device is as simple as creating an instance of `Notification` and configuring its payload. When the payload is prepared and the [Device token](#apn.devicedevicetoken) is ready, call `Connection#pushNotification` with the notification object and the device token you wish to send it to. It is also possible to send the same notification object to multiple devices very efficiently please consult the documentation for `Connection#pushNotification` for more details.
+```javascript
+let provider = new apn.Provider({ cert: "path/to/cert.pem", key: "path/to/key.pem" });
+```
 
-[Connection documentation](connection.markdown)
-[Notification documentation](notification.markdown)
+See the [Provider documentation](provider.markdown) for more information.
+
+### Device Tokens
+
+To push a notification you will need a set of device tokens to send a notification to. These are in the form of a hex-encoded string (see example below). Information about getting device tokens can be found in [Registering for Remote Notifications](registration).
+
+```javascript
+let deviceTokens = ["834c8b48e6254e47435d74720b1d4a13e3e57d0bf318333c284c1db8ce8ddc58"];
+```
+
+### Notification
+
+You will also need something to send to the devices. A push notification takes the form of a JSON payload sent to Apple which is then relayed to the devices. `node-apn` provides the `apn.Notification` class, a programmatic interface to generate notification payloads.
+
+```javascript
+let notification = new apn.Notification();
+notification.alert = "Hello, world!";
+notification.badge = 1;
+notification.topic = "io.github.node-apn.test-app";
+```
+
+See the [Notification documentation](notification.markdown) for more information.
+
+### Sending the notification
+
+After you have created a `Provider` and a `Notification` you can send it to Apple. The module will take care of creating a secure connection, encoding the payload, transmitting it, handling errors and processing the response.
+
+The `send` method returns a [`Promise`](promise) which will be fulfilled when all notifications have been successfully sent, or failed due to an error. The resolved value contains information about successful transmissions as well as details of failures.
+
+```javascript
+provider.send(notification, deviceTokens).then( (response) => {
+		// response.sent: Array of device tokens to which the notification was sent succesfully
+		// response.failed: Array of objects containing the device token (`device`) and either an `error`, or a `status` and `response` from the API
+});
+```
+
+See the [Provider documentation](provider.markdown) for more information.
+
+[programming-guide]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9
+[push-path]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW10
+[registration]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html#//apple_ref/doc/uid/TP40008194-CH103-SW2
+
+[promise]:https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise
