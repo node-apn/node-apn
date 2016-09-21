@@ -1,21 +1,31 @@
 "use strict";
 
+/**
+
+Send an identical notification to multiple devices.
+
+Possible use cases:
+
+ - Breaking news
+ - Announcements
+ - Sport results
+*/
+
 const apn = require('apn');
 
 let tokens = ["<insert token here>", "<insert token here>"];
-if(tokens[0] === "<insert token here>") {
-    console.log("Please set token to a valid device token for the push notification service");
-    process.exit();
-}
 
 let service = new apn.Provider({
   cert: "certificates/cert.pem",
   key: "certificates/key.pem",
 });
 
-let note = new apn.Notification();
-note.alert = "This is a test";
-note.topic = "<app bundle topic>";
+let note = new apn.Notification({
+	alert:  "Breaking News: I just sent my first Push Notification",
+});
+
+// The topic is usually the bundle identifier of your application.
+note.topic = "<bundle identifier>";
 
 console.log(`Sending: ${note.compile()} to ${tokens}`);
 service.send(note, tokens).then( result => {
@@ -24,6 +34,8 @@ service.send(note, tokens).then( result => {
     console.log(result.failed);
 });
 
-setTimeout( () => {
-  service.shutdown();
-}, 10);
+
+// For one-shot notification tasks you may wish to shutdown the connection
+// after everything is sent, but only call shutdown if you need your 
+// application to terminate.
+service.shutdown();
