@@ -398,6 +398,20 @@ describe("Endpoint", function () {
           error, error, error,
         ]);
       });
+
+      it("does not emit `unprocessed` on any streams", function () {
+        let unprocessedSpy = sinon.spy();
+
+        streams.connection._streamIds[5].on("unprocessed", unprocessedSpy);
+        streams.connection._streamIds[7].on("unprocessed", unprocessedSpy);
+        streams.connection._streamIds[9].on("unprocessed", unprocessedSpy);
+
+        let error = new Error("socket failed");
+        streams.socket.emit("error", error);
+        streams.socket.emit("close", true);
+
+        expect(unprocessedSpy).to.not.be.called;
+      });
     });
 
     context("connection error", function () {
@@ -464,6 +478,150 @@ describe("Endpoint", function () {
         });
       });
     });
+  });
+
+  describe("`GOAWAY` received", function () {
+    let frame, errorSpy;
+
+    beforeEach(function () {
+      let endpoint = new Endpoint({});
+
+      errorSpy = sinon.spy();
+      endpoint.on("error", errorSpy);
+    });
+
+    context("no error", function () {
+      it("does not emit an error", function () {
+        streams.connection.emit("GOAWAY", { error: "NO_ERROR" });
+
+        expect(errorSpy).to.not.be.called;
+      });
+
+      context("some streams are unprocessed", function () {
+        beforeEach(function () {
+          streams.connection._streamIds = [];
+
+          // Stream 0 is an exception and should not triggered
+          streams.connection._streamIds[0] = new stream.PassThrough();
+
+          streams.connection._streamIds[5] = new stream.PassThrough();
+          streams.connection._streamIds[7] = new stream.PassThrough();
+          streams.connection._streamIds[9] = new stream.PassThrough();
+        });
+
+        it("does not emit `unprocessed` on streams below `last_stream`", function () {
+          let spy = sinon.spy();
+          streams.connection._streamIds[5].on("unprocessed", spy);
+
+          streams.connection.emit("GOAWAY", { error: "NO_ERROR", last_stream: 5 });
+          streams.socket.emit("close");
+
+          expect(spy).to.not.be.called;
+        });
+
+        it("emits `unprocessed` on streams above `last_stream`", function () {
+          let spy7 = sinon.spy();
+          streams.connection._streamIds[7].on("unprocessed", spy7);
+
+          let spy9 = sinon.spy();
+          streams.connection._streamIds[9].on("unprocessed", spy9);
+
+          streams.connection.emit("GOAWAY", { error: "NO_ERROR", last_stream: 5 });
+          streams.socket.emit("close");
+
+          expect(spy7).to.be.calledOnce;
+          expect(spy9).to.be.calledOnce;
+        });
+
+        it("does not emit any errors on streams below `last_stream`", function () {
+          let errorSpy = sinon.spy();
+          streams.connection._streamIds[5].on("error", errorSpy);
+          streams.connection._streamIds[7].on("error", errorSpy);
+
+          streams.connection.emit("GOAWAY", { error: "NO_ERROR", last_stream: 7 });
+          streams.socket.emit("close");
+
+          expect(errorSpy).to.not.be.called;
+        });
+      });
+    });
+
+    context("with error", function () {
+      const debug_data = new Buffer(6);
+      debug_data.write("error!");
+
+      const formattedError = "GOAWAY: PROTOCOL_ERROR error!";
+
+      beforeEach(function () {
+        frame = { error: "PROTOCOL_ERROR", debug_data: debug_data };
+      });
+
+      it("emits an error with the type and debug data", function () {
+        streams.connection.emit("GOAWAY", frame);
+
+        expect(errorSpy).to.be.calledWith(formattedError);
+      });
+
+      context("some streams are unprocessed", function () {
+        let promises;
+
+        beforeEach(function () {
+          streams.connection._streamIds = [];
+
+          // Stream 0 is an exception and should not triggered
+          streams.connection._streamIds[0] = new stream.PassThrough();
+
+          function erroringStream() {
+            let s = new stream.PassThrough();
+            s.on("error", () => {});
+
+            return s;
+          }
+
+          streams.connection._streamIds[5] = erroringStream();
+          streams.connection._streamIds[7] = erroringStream();
+          streams.connection._streamIds[9] = erroringStream();
+        });
+
+        it("does not emit `unprocessed` on streams below `last_stream`", function () {
+          let spy = sinon.spy();
+          streams.connection._streamIds[5].on("unprocessed", spy);
+
+          frame.last_stream = 5;
+          streams.connection.emit("GOAWAY", frame);
+          streams.socket.emit("close");
+
+          expect(spy).to.not.be.called;
+        });
+
+        it("emits `unprocessed` on streams above `last_stream`", function () {
+          let spy7 = sinon.spy();
+          streams.connection._streamIds[7].on("unprocessed", spy7);
+
+          let spy9 = sinon.spy();
+          streams.connection._streamIds[9].on("unprocessed", spy9);
+
+          frame.last_stream = 5;
+          streams.connection.emit("GOAWAY", frame);
+          streams.socket.emit("close");
+
+          expect(spy7).to.be.calledOnce;
+          expect(spy9).to.be.calledOnce;
+        });
+
+        it("emits the formatted error on streams below `last_stream`", function () {
+          let errorSpy = sinon.spy();
+          streams.connection._streamIds[5].on("error", errorSpy);
+          streams.connection._streamIds[7].on("error", errorSpy);
+
+          frame.last_stream = 7;
+          streams.connection.emit("GOAWAY", frame);
+          streams.socket.emit("close");
+
+          expect(errorSpy).to.be.calledTwice.and.calledWith(formattedError);
+        });
+      });
+    })
   });
 
   describe("`wakeup` event", function () {
