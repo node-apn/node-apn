@@ -1,4 +1,4 @@
-[<p align="center"><img src="doc/logo.png" alt="nodeapn" width="450" height="138"></p>][node-apn]
+[<img src="doc/logo.png" alt="nodeapn" width="450" height="138">][node-apn]
 
 node-apn
 ========
