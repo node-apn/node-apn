@@ -151,6 +151,16 @@ describe("Endpoint", function () {
 
         expect(errorSpy).to.have.been.calledWith("this should be bubbled");
       });
+
+      it("bubbles end events", function () {
+        const endpoint = new Endpoint({});
+        const endSpy = sinon.spy();
+        endpoint.on("end", endSpy);
+
+        streams.socket.emit("end");
+
+        expect(endSpy).to.have.been.calledOnce;
+      });
     });
 
     describe("HTTP/2 layer", function () {
