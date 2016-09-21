@@ -191,7 +191,9 @@ describe("Client", function () {
 
         beforeEach(function () {
           const client = new Client( { address: "testapi" } );
-          fakes.stream = new stream.PassThrough();
+          fakes.stream = new stream.Transform({
+            transform: function(chunk, encoding, callback) {}
+          });
           fakes.stream.headers = sinon.stub();
 
           fakes.secondStream = FakeStream("abcd1234", "200");
@@ -214,7 +216,7 @@ describe("Client", function () {
         });
 
         it("fulfills the promise", function () {
-          return expect(promise).to.eventually.deep.equal({ device: "abcd1234" });
+          return expect(promise).to.eventually.deep.equal({ device: "abcd1234"  });
         });
       });
 
