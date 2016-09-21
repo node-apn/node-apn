@@ -25,10 +25,7 @@ describe("config", function () {
       address: "api.sandbox.push.apple.com",
       port: 443,
       rejectUnauthorized: true,
-      connectTimeout: 10000,
-      connectionTimeout: 3600000,
       connectionRetryLimit: 3,
-      maxConnections: 10,
     });
   });
 
