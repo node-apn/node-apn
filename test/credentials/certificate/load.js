@@ -1,12 +1,14 @@
-const loadCredentials = require("../../../lib/credentials/certificate/load");
 const fs = require("fs");
 
 describe("loadCredentials", function() {
-	let pfx, cert, key;
+	let pfx, cert, key, loadCredentials;
 	before(function () {
 		pfx = fs.readFileSync("test/support/initializeTest.pfx");
 		cert = fs.readFileSync("test/support/initializeTest.crt");
 		key = fs.readFileSync("test/support/initializeTest.key");
+
+		const resolve = require("../../../lib/credentials/resolve");
+		loadCredentials = require("../../../lib/credentials/certificate/load")({ resolve });
 	});
 
 	it("should load a pfx file from disk", function () {
