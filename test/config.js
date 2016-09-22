@@ -211,7 +211,7 @@ describe("config", function () {
 
         fakes.prepareToken
           .withArgs(sinon.match(testConfig))
-          .returns({ token: () => "fake-token" });
+          .returns( () => "fake-token" );
 
         let configuration = config({ token: testConfig });
         expect(fakes.prepareToken).to.have.been.called;
