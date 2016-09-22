@@ -9,6 +9,7 @@ describe("config", function () {
     fakes = {
       debug: sinon.spy(),
       prepareCertificate: sinon.stub(),
+      prepareToken: sinon.stub(),
     };
 
     config = require("../lib/config")(fakes);
@@ -81,7 +82,7 @@ describe("config", function () {
 
   describe("credentials", function () {
 
-    context("jwt not supplied, use certificate", function () {
+    context("`token` not supplied, use certificate", function () {
       describe("passphrase", function () {
         it("throws an error when supplied passphrase is not a string", function () {
           expect(() => config({ passphrase: 123 }) ).to.throw("Passphrase must be a string");
@@ -163,6 +164,7 @@ describe("config", function () {
     });
 
     context("`token` supplied", function () {
+      // Necessary to ensure tls.Socket doesn't freak out
       it("clears the `pfx` property", function () {
         expect(config( { token: {} })).to.not.have.property("pfx");
       });
@@ -175,6 +177,21 @@ describe("config", function () {
         expect(config( { token: {} })).to.not.have.property("cert");
       });
 
+      it("does not invoke prepareCertificate", function () {
+        let configuration = config({ token: {} });
+
+        expect(fakes.prepareCertificate).to.have.not.been.called;
+      });
+
+      it("prepares a token generator", function () {
+        fakes.prepareToken
+          .withArgs(sinon.match({}))
+          .returns({ token: () => "fake-token" });
+
+        let configuration = config({ token: {} });
+        expect(fakes.prepareToken).to.have.been.called;
+        expect(configuration.token()).to.equal("fake-token");
+      });
     });
   });
 
