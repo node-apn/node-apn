@@ -84,10 +84,10 @@ note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
 note.payload = {'messageFrom': 'John Appleseed'};
 ```
 
-Send the notification to the API with `pushNotification`, which returns a promise.
+Send the notification to the API with `send`, which returns a promise.
 
 ```javascript
-apnProvider.pushNotification(note, deviceToken).then( (result) => {
+apnProvider.send(note, deviceToken).then( (result) => {
 	// see documentation for an explanation of result
 });
 ```
