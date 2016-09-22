@@ -69,7 +69,7 @@ Help with preparing the key and certificate files for connection can be found in
 To send a notification you will first need a token from your app as a string
 
 ```javascript
-let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
+let deviceTokens = ["a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"]
 ```
 
 Create a notification object, configuring it with the relevant parameters (See the [payload documentation][pl] for more details.)
@@ -84,10 +84,10 @@ note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
 note.payload = {'messageFrom': 'John Appleseed'};
 ```
 
-Send the notification to the API with `pushNotification`, which returns a promise.
+Send the notification to the API with `send`, which returns a promise.
 
 ```javascript
-apnProvider.pushNotification(note, deviceToken).then( (result) => {
+apnProvider.send(note, deviceTokens).then( (result) => {
 	// see documentation for an explanation of result
 });
 ```
