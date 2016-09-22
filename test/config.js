@@ -164,31 +164,56 @@ describe("config", function () {
     });
 
     context("`token` supplied", function () {
-      // Necessary to ensure tls.Socket doesn't freak out
+      const key = "testKey";
+      const keyId = "abckeyId";
+      const teamId = "teamId123";
+
+      // Clear these to ensure tls.Socket doesn't attempt to do client-auth
       it("clears the `pfx` property", function () {
-        expect(config( { token: {} })).to.not.have.property("pfx");
+        expect(config( { token: { key, keyId, teamId } })).to.not.have.property("pfx");
       });
 
       it("clears the `key` property", function () {
-        expect(config( { token: {} })).to.not.have.property("key");
+        expect(config( { token: { key, keyId, teamId } })).to.not.have.property("key");
       });
 
       it("clears the `cert` property", function () {
-        expect(config( { token: {} })).to.not.have.property("cert");
+        expect(config( { token: { key, keyId, teamId } })).to.not.have.property("cert");
       });
 
+      describe("token", function () {
+
+        it("throws an error if keyId is missing", function () {
+          expect(() => config({ token: { key, teamId } })).to.throw(/token\.keyId is missing/);
+        });
+
+        it("throws an error if keyId is not a string", function () {
+          expect(() => config({ token: { key, teamId, keyId: 123 }})).to.throw(/token\.keyId must be a string/);
+        });
+
+        it("throws an error if teamId is missing", function () {
+          expect(() => config({ token: { key, keyId }})).to.throw(/token\.teamId is missing/);
+        });
+
+        it("throws an error if teamId is not a string", function () {
+          expect(() => config({ token: { key, keyId, teamId: 123 }})).to.throw(/token\.teamId must be a string/);
+        });
+      })
+
       it("does not invoke prepareCertificate", function () {
-        let configuration = config({ token: {} });
+        let configuration = config({ token: { key, keyId, teamId } });
 
         expect(fakes.prepareCertificate).to.have.not.been.called;
       });
 
       it("prepares a token generator", function () {
+        let testConfig = { key, keyId, teamId };
+
         fakes.prepareToken
-          .withArgs(sinon.match({}))
+          .withArgs(sinon.match(testConfig))
           .returns({ token: () => "fake-token" });
 
-        let configuration = config({ token: {} });
+        let configuration = config({ token: testConfig });
         expect(fakes.prepareToken).to.have.been.called;
         expect(configuration.token()).to.equal("fake-token");
       });
