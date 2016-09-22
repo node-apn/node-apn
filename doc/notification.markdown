@@ -170,4 +170,9 @@ Provide one of the following values:
     > The push notification must trigger an alert, sound, or badge on the device. It is an error use this priority for a push that contains only the `content-available` key.
   * `5` - The push message is sent at a time that conserves power on the device receiving it.
 
+
+#### notification.collapseId
+
+Multiple notifications with same collapse identifier are displayed to the user as a single notification. The value should not exceed 64 bytes.
+
 [pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html "Local and Push Notification Programming Guide: Apple Push Notification Service"
