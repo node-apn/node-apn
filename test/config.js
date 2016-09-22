@@ -16,6 +16,7 @@ describe("config", function () {
 
   it("supplies sensible defaults", function () {
     expect(config()).to.deep.equal({
+      token: null,
       cert: "cert.pem",
       key: "key.pem",
       ca: null,
@@ -80,83 +81,106 @@ describe("config", function () {
 
   describe("credentials", function () {
 
-    describe("passphrase", function () {
-      it("throws an error when supplied passphrase is not a string", function () {
-        expect(() => config({ passphrase: 123 }) ).to.throw("Passphrase must be a string");
+    context("jwt not supplied", function () {
+      describe("passphrase", function () {
+        it("throws an error when supplied passphrase is not a string", function () {
+          expect(() => config({ passphrase: 123 }) ).to.throw("Passphrase must be a string");
+        });
+
+        it("does not throw when passphrase is a string", function () {
+          expect(() => config({ passphrase: "seekrit" }) ).to.not.throw();
+        });
+
+        it("does not throw when passphrase is not supplied", function () {
+          expect(() => config({ }) ).to.not.throw();
+        });
       });
 
-      it("does not throw when passphrase is a string", function () {
-        expect(() => config({ passphrase: "seekrit" }) ).to.not.throw();
+      context("pfx value is supplied without cert and key", function () {
+        it("includes the value of `pfx`", function () {
+          expect(config( { pfx: "apn.pfx" } )).to.have.property("pfx", "apn.pfx");
+        });
+
+        it("does not include a value for `cert`", function () {
+          expect(config( { pfx: "apn.pfx" }).cert).to.be.undefined;
+        });
+
+        it("does not include a value for `key`", function () {
+          expect(config( { pfx: "apn.pfx" }).key).to.be.undefined;
+        });
       });
 
-      it("does not throw when passphrase is not supplied", function () {
-        expect(() => config({ }) ).to.not.throw();
+      context("pfx value is supplied along with a cert and key", function () {
+        it("includes the value of `pfx`", function () {
+          expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" } )).to.have.property("pfx", "apn.pfx");
+        });
+
+        it("does not include a value for `cert`", function () {
+          expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" })).to.have.property("cert", "cert.pem");
+        });
+
+        it("does not include a value for `key`", function () {
+          expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" })).to.have.property("key", "key.pem");
+        });
+      });
+
+      context("pfxData value is supplied without cert and key", function () {
+        it("includes the value of `pfxData`", function () {
+          expect(config( { pfxData: "apnData" } )).to.have.property("pfxData", "apnData");
+        });
+
+        it("does not include a value for `cert`", function () {
+          expect(config( { pfxData: "apnData" } ).cert).to.be.undefined;
+        });
+
+        it("does not include a value for `key`", function () {
+          expect(config( { pfxData: "apnData" }).key).to.be.undefined;
+        });
+      });
+
+      context("pfxData value is supplied along with a cert and key", function () {
+        it("includes the value of `pfxData`", function () {
+          expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" } )).to.have.property("pfxData", "apnData");
+        });
+
+        it("does not include a value for `cert`", function () {
+          expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" })).to.have.property("cert", "cert.pem");
+        });
+
+        it("does not include a value for `key`", function () {
+          expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" })).to.have.property("key", "key.pem");
+        });
+      });
+
+      it("loads and validates the credentials", function () {
+        fakes.prepareCredentials.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData"});
+
+        let configuration = config({});
+        expect(configuration).to.have.property("cert", "certData");
+        expect(configuration).to.have.property("key", "keyData");
+        expect(configuration).to.have.property("pfx", "pfxData");
       });
     });
 
-    context("pfx value is supplied without cert and key", function () {
-      it("includes the value of `pfx`", function () {
-        expect(config( { pfx: "apn.pfx" } )).to.have.property("pfx", "apn.pfx");
+    context("`token` supplied", function () {
+      it("clears the `pfx` property", function () {
+        expect(config( { token: {} })).to.not.have.property("pfx");
       });
 
-      it("does not include a value for `cert`", function () {
-        expect(config( { pfx: "apn.pfx" }).cert).to.be.undefined;
+      it("clears the `key` property", function () {
+        expect(config( { token: {} })).to.not.have.property("key");
       });
 
-      it("does not include a value for `key`", function () {
-        expect(config( { pfx: "apn.pfx" }).key).to.be.undefined;
-      });
-    });
-
-    context("pfx value is supplied along with a cert and key", function () {
-      it("includes the value of `pfx`", function () {
-        expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" } )).to.have.property("pfx", "apn.pfx");
+      it("clears the `cert` property", function () {
+        expect(config( { token: {} })).to.not.have.property("cert");
       });
 
-      it("does not include a value for `cert`", function () {
-        expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" })).to.have.property("cert", "cert.pem");
+      it("prepares the credentials", function () {
+        fakes.prepareCredentials.returns({"token": {} });
+
+        let configuration = config({ token: {} });
+        expect(configuration.token).to.deep.equal({});
       });
-
-      it("does not include a value for `key`", function () {
-        expect(config( { pfx: "apn.pfx", cert: "cert.pem", key: "key.pem" })).to.have.property("key", "key.pem");
-      });
-    });
-
-    context("pfxData value is supplied without cert and key", function () {
-      it("includes the value of `pfxData`", function () {
-        expect(config( { pfxData: "apnData" } )).to.have.property("pfxData", "apnData");
-      });
-
-      it("does not include a value for `cert`", function () {
-        expect(config( { pfxData: "apnData" } ).cert).to.be.undefined;
-      });
-
-      it("does not include a value for `key`", function () {
-        expect(config( { pfxData: "apnData" }).key).to.be.undefined;
-      });
-    });
-
-    context("pfxData value is supplied along with a cert and key", function () {
-      it("includes the value of `pfxData`", function () {
-        expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" } )).to.have.property("pfxData", "apnData");
-      });
-
-      it("does not include a value for `cert`", function () {
-        expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" })).to.have.property("cert", "cert.pem");
-      });
-
-      it("does not include a value for `key`", function () {
-        expect(config( { pfxData: "apnData", cert: "cert.pem", key: "key.pem" })).to.have.property("key", "key.pem");
-      });
-    });
-
-    it("loads and validates the credentials", function () {
-      fakes.prepareCredentials.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData"});
-
-      let configuration = config({});
-      expect(configuration).to.have.property("cert", "certData");
-      expect(configuration).to.have.property("key", "keyData");
-      expect(configuration).to.have.property("pfx", "pfxData");
     });
   });
 
