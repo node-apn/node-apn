@@ -136,31 +136,4 @@ describe("perpareCertificate", function () {
       return expect(() => prepareCertificate({ cert: "noSuchFile.pem", key: "myKey.pem" })).to.throw("ENOENT, no such file or directory");
     });
   });
-
-  describe("with token configuration", function () {
-    let credentials;
-    const testOptions = {
-      token: {
-        key: "keyData",
-        keyId: "abcd",
-        teamId: "a1b2c3",
-      },
-      production: true,
-    };
-
-    beforeEach(function() {
-      fakes.load.withArgs(sinon.match(testOptions)).returns(
-        {
-          pfx: "myPfxData",
-          cert: "myCertData",
-          key: "myKeyData",
-          ca: ["myCaData"],
-          passphrase: "apntest",
-        }
-      );
-
-      fakes.parse.returnsArg(0);
-      credentials = prepareCertificate(testOptions);
-    });
-  });
 });
