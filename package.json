@@ -30,7 +30,7 @@
     "debug": "^2.2.0",
     "http2": "https://github.com/argon/node-http2#apn-2.0.0",
     "node-forge": "^0.6.20",
-    "verror": "*"
+    "verror": "^1.8.1"
   },
   "devDependencies": {
     "chai": "3.x",
