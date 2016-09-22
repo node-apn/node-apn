@@ -1,9 +1,10 @@
-var sinon = require("sinon");
-var validateCredentials = require("../../lib/credentials/validate");
-var fakeCredentials;
+const sinon = require("sinon");
+const validateCredentials = require("../../../lib/credentials/certificate/validate");
+
+let fakeCredentials;
 
 describe("validateCredentials", function() {
-	var credentials;
+	let credentials;
 	beforeEach(function() {
 		credentials = fakeCredentials();
 	});

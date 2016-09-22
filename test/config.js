@@ -8,7 +8,7 @@ describe("config", function () {
   beforeEach(function() {
     fakes = {
       debug: sinon.spy(),
-      prepareCredentials: sinon.stub(),
+      prepareCertificate: sinon.stub(),
     };
 
     config = require("../lib/config")(fakes);
@@ -81,7 +81,7 @@ describe("config", function () {
 
   describe("credentials", function () {
 
-    context("jwt not supplied", function () {
+    context("jwt not supplied, use certificate", function () {
       describe("passphrase", function () {
         it("throws an error when supplied passphrase is not a string", function () {
           expect(() => config({ passphrase: 123 }) ).to.throw("Passphrase must be a string");
@@ -152,8 +152,8 @@ describe("config", function () {
         });
       });
 
-      it("loads and validates the credentials", function () {
-        fakes.prepareCredentials.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData"});
+      it("loads and validates the TLS credentials", function () {
+        fakes.prepareCertificate.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData"});
 
         let configuration = config({});
         expect(configuration).to.have.property("cert", "certData");
@@ -175,12 +175,6 @@ describe("config", function () {
         expect(config( { token: {} })).to.not.have.property("cert");
       });
 
-      it("prepares the credentials", function () {
-        fakes.prepareCredentials.returns({"token": {} });
-
-        let configuration = config({ token: {} });
-        expect(configuration.token).to.deep.equal({});
-      });
     });
   });
 

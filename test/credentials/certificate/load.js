@@ -1,8 +1,8 @@
-var loadCredentials = require("../../lib/credentials/load");
-var fs = require("fs");
+const loadCredentials = require("../../../lib/credentials/certificate/load");
+const fs = require("fs");
 
 describe("loadCredentials", function() {
-	var pfx, cert, key;
+	let pfx, cert, key;
 	before(function () {
 		pfx = fs.readFileSync("test/support/initializeTest.pfx");
 		cert = fs.readFileSync("test/support/initializeTest.crt");

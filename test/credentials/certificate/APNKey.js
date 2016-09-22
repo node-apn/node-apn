@@ -1,6 +1,6 @@
-var APNKey = require("../../lib/credentials/APNKey");
-var forge = require("node-forge");
-var fs = require("fs");
+const APNKey = require("../../../lib/credentials/certificate/APNKey");
+const forge = require("node-forge");
+const fs = require("fs");
 
 describe("APNKey", function() {
 	it("initialises with a node-forge public key", function() {
@@ -29,8 +29,8 @@ describe("APNKey", function() {
 
 	describe("fingerprint", function() {
 		it("returns the fingerprint of the public key", function() {
-			var keyPem = fs.readFileSync("test/credentials/support/key.pem");
-			var apnKey = new APNKey(forge.pki.decryptRsaPrivateKey(keyPem));
+			let keyPem = fs.readFileSync("test/credentials/support/key.pem");
+			let apnKey = new APNKey(forge.pki.decryptRsaPrivateKey(keyPem));
 			expect(apnKey.fingerprint()).to.equal("2d594c9861227dd22ba5ae37cc9354e9117a804d");
 		});
 	});

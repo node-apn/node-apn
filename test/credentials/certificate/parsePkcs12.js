@@ -1,9 +1,9 @@
-var parsePkcs12 = require("../../lib/credentials/parsePkcs12");
+const parsePkcs12 = require("../../../lib/credentials/certificate/parsePkcs12");
 
-var APNKey = require("../../lib/credentials/APNKey");
-var APNCertificate = require("../../lib/credentials/APNCertificate");
+const APNKey = require("../../../lib/credentials/certificate/APNKey");
+const APNCertificate = require("../../../lib/credentials/certificate/APNCertificate");
 
-var fs = require("fs");
+const fs = require("fs");
 
 describe("parsePkcs12", function() {
 	describe("with PKCS#12 data", function() {

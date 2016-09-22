@@ -1,21 +1,21 @@
 const debug = require("debug")("apn");
 
-const parse = require("./lib/credentials/parse")({
-	parsePkcs12:  require("./lib/credentials/parsePkcs12"),
-	parsePemKey:  require("./lib/credentials/parsePemKey"),
-	parsePemCert: require("./lib/credentials/parsePemCertificate"),
+const parseCertificate = require("./lib/credentials/certificate/parse")({
+	parsePkcs12:  require("./lib/credentials/certificate/parsePkcs12"),
+	parsePemKey:  require("./lib/credentials/certificate/parsePemKey"),
+	parsePemCert: require("./lib/credentials/certificate/parsePemCertificate"),
 });
 
-const prepareCredentials = require("./lib/credentials/prepare")({
-	load: require("./lib/credentials/load"),
-	parse,
-	validate: require("./lib/credentials/validate"),
+const prepareCertificate = require("./lib/credentials/certificate/prepare")({
+	load: require("./lib/credentials/certificate/load"),
+	parse: parseCertificate,
+	validate: require("./lib/credentials/certificate/validate"),
 	logger: debug,
 });
 
 const config = require("./lib/config")({
 	debug,
-	prepareCredentials,
+	prepareCertificate,
 });
 
 const tls = require("tls");
