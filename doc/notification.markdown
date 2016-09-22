@@ -175,4 +175,8 @@ Provide one of the following values:
 
 Multiple notifications with same collapse identifier are displayed to the user as a single notification. The value should not exceed 64 bytes.
 
+#### notification.threadId
+
+> When displaying notifications, the system visually groups notifications with the same thread identifier together.
+
 [pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html "Local and Push Notification Programming Guide: Apple Push Notification Service"

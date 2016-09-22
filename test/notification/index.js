@@ -143,6 +143,14 @@ describe("Notification", function() {
 				expect(note.headers()).to.have.property("apns-collapse-id", "io.apn.collapse");
 			});
 		});
+
+		context("threadId is set", function () {
+			it("contains the thread-id header", function () {
+				note.threadId = "io.apn.thread.1";
+
+				expect(note.headers()).to.have.property("thread-id", "io.apn.thread.1");
+			});
+		});
 	});
 
 	describe("compile", function() {
