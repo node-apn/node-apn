@@ -1,3 +1,5 @@
+"use strict";
+
 const parsePkcs12 = require("../../../lib/credentials/certificate/parsePkcs12");
 
 const APNKey = require("../../../lib/credentials/certificate/APNKey");

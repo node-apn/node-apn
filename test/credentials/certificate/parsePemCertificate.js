@@ -1,3 +1,5 @@
+"use strict";
+
 const parsePemCertificate = require("../../../lib/credentials/certificate/parsePemCertificate");
 const APNCertificate = require("../../../lib/credentials/certificate/APNCertificate");
 const fs = require("fs");

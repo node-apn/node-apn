@@ -1,3 +1,5 @@
+"use strict";
+
 const sinon = require("sinon");
 const validateCredentials = require("../../../lib/credentials/certificate/validate");
 
