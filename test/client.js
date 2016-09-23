@@ -143,11 +143,11 @@ describe("Client", function () {
               fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
             });
 
-            it("does not send an authorization header", function () {
+            it("does not set an authorization header", function () {
               let notification = builtNotification();
 
               return client.write(notification, "abcd1234").then(function () {
-                expect(fakes.stream.headers).to.not.be.calledWithMatch({ authorization: sinon.match.string });
+                expect(fakes.stream.headers.firstCall.args[0]).to.not.have.property("authorization");
               })
             });
           })
@@ -178,17 +178,26 @@ describe("Client", function () {
       context("error occurs", function () {
         let promise;
 
-        beforeEach(function () {
-          const client = new Client( { address: "testapi" } );
+        context("general case", function () {
+          beforeEach(function () {
+            const client = new Client( { address: "testapi" } );
 
-          fakes.stream = new FakeStream("abcd1234", "400", { "reason" : "BadDeviceToken" });
-          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+            fakes.stream = new FakeStream("abcd1234", "400", { "reason" : "BadDeviceToken" });
+            fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
 
-          promise = client.write(builtNotification(), "abcd1234");
-        });
+            promise = client.write(builtNotification(), "abcd1234");
+          });
 
-        it("resolves with the device token, status code and response", function () {
-          return expect(promise).to.eventually.deep.equal({ status: "400", device: "abcd1234", response: { reason: "BadDeviceToken" }});
+          it("resolves with the device token, status code and response", function () {
+            return expect(promise).to.eventually.deep.equal({ status: "400", device: "abcd1234", response: { reason: "BadDeviceToken" }});
+          });
+        })
+
+        context("ExpiredProviderToken", function () {
+          beforeEach(function () {
+            let tokenGenerator = sinon.stub().returns("fake-token");
+            const client = new Client( { address: "testapi", token: tokenGenerator });
+          })
         });
       });
 
@@ -490,6 +499,39 @@ describe("Client", function () {
             expect(response[2]).to.deep.equal({ device: "abcd1335", error: new Error("endpoint failed") });
           })
         })
+      });
+
+    });
+
+    describe("token generator behaviour", function () {
+      beforeEach(function () {
+          fakes.streams = [
+            new FakeStream("abcd1234", "200"),
+            new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
+            new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
+          ];
+      });
+
+      it("reuses the token", function () {
+        const tokenGenerator = sinon.stub();
+        const client = new Client( { address: "testapi", token: tokenGenerator } );
+
+        tokenGenerator.onCall(0).returns("fake-token");
+        tokenGenerator.onCall(1).returns("second-token");
+
+        fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+        fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+        fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
+
+        return Promise.all([
+          client.write(builtNotification(), "abcd1234"),
+          client.write(builtNotification(), "adfe5969"),
+          client.write(builtNotification(), "abcd1335"),
+        ]).then(function () {
+          expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+          expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+          expect(fakes.streams[2].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+        });
       });
     });
   });
