@@ -115,6 +115,25 @@ describe("Client", function () {
                 });
               });
           });
+
+          context("when token authentication is enabled", function () {
+            beforeEach(function () {
+              client = new Client( { address: "testapi", token: () => "fake-token" } );
+
+              fakes.stream = new FakeStream("abcd1234", "200");
+              fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+            });
+
+            it("sends the bearer token", function () {
+              let notification = builtNotification();
+
+              return client.write(notification, "abcd1234").then(function () {
+                expect(fakes.stream.headers).to.be.calledWithMatch({
+                  authorization: "bearer fake-token",
+                });
+              })
+            });
+          });
         });
 
         it("writes the notification data to the pipe", function () {
