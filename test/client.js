@@ -526,7 +526,7 @@ describe("Client", function () {
 
 function builtNotification() {
   return {
-    headers: sinon.stub().returns({}),
+    headers: {},
     body: JSON.stringify({ aps: { badge: 1 } }),
   };
 }
