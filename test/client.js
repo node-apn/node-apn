@@ -118,7 +118,13 @@ describe("Client", function () {
 
           context("when token authentication is enabled", function () {
             beforeEach(function () {
-              client = new Client( { address: "testapi", token: () => "fake-token" } );
+              fakes.token = {
+                generation: 0,
+                current: "fake-token",
+                regenerate: sinon.stub(),
+              }
+
+              client = new Client( { address: "testapi", token: fakes.token } );
 
               fakes.stream = new FakeStream("abcd1234", "200");
               fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
@@ -505,19 +511,26 @@ describe("Client", function () {
 
     describe("token generator behaviour", function () {
       beforeEach(function () {
-          fakes.streams = [
-            new FakeStream("abcd1234", "200"),
-            new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
-            new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
-          ];
+        fakes.token = {
+          generation: 0,
+          current: "fake-token",
+          regenerate: sinon.stub(),
+        }
+
+        fakes.streams = [
+          new FakeStream("abcd1234", "200"),
+          new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
+          new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
+        ];
       });
 
       it("reuses the token", function () {
-        const tokenGenerator = sinon.stub();
-        const client = new Client( { address: "testapi", token: tokenGenerator } );
+        const client = new Client( { address: "testapi", token: fakes.token } );
 
-        tokenGenerator.onCall(0).returns("fake-token");
-        tokenGenerator.onCall(1).returns("second-token");
+        fakes.token.regenerate = function () {
+          fakes.token.generation = 1;
+          fakes.token.current = "second-token"
+        }
 
         fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
         fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
@@ -536,6 +549,15 @@ describe("Client", function () {
 
       context("token expires", function () {
 
+        beforeEach(function () {
+          fakes.token.regenerate = function (generation) {
+            if (generation === fakes.token.generation) {
+              fakes.token.generation += 1;
+              fakes.token.current = "token-" + fakes.token.generation;
+            }
+          }
+        });
+
         it("resends the notification with a new token", function () {
           fakes.streams = [
             new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
@@ -544,11 +566,7 @@ describe("Client", function () {
 
           fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
 
-          const tokenGenerator = sinon.stub();
-          const client = new Client( { address: "testapi", token: tokenGenerator } );
-
-          tokenGenerator.onCall(0).returns("fake-token");
-          tokenGenerator.onCall(1).returns("second-token");
+          const client = new Client( { address: "testapi", token: fakes.token } );
 
           const promise = client.write(builtNotification(), "adfe5969");
 
@@ -560,7 +578,7 @@ describe("Client", function () {
 
           return promise.then(function () {
             expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
-            expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer second-token" });
+            expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer token-1" });
           });
         });
 
@@ -577,12 +595,7 @@ describe("Client", function () {
           fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
           fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
 
-          const tokenGenerator = sinon.stub();
-          tokenGenerator.onCall(0).returns("fake-token");
-          tokenGenerator.onCall(1).returns("second-token");
-          tokenGenerator.onCall(2).returns("third-token");
-
-          const client = new Client( { address: "testapi", token: tokenGenerator } );
+          const client = new Client( { address: "testapi", token: fakes.token } );
 
           const promises = Promise.all([
             client.write(builtNotification(), "abcd1234"),
@@ -601,8 +614,8 @@ describe("Client", function () {
             expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
             expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
             expect(fakes.streams[2].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
-            expect(fakes.streams[3].headers).to.be.calledWithMatch({ authorization: "bearer second-token" });
-            expect(fakes.streams[4].headers).to.be.calledWithMatch({ authorization: "bearer second-token" });
+            expect(fakes.streams[3].headers).to.be.calledWithMatch({ authorization: "bearer token-1" });
+            expect(fakes.streams[4].headers).to.be.calledWithMatch({ authorization: "bearer token-1" });
           });
         });
       });
