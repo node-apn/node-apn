@@ -563,6 +563,48 @@ describe("Client", function () {
             expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer second-token" });
           });
         });
+
+        it("only regenerates the token once per-expiry", function () {
+          fakes.streams = [
+            new FakeStream("abcd1234", "200"),
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("abcd1335", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
+            new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
+          ];
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+          fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+          fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
+
+          const tokenGenerator = sinon.stub();
+          tokenGenerator.onCall(0).returns("fake-token");
+          tokenGenerator.onCall(1).returns("second-token");
+          tokenGenerator.onCall(2).returns("third-token");
+
+          const client = new Client( { address: "testapi", token: tokenGenerator } );
+
+          const promises = Promise.all([
+            client.write(builtNotification(), "abcd1234"),
+            client.write(builtNotification(), "adfe5969"),
+            client.write(builtNotification(), "abcd1335"),
+          ]);
+
+          setTimeout(function () {
+            fakes.endpointManager.getStream.reset();
+            fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[3]);
+            fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[4]);
+            fakes.endpointManager.emit("wakeup");
+          }, 1);
+
+          return promises.then(function () {
+            expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[2].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[3].headers).to.be.calledWithMatch({ authorization: "bearer second-token" });
+            expect(fakes.streams[4].headers).to.be.calledWithMatch({ authorization: "bearer second-token" });
+          });
+        });
       });
     });
   });
