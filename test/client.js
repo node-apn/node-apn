@@ -533,6 +533,37 @@ describe("Client", function () {
           expect(fakes.streams[2].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
         });
       });
+
+      context("token expires", function () {
+
+        it("resends the notification with a new token", function () {
+          fakes.streams = [
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "200"),
+          ];
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+
+          const tokenGenerator = sinon.stub();
+          const client = new Client( { address: "testapi", token: tokenGenerator } );
+
+          tokenGenerator.onCall(0).returns("fake-token");
+          tokenGenerator.onCall(1).returns("second-token");
+
+          const promise = client.write(builtNotification(), "adfe5969");
+
+          setTimeout(function () {
+            fakes.endpointManager.getStream.reset();
+            fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[1]);
+            fakes.endpointManager.emit("wakeup");
+          }, 1);
+
+          return promise.then(function () {
+            expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer second-token" });
+          });
+        });
+      });
     });
   });
 
