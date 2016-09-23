@@ -120,9 +120,11 @@ describe("perpareToken", function () {
     });
 
     context("key cannot be used for signing", function () {
-      xit("throws a wrapped error from jwt.sign", function () {
+      it("throws a wrapped error from jwt.sign", function () {
+        fakes.sign.throws(new Error("Unable to sign token"));
 
-      }); // Call sign once to check if something throws
+        expect(() => prepareToken(testOptions)).to.throw(/Failed to generate token: Unable to sign token/);
+      });
     });
   });
 });
