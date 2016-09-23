@@ -134,6 +134,23 @@ describe("Client", function () {
               })
             });
           });
+
+          context("when token authentication is disabled", function () {
+            beforeEach(function () {
+              client = new Client( { address: "testapi" } );
+
+              fakes.stream = new FakeStream("abcd1234", "200");
+              fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+            });
+
+            it("does not send an authorization header", function () {
+              let notification = builtNotification();
+
+              return client.write(notification, "abcd1234").then(function () {
+                expect(fakes.stream.headers).to.not.be.calledWithMatch({ authorization: sinon.match.string });
+              })
+            });
+          })
         });
 
         it("writes the notification data to the pipe", function () {
