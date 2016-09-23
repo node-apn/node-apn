@@ -618,6 +618,22 @@ describe("Client", function () {
             expect(fakes.streams[4].headers).to.be.calledWithMatch({ authorization: "bearer token-1" });
           });
         });
+
+        it("abandons sending after 3 ExpiredProviderToken failures", function () {
+          fakes.streams = [
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+          ];
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+          fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+          fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
+
+          const client = new Client( { address: "testapi", token: fakes.token } );
+
+          return expect(client.write(builtNotification(), "adfe5969")).to.eventually.have.property("status", "403");
+        });
       });
     });
   });
