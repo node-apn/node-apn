@@ -4,6 +4,8 @@
 
 * JSON Web Token support (#401)
 * Add `threadId` property for notifications
+* Fix a leak caused when an error is emitted from the endpoint manager
+    - Queued notifications would resolve as errored but would remain in the queue, leading them to be repeatedly rejected without termination and causing an error log from node
 
 2.0.0:
 
