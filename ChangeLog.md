@@ -1,5 +1,9 @@
 ## Changelog
 
+2.1.0:
+
+* JSON Web Token support (#401)
+
 2.0.0:
 
 * HTTP/2 Provider API (#277)
