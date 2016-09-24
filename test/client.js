@@ -472,10 +472,10 @@ describe("Client", function () {
       });
 
       context("connection fails", function () {
-        let promises;
+        let promises, client;
 
         beforeEach( function() {
-          const client = new Client( { address: "testapi" } );
+          client = new Client( { address: "testapi" } );
 
           fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
 
@@ -504,7 +504,13 @@ describe("Client", function () {
             expect(response[1]).to.deep.equal({ device: "adfe5969", error: new Error("endpoint failed") });
             expect(response[2]).to.deep.equal({ device: "abcd1335", error: new Error("endpoint failed") });
           })
-        })
+        });
+
+        it("clears the queue", function () {
+          return promises.then( () => {
+            expect(client.queue.length).to.equal(0);
+          });
+        });
       });
 
     });
