@@ -8,6 +8,7 @@ const config = require("./lib/config")({
 	debug,
 	prepareCertificate: credentials.certificate,
 	prepareToken: credentials.token,
+	prepareCA: credentials.ca,
 });
 
 const tls = require("tls");

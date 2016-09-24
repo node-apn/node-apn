@@ -10,6 +10,7 @@ describe("config", function () {
       debug: sinon.spy(),
       prepareCertificate: sinon.stub(),
       prepareToken: sinon.stub(),
+      prepareCA: sinon.stub(),
     };
 
     config = require("../lib/config")(fakes);
@@ -161,6 +162,13 @@ describe("config", function () {
         expect(configuration).to.have.property("key", "keyData");
         expect(configuration).to.have.property("pfx", "pfxData");
       });
+
+      it("prepares the CA certificates", function () {
+        fakes.prepareCA.returns({ ca: "certificate1" });
+
+        let configuration = config({});
+        expect(configuration).to.have.property("ca", "certificate1");
+      });
     });
 
     context("`token` supplied", function () {
@@ -216,6 +224,13 @@ describe("config", function () {
         let configuration = config({ token: testConfig });
         expect(fakes.prepareToken).to.have.been.called;
         expect(configuration.token()).to.equal("fake-token");
+      });
+
+      it("prepares the CA certificates", function () {
+        fakes.prepareCA.returns({ ca: "certificate1" });
+
+        let configuration = config({});
+        expect(configuration).to.have.property("ca", "certificate1");
       });
     });
   });
