@@ -3,6 +3,7 @@
 2.1.0:
 
 * JSON Web Token support (#401)
+* Add `threadId` property for notifications
 
 2.0.0:
 
