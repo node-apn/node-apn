@@ -51,10 +51,17 @@ var apn = require('apn');
 ```
 
 ### Connecting
-Create a new connection to the Apple Push Notification provider API, passing a dictionary of options to the constructor. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running.
+Create a new connection to the Apple Push Notification provider API, passing a dictionary of options to the constructor. You must supply your token credentials in the options.
 
 ```javascript
-var options = { };
+var options = {
+	token: {
+		key: "path/to/key.p8",
+		keyId: "T0K3NK3Y1D",
+		teamId: "T34M1D",
+	},
+	production: false,
+};
 
 var apnProvider = new apn.Provider(options);
 ```
