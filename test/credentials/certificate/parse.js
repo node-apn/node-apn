@@ -2,8 +2,8 @@
 
 const sinon = require("sinon");
 
-const APNCertificate = require("../../lib/credentials/APNCertificate");
-const APNKey = require("../../lib/credentials/APNKey");
+const APNCertificate = require("../../../lib/credentials/certificate/APNCertificate");
+const APNKey = require("../../../lib/credentials/certificate/APNKey");
 
 describe("parseCredentials", function() {
 	let fakes, parseCredentials;
@@ -25,7 +25,7 @@ describe("parseCredentials", function() {
 
 		fakes.parsePemKey.withArgs("pemcert").returns(pemCert);
 
-		parseCredentials = require("../../lib/credentials/parse")(fakes);
+		parseCredentials = require("../../../lib/credentials/certificate/parse")(fakes);
 	});
 
 	describe("with PFX file", function() {

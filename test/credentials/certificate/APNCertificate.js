@@ -1,15 +1,17 @@
-var APNCertificate = require("../../lib/credentials/APNCertificate");
-var APNKey = require("../../lib/credentials/APNKey");
-var forge = require("node-forge");
-var fs = require("fs");
+"use strict";
+
+const APNCertificate = require("../../../lib/credentials/certificate/APNCertificate");
+const APNKey = require("../../../lib/credentials/certificate/APNKey");
+const forge = require("node-forge");
+const fs = require("fs");
 
 describe("APNCertificate", function() {
-	var certPem;
+	let certPem;
 	before(function() {
 		certPem = fs.readFileSync("test/credentials/support/cert.pem");
 	});
 
-	var cert;
+	let cert;
 	beforeEach(function() {
 		cert = forge.pki.certificateFromPem(certPem.toString());
 	});
@@ -86,7 +88,7 @@ describe("APNCertificate", function() {
 		});
 
 		describe("production certificate", function() {
-			var productionCertPem, productionCert;
+			let productionCertPem, productionCert;
 			before(function() {
 				productionCertPem = fs.readFileSync("test/credentials/support/certProduction.pem");
 			});

@@ -1,10 +1,12 @@
-var parsePemCertificate = require("../../lib/credentials/parsePemCertificate");
-var APNCertificate = require("../../lib/credentials/APNCertificate");
-var fs = require("fs");
+"use strict";
+
+const parsePemCertificate = require("../../../lib/credentials/certificate/parsePemCertificate");
+const APNCertificate = require("../../../lib/credentials/certificate/APNCertificate");
+const fs = require("fs");
 
 describe("parsePemCertificate", function() {
 	describe("with PEM certificate", function() {
-		var cert, certProperties;
+		let cert, certProperties;
 		before(function() {
 			cert = fs.readFileSync("test/credentials/support/cert.pem");
 		});
@@ -35,7 +37,7 @@ describe("parsePemCertificate", function() {
 	});
 
 	describe("with PEM containing multiple certificates", function() {
-		var cert, certProperties;
+		let cert, certProperties;
 		before(function() {
 			cert = fs.readFileSync("test/credentials/support/certIssuerKey.pem");
 		});
@@ -63,7 +65,7 @@ describe("parsePemCertificate", function() {
 
 	describe("with a PKCS#12 file", function() {
 		it("throws", function() {
-			var pfx = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
+			let pfx = fs.readFileSync("test/credentials/support/certIssuerKey.p12");
 			expect(function() {
 				parsePemCertificate(pfx);
 			}).to.throw("unable to parse certificate, not a valid PEM file");
@@ -72,7 +74,7 @@ describe("parsePemCertificate", function() {
 
 	describe("with a key", function() {
 		it("returns an empty array", function() {
-			var key = fs.readFileSync("test/credentials/support/key.pem");
+			let key = fs.readFileSync("test/credentials/support/key.pem");
 			expect(parsePemCertificate(key)).to.be.empty;
 		});
 	});

@@ -52,7 +52,7 @@ func sendNotification(user) {
     note.alert = "Hello " + user.name;
     note.topic = "io.github.node-apn.test"
 
-    connection.set(note, user.token).then( (response) => {
+    connection.send(note, user.token).then( (response) => {
         response.sent.forEach( (token) => {
             notificationSent(user, token);
         });
