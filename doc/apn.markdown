@@ -10,10 +10,17 @@ If you are not familiar with how the Apple Push Notificaion System (APNS) works,
 
 ### Provider
 
-Sending push notifications starts with creating a connection to APNS using the `apn.Provider` class. This must be configured with your applications' certificate and private key. The `apn.Provider` will manage underlying sockets automatically. You will never need more than one `apn.Provider` for each application, per-process. They should always be reused rather than recreated to achieve the best possible performance.
+Sending push notifications starts with creating a connection to APNS using the `apn.Provider` class. This must be configured with your credentials issued by Apple - using [Provider Authentication Tokens](provider-auth-tokens) is preferred. The `apn.Provider` will manage underlying sockets automatically. You will never need more than one `apn.Provider` for each application, per-process. They should always be reused rather than recreated to achieve the best possible performance.
 
 ```javascript
-let provider = new apn.Provider({ cert: "path/to/cert.pem", key: "path/to/key.pem" });
+let provider = new apn.Provider({
+  token: {
+    key: "path/to/key.pem",
+    keyId: "key-id",
+    teamId: "developer-team-id",
+  },
+  production: false,
+);
 ```
 
 See the [Provider documentation](provider.markdown) for more information.

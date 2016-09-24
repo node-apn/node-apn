@@ -51,17 +51,24 @@ var apn = require('apn');
 ```
 
 ### Connecting
-Create a new connection to the Apple Push Notification provider API, passing a dictionary of options to the constructor. If you name your certificate and key files appropriately (`cert.pem` and `key.pem`) then the defaults should be suitable to get you up and running.
+Create a new connection to the Apple Push Notification provider API, passing a dictionary of options to the constructor. You must supply your token credentials in the options.
 
 ```javascript
-var options = { };
+var options = {
+	token: {
+		key: "path/to/key.p8",
+		keyId: "T0K3NK3Y1D",
+		teamId: "T34M1D",
+	},
+	production: false,
+};
 
 var apnProvider = new apn.Provider(options);
 ```
 
 By default, the provider will connect to the sandbox unless the environment variable `NODE_ENV=production` is set.
 
-For more information about configuration options consult the [documentation](doc/connection.markdown).
+For more information about configuration options consult the [documentation](doc/provider.markdown).
 
 Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
 
@@ -84,10 +91,10 @@ note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
 note.payload = {'messageFrom': 'John Appleseed'};
 ```
 
-Send the notification to the API with `pushNotification`, which returns a promise.
+Send the notification to the API with `send`, which returns a promise.
 
 ```javascript
-apnProvider.pushNotification(note, deviceToken).then( (result) => {
+apnProvider.send(note, deviceToken).then( (result) => {
 	// see documentation for an explanation of result
 });
 ```

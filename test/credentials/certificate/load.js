@@ -1,12 +1,16 @@
-var loadCredentials = require("../../lib/credentials/load");
-var fs = require("fs");
+"use strict";
+
+const fs = require("fs");
 
 describe("loadCredentials", function() {
-	var pfx, cert, key;
+	let pfx, cert, key, loadCredentials;
 	before(function () {
 		pfx = fs.readFileSync("test/support/initializeTest.pfx");
 		cert = fs.readFileSync("test/support/initializeTest.crt");
 		key = fs.readFileSync("test/support/initializeTest.key");
+
+		const resolve = require("../../../lib/credentials/resolve");
+		loadCredentials = require("../../../lib/credentials/certificate/load")({ resolve });
 	});
 
 	it("should load a pfx file from disk", function () {
@@ -64,34 +68,6 @@ describe("loadCredentials", function() {
 				  .to.equal(key.toString());
 	});
 
-	it("should load a single CA certificate from disk", function () {
-		return expect(loadCredentials({ cert: null, key: null, ca: "test/support/initializeTest.crt" })
-				  .ca[0].toString()).to.equal(cert.toString());
-	});
-
-	it("should provide a single CA certificate from a Buffer", function () {
-		return expect(loadCredentials({ cert: null, key: null, ca: cert }).ca[0].toString())
-				  .to.equal(cert.toString());
-	});
-
-	it("should provide a single CA certificate from a String", function () {
-		return expect(loadCredentials({ cert: null, key: null, ca: cert.toString() }).ca[0])
-				  .to.equal(cert.toString());
-	});
-
-	it("should load an array of CA certificates", function () {
-    const certString = cert.toString();
-		return expect(loadCredentials({ cert: null, key: null,
-            ca: ["test/support/initializeTest.crt", cert, certString]
-          }).ca.map( cert => cert.toString() ))
-			.to.deep.equal([certString, certString, certString]);
-	});
-
-	it("returns undefined if no CA values are specified", function() {
-		return expect(loadCredentials({ cert: null, key: null, ca: null}).ca)
-      .to.be.undefined;
-	});
-	
 	it("should inclue the passphrase in the resolved value", function() {
 		return expect(loadCredentials({ passphrase: "apntest" }).passphrase)
 			.to.equal("apntest");

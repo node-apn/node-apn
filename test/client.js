@@ -115,6 +115,48 @@ describe("Client", function () {
                 });
               });
           });
+
+          context("when token authentication is enabled", function () {
+            beforeEach(function () {
+              fakes.token = {
+                generation: 0,
+                current: "fake-token",
+                regenerate: sinon.stub(),
+              }
+
+              client = new Client( { address: "testapi", token: fakes.token } );
+
+              fakes.stream = new FakeStream("abcd1234", "200");
+              fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+            });
+
+            it("sends the bearer token", function () {
+              let notification = builtNotification();
+
+              return client.write(notification, "abcd1234").then(function () {
+                expect(fakes.stream.headers).to.be.calledWithMatch({
+                  authorization: "bearer fake-token",
+                });
+              })
+            });
+          });
+
+          context("when token authentication is disabled", function () {
+            beforeEach(function () {
+              client = new Client( { address: "testapi" } );
+
+              fakes.stream = new FakeStream("abcd1234", "200");
+              fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+            });
+
+            it("does not set an authorization header", function () {
+              let notification = builtNotification();
+
+              return client.write(notification, "abcd1234").then(function () {
+                expect(fakes.stream.headers.firstCall.args[0]).to.not.have.property("authorization");
+              })
+            });
+          })
         });
 
         it("writes the notification data to the pipe", function () {
@@ -142,17 +184,26 @@ describe("Client", function () {
       context("error occurs", function () {
         let promise;
 
-        beforeEach(function () {
-          const client = new Client( { address: "testapi" } );
+        context("general case", function () {
+          beforeEach(function () {
+            const client = new Client( { address: "testapi" } );
 
-          fakes.stream = new FakeStream("abcd1234", "400", { "reason" : "BadDeviceToken" });
-          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+            fakes.stream = new FakeStream("abcd1234", "400", { "reason" : "BadDeviceToken" });
+            fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
 
-          promise = client.write(builtNotification(), "abcd1234");
-        });
+            promise = client.write(builtNotification(), "abcd1234");
+          });
 
-        it("resolves with the device token, status code and response", function () {
-          return expect(promise).to.eventually.deep.equal({ status: "400", device: "abcd1234", response: { reason: "BadDeviceToken" }});
+          it("resolves with the device token, status code and response", function () {
+            return expect(promise).to.eventually.deep.equal({ status: "400", device: "abcd1234", response: { reason: "BadDeviceToken" }});
+          });
+        })
+
+        context("ExpiredProviderToken", function () {
+          beforeEach(function () {
+            let tokenGenerator = sinon.stub().returns("fake-token");
+            const client = new Client( { address: "testapi", token: tokenGenerator });
+          })
         });
       });
 
@@ -421,10 +472,10 @@ describe("Client", function () {
       });
 
       context("connection fails", function () {
-        let promises;
+        let promises, client;
 
         beforeEach( function() {
-          const client = new Client( { address: "testapi" } );
+          client = new Client( { address: "testapi" } );
 
           fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
 
@@ -453,7 +504,142 @@ describe("Client", function () {
             expect(response[1]).to.deep.equal({ device: "adfe5969", error: new Error("endpoint failed") });
             expect(response[2]).to.deep.equal({ device: "abcd1335", error: new Error("endpoint failed") });
           })
-        })
+        });
+
+        it("clears the queue", function () {
+          return promises.then( () => {
+            expect(client.queue.length).to.equal(0);
+          });
+        });
+      });
+
+    });
+
+    describe("token generator behaviour", function () {
+      beforeEach(function () {
+        fakes.token = {
+          generation: 0,
+          current: "fake-token",
+          regenerate: sinon.stub(),
+        }
+
+        fakes.streams = [
+          new FakeStream("abcd1234", "200"),
+          new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
+          new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
+        ];
+      });
+
+      it("reuses the token", function () {
+        const client = new Client( { address: "testapi", token: fakes.token } );
+
+        fakes.token.regenerate = function () {
+          fakes.token.generation = 1;
+          fakes.token.current = "second-token"
+        }
+
+        fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+        fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+        fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
+
+        return Promise.all([
+          client.write(builtNotification(), "abcd1234"),
+          client.write(builtNotification(), "adfe5969"),
+          client.write(builtNotification(), "abcd1335"),
+        ]).then(function () {
+          expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+          expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+          expect(fakes.streams[2].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+        });
+      });
+
+      context("token expires", function () {
+
+        beforeEach(function () {
+          fakes.token.regenerate = function (generation) {
+            if (generation === fakes.token.generation) {
+              fakes.token.generation += 1;
+              fakes.token.current = "token-" + fakes.token.generation;
+            }
+          }
+        });
+
+        it("resends the notification with a new token", function () {
+          fakes.streams = [
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "200"),
+          ];
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+
+          const client = new Client( { address: "testapi", token: fakes.token } );
+
+          const promise = client.write(builtNotification(), "adfe5969");
+
+          setTimeout(function () {
+            fakes.endpointManager.getStream.reset();
+            fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[1]);
+            fakes.endpointManager.emit("wakeup");
+          }, 1);
+
+          return promise.then(function () {
+            expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer token-1" });
+          });
+        });
+
+        it("only regenerates the token once per-expiry", function () {
+          fakes.streams = [
+            new FakeStream("abcd1234", "200"),
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("abcd1335", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "400", { reason: "MissingTopic" }),
+            new FakeStream("abcd1335", "410", { reason: "BadDeviceToken", timestamp: 123456789 }),
+          ];
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+          fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+          fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
+
+          const client = new Client( { address: "testapi", token: fakes.token } );
+
+          const promises = Promise.all([
+            client.write(builtNotification(), "abcd1234"),
+            client.write(builtNotification(), "adfe5969"),
+            client.write(builtNotification(), "abcd1335"),
+          ]);
+
+          setTimeout(function () {
+            fakes.endpointManager.getStream.reset();
+            fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[3]);
+            fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[4]);
+            fakes.endpointManager.emit("wakeup");
+          }, 1);
+
+          return promises.then(function () {
+            expect(fakes.streams[0].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[1].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[2].headers).to.be.calledWithMatch({ authorization: "bearer fake-token" });
+            expect(fakes.streams[3].headers).to.be.calledWithMatch({ authorization: "bearer token-1" });
+            expect(fakes.streams[4].headers).to.be.calledWithMatch({ authorization: "bearer token-1" });
+          });
+        });
+
+        it("abandons sending after 3 ExpiredProviderToken failures", function () {
+          fakes.streams = [
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+            new FakeStream("adfe5969", "403", { reason: "ExpiredProviderToken" }),
+          ];
+
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);
+          fakes.endpointManager.getStream.onCall(1).returns(fakes.streams[1]);
+          fakes.endpointManager.getStream.onCall(2).returns(fakes.streams[2]);
+
+          const client = new Client( { address: "testapi", token: fakes.token } );
+
+          return expect(client.write(builtNotification(), "adfe5969")).to.eventually.have.property("status", "403");
+        });
       });
     });
   });
@@ -526,7 +712,7 @@ describe("Client", function () {
 
 function builtNotification() {
   return {
-    headers: sinon.stub().returns({}),
+    headers: {},
     body: JSON.stringify({ aps: { badge: 1 } }),
   };
 }

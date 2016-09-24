@@ -1,8 +1,13 @@
 ## apn.Provider([options])
 
-A provider represents a new connection to the [APNs Provider API](provider-api).
+A provider represents a new connection to the [APNs Provider API][provider-api].
 
 Options:
+
+ - `token` {Object} Configuration for Provider Authentication Tokens. (Defaults to: `null` i.e. fallback to Certificates)
+     - `token.key` {Buffer|String} The filename of the provider token key (as supplied by Apple) to load from disk, or a Buffer/String containing the key data.
+     - `token.keyId` {String} The ID of the key issued by Apple
+     - `token.teamId` {String} ID of the team associated with the provider token key
 
  - `cert` {Buffer|String} The filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
 
@@ -19,6 +24,16 @@ Options:
  - `rejectUnauthorized` {Boolean} Reject Unauthorized property to be passed through to tls.connect() (Defaults to `true`)
 
  - `connectionRetryLimit` {Number} The maximum number of connection failures that will be tolerated before `apn.Provider` will "give up". [See below.](#connection-retry-limit) (Defaults to: 3)
+
+#### Provider Certificates vs. Authentication Tokens
+
+Apple have introduced a new means of authentication with the APNs - [Provider Authentication Tokens][provider-auth-tokens]. These replace the old-style Certificate/Key pairs with tokens based on the [JWT][jwt] standard. The new system is superior in a number of ways:
+
+ * A token key does not expire and therefore does not require annual renewal - no more outages when someone forgets to deploy the renewed certificate
+ * Token keys are issued per-team - no need to manage one connection per app, just use the notification `topic` property to target a specific application on your connection
+ * Tokens are valid for Production and Sandbox environments - certificates have also had this feature for a while but it's so nice it's worth mentioning again
+
+In short: You should switch to using [Provider Authentication Tokens][provider-auth-tokens] _as soon as possible_.
 
 ##### Connection retry limit
 
@@ -66,7 +81,7 @@ For **rejected** notifications the object will take the following form
 }
 ```
 
-More details about the response and associated status codes can be found in the [HTTP/2 Response from APN documentation](http2-response).
+More details about the response and associated status codes can be found in the [HTTP/2 Response from APN documentation][http2-response].
 
 If a failed notification was instead caused by an **error** then it will have an `error` property instead of `response` and `status`:
 
@@ -88,5 +103,7 @@ Indicate to node-apn that it should close all open connections when the queue of
 
 **Note:** If notifications are pushed after the connection has completely shutdown a new connection will be established. However, the shutdown flag will remain and after the notifications are sent the connections will be optimistically shutdown again. Do not rely on this behaviour, it's more of a quirk.
 
-[provider-api]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html
-[http2-response]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW18
+[provider-api]: https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html
+[provider-auth-tokens]: https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW21
+[http2-response]: https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW18
+[jwt]: https://jwt.io

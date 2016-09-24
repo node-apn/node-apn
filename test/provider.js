@@ -56,7 +56,7 @@ describe("Provider", function() {
           fakes.client.write.onCall(0).returns(Promise.resolve({ device: "abcd1234" }));
         });
 
-        it("invokes the writer withe correct `this`", function () {
+        it("invokes the writer with correct `this`", function () {
           return provider.send(notificationDouble(), "abcd1234")
             .then(function () {
               expect(fakes.client.write).to.be.calledOn(fakes.client);
@@ -73,6 +73,13 @@ describe("Provider", function() {
               };
               expect(fakes.client.write).to.be.calledOnce;
               expect(fakes.client.write).to.be.calledWith(builtNotification, "abcd1234");
+            });
+        });
+
+        it("does not pass the array index to writer", function () {
+          return provider.send(notificationDouble(), "abcd1234")
+            .then(function () {
+              expect(fakes.client.write.firstCall.args[2]).to.be.undefined;
             });
         });
 
