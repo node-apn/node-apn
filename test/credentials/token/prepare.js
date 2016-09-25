@@ -25,7 +25,7 @@ describe("perpareToken", function () {
 
     beforeEach(function() {
       fakes.resolve.withArgs("key.pem").returns("keyData");
-      fakes.sign.returns("generated-token")
+      fakes.sign.returns("generated-token");
 
       token = prepareToken(testOptions);
     });
@@ -105,7 +105,7 @@ describe("perpareToken", function () {
 
         it("does not change the `current` property", function () {
           expect(token.current).to.equal("generated-token");
-        })
+        });
       });
     });
   });

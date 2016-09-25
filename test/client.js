@@ -122,7 +122,7 @@ describe("Client", function () {
                 generation: 0,
                 current: "fake-token",
                 regenerate: sinon.stub(),
-              }
+              };
 
               client = new Client( { address: "testapi", token: fakes.token } );
 
@@ -137,7 +137,7 @@ describe("Client", function () {
                 expect(fakes.stream.headers).to.be.calledWithMatch({
                   authorization: "bearer fake-token",
                 });
-              })
+              });
             });
           });
 
@@ -535,7 +535,7 @@ describe("Client", function () {
 
         fakes.token.regenerate = function () {
           fakes.token.generation = 1;
-          fakes.token.current = "second-token"
+          fakes.token.current = "second-token";
         }
 
         fakes.endpointManager.getStream.onCall(0).returns(fakes.streams[0]);

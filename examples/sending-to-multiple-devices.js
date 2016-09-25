@@ -11,7 +11,7 @@ Possible use cases:
  - Sport results
 */
 
-const apn = require('apn');
+const apn = require("apn");
 
 let tokens = ["<insert token here>", "<insert token here>"];
 

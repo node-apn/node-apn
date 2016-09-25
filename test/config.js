@@ -206,7 +206,7 @@ describe("config", function () {
         it("throws an error if teamId is not a string", function () {
           expect(() => config({ token: { key, keyId, teamId: 123 }})).to.throw(/token\.teamId must be a string/);
         });
-      })
+      });
 
       it("does not invoke prepareCertificate", function () {
         let configuration = config({ token: { key, keyId, teamId } });

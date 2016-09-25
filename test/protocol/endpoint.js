@@ -364,7 +364,7 @@ describe("Endpoint", function () {
 
     beforeEach(function () {
       let endpoint = new Endpoint({});
-      endpoint.on("error", () => {})
+      endpoint.on("error", () => {});
 
       streams.connection._streamIds = [];
 
@@ -547,13 +547,13 @@ describe("Endpoint", function () {
     });
 
     context("with error", function () {
-      const debug_data = new Buffer(6);
-      debug_data.write("error!");
+      const debugData = new Buffer(6);
+      debugData.write("error!");
 
       const formattedError = "GOAWAY: PROTOCOL_ERROR error!";
 
       beforeEach(function () {
-        frame = { error: "PROTOCOL_ERROR", debug_data: debug_data };
+        frame = { error: "PROTOCOL_ERROR", debug_data: debugData };
       });
 
       it("emits an error with the type and debug data", function () {
@@ -620,7 +620,7 @@ describe("Endpoint", function () {
           expect(errorSpy).to.be.calledTwice.and.calledWith(formattedError);
         });
       });
-    })
+    });
   });
 
   describe("`wakeup` event", function () {
