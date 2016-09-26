@@ -5,7 +5,7 @@ node-apn
 
 > A Node.js module for interfacing with the Apple Push Notification service.
 
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](https://github.com/argon/node-apn/issues/436)
 [![Build status][ci-image] ][ci-url]
 [![Code coverage][coverage-image]][coverage-url]
 [![Codacy][codacy-image]][codacy-url]
