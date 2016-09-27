@@ -1,11 +1,11 @@
 const debug = require("debug")("apn");
 
 const credentials = require("./lib/credentials")({
-	debug
+	logger: debug
 });
 
 const config = require("./lib/config")({
-	debug,
+	logger: debug,
 	prepareCertificate: credentials.certificate,
 	prepareToken: credentials.token,
 	prepareCA: credentials.ca,
