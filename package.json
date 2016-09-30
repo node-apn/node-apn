@@ -20,15 +20,15 @@
   "main": "index.js",
   "bugs": {
     "email": "argon@mkbot.net",
-    "url": "https://github.com/argon/node-apn/issues"
+    "url": "https://github.com/node-apn/node-apn/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/argon/node-apn.git"
+    "url": "https://github.com/node-apn/node-apn.git"
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "http2": "https://github.com/argon/node-http2#apn-2.0.0",
+    "http2": "https://github.com/node-apn/node-http2/archive/apn-2.0.0.tar.gz",
     "node-forge": "^0.6.20",
     "jsonwebtoken": "^7.1.9",
     "verror": "^1.8.1"
