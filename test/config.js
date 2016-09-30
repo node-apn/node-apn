@@ -7,7 +7,7 @@ describe("config", function () {
 
   beforeEach(function() {
     fakes = {
-      debug: sinon.spy(),
+      logger: sinon.spy(),
       prepareCertificate: sinon.stub(),
       prepareToken: sinon.stub(),
       prepareCA: sinon.stub(),
@@ -239,7 +239,7 @@ describe("config", function () {
     it("should log a message with `debug`", function () {
       config( { address: null } );
 
-      expect(fakes.debug).to.be.calledWith("Option [address] is null. This may cause unexpected behaviour.");
+      expect(fakes.logger).to.be.calledWith("Option [address] is null. This may cause unexpected behaviour.");
     });
   });
 
@@ -247,7 +247,7 @@ describe("config", function () {
     it("should log a message with `debug`", function () {
       config( { anOption: undefined } );
 
-      expect(fakes.debug).to.be.calledWith("Option [anOption] is undefined. This may cause unexpected behaviour.");
+      expect(fakes.logger).to.be.calledWith("Option [anOption] is undefined. This may cause unexpected behaviour.");
     });
   });
 });
