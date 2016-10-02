@@ -1,5 +1,9 @@
 ## Changelog
 
+2.1.1:
+* Fix broken logger (#438)
+* Use archive URL for forked node-http2 module (#433)
+
 2.1.0:
 
 * JSON Web Token support (#401)
@@ -13,7 +17,7 @@
 * `apn.Connection` has been renamed to `apn.Provider`
 * `apn.Feedback` has been removed
 * `apn.Device` has been removed - all tokens are now hex-encoded strings
-* `apn.token` is provided to validate tokens and convert from `Buffer` if 
+* `apn.token` is provided to validate tokens and convert from `Buffer` if
   necessary
 * Notifications are now required to have an associated `topic`
 * `pushNotification(notification, tokens)` is now simply, `send(notification, recipients)`
@@ -101,7 +105,7 @@
 * Improved error handling for EPIPE write events to maximise chances of reading error info from Apple.
 * Fixed #181: Initial support for larger payloads for iOS 8 testing.
 * Fixed #187: Correctly trim notifications with escaped characters.
-* Merged #190: Always emit a feedback event when batch mode is enabled, even if there are no tokens. 
+* Merged #190: Always emit a feedback event when batch mode is enabled, even if there are no tokens.
 * Merged #189: Added support for iOS 8 Notification actions.
 * Display a warning when null parameters are passed during connection creation.
 * Fixed #171: Removed references to the unknown notification identifier.
@@ -313,8 +317,8 @@ This release represents a major re-think with how the module should function, it
 * Moved some object methods into the prototype to save memory
 * Tidied up some connecting code
 * Introduced an `index.js` to make module loading tidier
-* Fixed a couple of typos. 
+* Fixed a couple of typos.
 
-1.0.0: 
- 
+1.0.0:
+
 * Well I created a module; Version 0.0.0 had no code, and now it does, and it works, so that's pretty neat, right?
