@@ -5,8 +5,8 @@
   "author": "Andrew Naylor <argon@mkbot.net>",
   "contributors": [
     {
-      "name": "Andrew Naylor",
-      "email": "argon@mkbot.net"
+      "name": "Florian Reinhart",
+      "email": "florian.reinhart@gmail.com"
     }
   ],
   "keywords": [
@@ -19,7 +19,7 @@
   ],
   "main": "index.js",
   "bugs": {
-    "email": "argon@mkbot.net",
+    "email": "florian.reinhart@gmail.com",
     "url": "https://github.com/node-apn/node-apn/issues"
   },
   "repository": {
