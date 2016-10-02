@@ -5,7 +5,7 @@ node-apn
 
 > A Node.js module for interfacing with the Apple Push Notification service.
 
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](https://github.com/argon/node-apn/issues/436)
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](https://github.com/node-apn/node-apn/issues/436)
 [![Build status][ci-image] ][ci-url]
 [![Code coverage][coverage-image]][coverage-url]
 [![Codacy][codacy-image]][codacy-url]
@@ -22,10 +22,10 @@ node-apn
 [codacy-image]:https://www.codacy.com/project/badge/e7735fbe0db244f3b310657d0dabaa11
 [codacy-url]:https://www.codacy.com/public/argon/node-apn
 
-[dependencies-image]:https://david-dm.org/argon/node-apn.svg
-[dependencies-url]:https://david-dm.org/argon/node-apn
-[devdependencies-image]:https://david-dm.org/argon/node-apn/dev-status.svg
-[devdependencies-url]:https://david-dm.org/argon/node-apn#info=devDependencies
+[dependencies-image]:https://david-dm.org/node-apn/node-apn.svg
+[dependencies-url]:https://david-dm.org/node-apn/node-apn
+[devdependencies-image]:https://david-dm.org/node-apn/node-apn/dev-status.svg
+[devdependencies-url]:https://david-dm.org/node-apn/node-apn?type=dev
 
 ## Features
 
@@ -150,12 +150,12 @@ Released under the MIT License
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [npm]: https://npmjs.org
-[node-apn]: https://github.com/argon/node-apn
-[certificateWiki]:https://github.com/argon/node-apn/wiki/Preparing-Certificates "Preparing Certificates"
+[node-apn]: https://github.com/node-apn/node-apn
+[certificateWiki]:https://github.com/node-apn/node-apn/wiki/Preparing-Certificates "Preparing Certificates"
 [pl]: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1 "Local and Push Notification Programming Guide: APNs Provider API"
 [tn2265]: http://developer.apple.com/library/ios/#technotes/tn2265/_index.html "Troubleshooting Push Notifications"
 [googlegroup]:https://groups.google.com/group/node-apn "node-apn Google Group"
-[pacapn]:https://github.com/argon/node-apn/wiki/Projects,-Applications,-and-Companies-Using-Node-apn "List of Projects, Applications and Companies Using Node-apn"
+[pacapn]:https://github.com/node-apn/node-apn/wiki/Projects,-Applications,-and-Companies-Using-Node-apn "List of Projects, Applications and Companies Using Node-apn"
 [argon]: https://github.com/argon
 [bobrik]: https://github.com/bobrik
 [dgthistle]: https://github.com/dgthistle
