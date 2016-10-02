@@ -15,8 +15,8 @@ node-apn
 [logo]:doc/logo.png
 [npm-image]:https://nodei.co/npm/apn.png?downloads=true
 [npm-url]:https://npmjs.com/package/apn
-[ci-image]:https://travis-ci.org/argon/node-apn.png?branch=develop
-[ci-url]:https://travis-ci.org/argon/node-apn
+[ci-image]:https://api.travis-ci.org/node-apn/node-apn.png
+[ci-url]:https://travis-ci.org/node-apn/node-apn
 [coverage-image]:https://coveralls.io/repos/argon/node-apn/badge.svg?branch=develop
 [coverage-url]:https://coveralls.io/r/argon/node-apn
 [codacy-image]:https://www.codacy.com/project/badge/e7735fbe0db244f3b310657d0dabaa11
@@ -115,7 +115,7 @@ You are encouraged to read the extremely informative [Troubleshooting Push Notif
 
 ## Support
 
-If you have any questions or difficulties working with the module, the [node-apn Google group][googlegroup] should be your first port of call. 
+If you have any questions or difficulties working with the module, the [node-apn Google group][googlegroup] should be your first port of call.
 
 Please include as much detail as possible - especially debug logs. If the problem is reproducible, sample code is also extremely helpful. GitHub Issues should only be created for verified problems and enhancements, this will allow them to be tracked more easily.
 
@@ -136,17 +136,17 @@ Thanks to: [Ian Babrou][bobrik], [dgthistle][dgthistle], [Keith Larsen][keithnla
 Released under the MIT License
 
 > Copyright (c) 2013 Andrew Naylor
-> 
+>
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal
 > in the Software without restriction, including without limitation the rights
 > to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 > copies of the Software, and to permit persons to whom the Software is
 > furnished to do so, subject to the following conditions:
-> 
+>
 > The above copyright notice and this permission notice shall be included in
 > all copies or substantial portions of the Software.
-> 
+>
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [npm]: https://npmjs.org
