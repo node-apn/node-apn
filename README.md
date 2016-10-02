@@ -15,16 +15,16 @@ node-apn
 [logo]:doc/logo.png
 [npm-image]:https://nodei.co/npm/apn.png?downloads=true
 [npm-url]:https://npmjs.com/package/apn
-[ci-image]:https://api.travis-ci.org/node-apn/node-apn.png
+[ci-image]:https://api.travis-ci.org/node-apn/node-apn.svg
 [ci-url]:https://travis-ci.org/node-apn/node-apn
 [coverage-image]:https://coveralls.io/repos/argon/node-apn/badge.svg?branch=develop
 [coverage-url]:https://coveralls.io/r/argon/node-apn
 [codacy-image]:https://www.codacy.com/project/badge/e7735fbe0db244f3b310657d0dabaa11
 [codacy-url]:https://www.codacy.com/public/argon/node-apn
 
-[dependencies-image]:https://david-dm.org/argon/node-apn.png
+[dependencies-image]:https://david-dm.org/argon/node-apn.svg
 [dependencies-url]:https://david-dm.org/argon/node-apn
-[devdependencies-image]:https://david-dm.org/argon/node-apn/dev-status.png
+[devdependencies-image]:https://david-dm.org/argon/node-apn/dev-status.svg
 [devdependencies-url]:https://david-dm.org/argon/node-apn#info=devDependencies
 
 ## Features
