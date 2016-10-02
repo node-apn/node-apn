@@ -15,8 +15,8 @@ describe("token", function () {
       });
 
       it("supports uppercase input", function () {
-        expect(token("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19c7"))
-          .to.equal("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19c7");
+        expect(token("A9D0ED10E9CFD022A61CB08753F49C5A0B0DFB784697BF9F9D750A1003DA19C7"))
+          .to.equal("A9D0ED10E9CFD022A61CB08753F49C5A0B0DFB784697BF9F9D750A1003DA19C7");
       });
     });
 

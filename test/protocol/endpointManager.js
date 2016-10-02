@@ -344,7 +344,7 @@ describe("Endpoint Manager", function () {
 
       beforeEach(function () {
         establishedEndpoint = establishEndpoint(manager);
-      })
+      });
 
       context("when the configured number of connections fail", function () {
         it("does not emit an error", function() {
@@ -501,7 +501,7 @@ describe("Endpoint Manager", function () {
     manager.getStream();
 
     if(fakes.Endpoint.callCount !== callCount + 1) {
-      return null
+      return null;
     }
 
     let endpoint = fakes.Endpoint.lastCall.returnValue;

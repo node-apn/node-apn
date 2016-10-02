@@ -10,7 +10,7 @@ If you are not familiar with how the Apple Push Notificaion System (APNS) works,
 
 ### Provider
 
-Sending push notifications starts with creating a connection to APNS using the `apn.Provider` class. This must be configured with your credentials issued by Apple - using [Provider Authentication Tokens](provider-auth-tokens) is preferred. The `apn.Provider` will manage underlying sockets automatically. You will never need more than one `apn.Provider` for each application, per-process. They should always be reused rather than recreated to achieve the best possible performance.
+Sending push notifications starts with creating a connection to APNS using the `apn.Provider` class. This must be configured with your credentials issued by Apple - using [Provider Authentication Tokens][provider-auth-tokens] is preferred. The `apn.Provider` will manage underlying sockets automatically. You will never need more than one `apn.Provider` for each application, per-process. They should always be reused rather than recreated to achieve the best possible performance.
 
 ```javascript
 let provider = new apn.Provider({
@@ -61,6 +61,7 @@ provider.send(notification, deviceTokens).then( (response) => {
 
 See the [Provider documentation](provider.markdown) for more information.
 
+[provider-auth-tokens]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW21
 [programming-guide]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9
 [push-path]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW10
 [registration]:https://developer.apple.com/library/prerelease/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html#//apple_ref/doc/uid/TP40008194-CH103-SW2

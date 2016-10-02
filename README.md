@@ -5,6 +5,7 @@ node-apn
 
 > A Node.js module for interfacing with the Apple Push Notification service.
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](https://github.com/argon/node-apn/issues/436)
 [![Build status][ci-image] ][ci-url]
 [![Code coverage][coverage-image]][coverage-url]
 [![Codacy][codacy-image]][codacy-url]
@@ -73,7 +74,7 @@ For more information about configuration options consult the [documentation](doc
 Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
 
 ### Sending a notification
-To send a notification you will first need a token from your app as a string
+To send a notification you will first need a device token from your app as a string
 
 ```javascript
 let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
@@ -89,6 +90,7 @@ note.badge = 3;
 note.sound = "ping.aiff";
 note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
 note.payload = {'messageFrom': 'John Appleseed'};
+note.topic = "<your-app-bundle-id>";
 ```
 
 Send the notification to the API with `send`, which returns a promise.

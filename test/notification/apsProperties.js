@@ -359,7 +359,7 @@ describe("Notification", function() {
 
         it("sets the aps.alert.action property", function () {
           expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Investigate");
-        })
+        });
       });
 
       describe("setAction", function () {

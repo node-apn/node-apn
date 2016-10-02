@@ -11,8 +11,8 @@ after_success:
 - rm -rf ./coverage
 deploy:
   provider: npm
-  email: argon@mkbot.net
+  email: florian.reinhart@gmail.com
   api_key:
-    secure: gs5H2MwW+AInpILDEmSsVWevzrMBapNHBJS/rvmHP9AtFnj0W5HE619F1duDZwhpwV/e6vdbo6xCWnxc+egR7gciW3OQrggsXSaKeWDFcJ9oNFvOsxKePOxk62fBjeSRD3LSPGyrv3XhmE4sm/6x4gCf4ZbzbYqvvOCvADCqJzA=
+    secure: Hbtlm2kXLhrLIQMSpyMnioBaBhI31xJzbj5WguXzVU26DLNJeprTJnNBQwjPt5F99b5PMQiOEq7vIZB2DqY+PF3Gz3nxEnFHmT67FSLYkaibSyU13bt9BsUOIQg6d5yt0h13ZF86+kRNx65P7p4aM5P4Vj7v/xZjCwRQr2VIKTA=
   on:
     tags: true
