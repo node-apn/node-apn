@@ -80,7 +80,7 @@ To send a notification you will first need a device token from your app as a str
 let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
 ```
 
-Create a notification object, configuring it with the relevant parameters (See the [payload documentation][pl] for more details.)
+Create a notification object, configuring it with the relevant parameters (See the [notification documentation][notificationDocs] for more details.)
 
 ```javascript
 var note = new apn.Notification();
@@ -152,6 +152,7 @@ Released under the MIT License
 [npm]: https://npmjs.org
 [node-apn]: https://github.com/node-apn/node-apn
 [certificateWiki]:https://github.com/node-apn/node-apn/wiki/Preparing-Certificates "Preparing Certificates"
+[notificationDocs]: doc/notification.markdown "Notification documentation"
 [pl]: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1 "Local and Push Notification Programming Guide: APNs Provider API"
 [tn2265]: http://developer.apple.com/library/ios/#technotes/tn2265/_index.html "Troubleshooting Push Notifications"
 [googlegroup]:https://groups.google.com/group/node-apn "node-apn Google Group"
