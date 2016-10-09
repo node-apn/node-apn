@@ -80,7 +80,7 @@ To send a notification you will first need a device token from your app as a str
 let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
 ```
 
-Create a notification object, configuring it with the relevant parameters (See the [payload documentation][pl] for more details.)
+Create a notification object, configuring it with the relevant parameters (See the [payload documentation](doc/notification.markdown) for more details.)
 
 ```javascript
 var note = new apn.Notification();
