@@ -41,7 +41,7 @@ node-apn
 
 ## Quick Start
 
-This is readme is a brief introduction, please refer to the full [documentation](doc/apn.markdown) in `doc/` for more details.
+This readme is a brief introduction, please refer to the full [documentation](doc/apn.markdown) in `doc/` for more details.
 
 If you have previously used v1.x and wish to learn more about what's changed in v2.0, please see [What's New](doc/whats-new.markdown)
 
@@ -69,7 +69,7 @@ var apnProvider = new apn.Provider(options);
 
 By default, the provider will connect to the sandbox unless the environment variable `NODE_ENV=production` is set.
 
-For more information about configuration options consult the [documentation](doc/provider.markdown).
+For more information about configuration options consult the [provider documentation](doc/provider.markdown).
 
 Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
 
@@ -80,7 +80,7 @@ To send a notification you will first need a device token from your app as a str
 let deviceToken = "a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb383697bf9f9d750a1003da19c7"
 ```
 
-Create a notification object, configuring it with the relevant parameters (See the [payload documentation][pl] for more details.)
+Create a notification object, configuring it with the relevant parameters (See the [notification documentation](doc/notification.markdown) for more details.)
 
 ```javascript
 var note = new apn.Notification();
@@ -155,7 +155,7 @@ Released under the MIT License
 [pl]: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1 "Local and Push Notification Programming Guide: APNs Provider API"
 [tn2265]: http://developer.apple.com/library/ios/#technotes/tn2265/_index.html "Troubleshooting Push Notifications"
 [googlegroup]:https://groups.google.com/group/node-apn "node-apn Google Group"
-[pacapn]:https://github.com/node-apn/node-apn/wiki/Projects,-Applications,-and-Companies-Using-Node-apn "List of Projects, Applications and Companies Using Node-apn"
+[pacapn]:https://github.com/node-apn/node-apn/wiki/Projects,-Applications,-and-Companies-Using-Node-apn "List of Projects, Applications and Companies Using node-apn"
 [argon]: https://github.com/argon
 [bobrik]: https://github.com/bobrik
 [dgthistle]: https://github.com/dgthistle
