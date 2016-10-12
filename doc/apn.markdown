@@ -27,7 +27,7 @@ See the [Provider documentation](provider.markdown) for more information.
 
 ### Device Tokens
 
-To push a notification you will need a set of device tokens to send a notification to. These are in the form of a hex-encoded string (see example below). Information about getting device tokens can be found in [Registering for Remote Notifications](registration).
+To push a notification you will need a set of device tokens to send a notification to. These are in the form of a hex-encoded string (see example below). Information about getting device tokens can be found in [Registering for Remote Notifications][registration].
 
 ```javascript
 let deviceTokens = ["834c8b48e6254e47435d74720b1d4a13e3e57d0bf318333c284c1db8ce8ddc58"];
@@ -50,7 +50,7 @@ See the [Notification documentation](notification.markdown) for more information
 
 After you have created a `Provider` and a `Notification` you can send it to Apple. The module will take care of creating a secure connection, encoding the payload, transmitting it, handling errors and processing the response.
 
-The `send` method returns a [`Promise`](promise) which will be fulfilled when all notifications have been successfully sent, or failed due to an error. The resolved value contains information about successful transmissions as well as details of failures.
+The `send` method returns a [`Promise`][promise] which will be fulfilled when all notifications have been successfully sent, or failed due to an error. The resolved value contains information about successful transmissions as well as details of failures.
 
 ```javascript
 provider.send(notification, deviceTokens).then( (response) => {
