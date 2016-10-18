@@ -1,9 +1,9 @@
 "use strict";
 
 module.exports = function (dependencies) {
-	var parsePkcs12 = dependencies.parsePkcs12;
-	var parsePemKey = dependencies.parsePemKey;
-	var parsePemCert = dependencies.parsePemCert;
+	const parsePkcs12 = dependencies.parsePkcs12;
+	const parsePemKey = dependencies.parsePemKey;
+	const parsePemCert = dependencies.parsePemCert;
 	function parse(credentials) {
 		var parsed = {};
 

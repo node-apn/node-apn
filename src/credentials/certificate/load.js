@@ -1,7 +1,7 @@
 "use strict";
 
-module.exports = function (dependencies) {
-  var resolve = dependencies.resolve;
+module.exports = function(dependencies) {
+  const resolve = dependencies.resolve;
 
   function loadCredentials(credentials) {
 

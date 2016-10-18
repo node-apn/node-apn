@@ -1,8 +1,8 @@
 "use strict";
 
-var forge = require("node-forge");
+const forge = require("node-forge");
 
-var APNCertificate = require("./APNCertificate");
+const APNCertificate = require("./APNCertificate");
 
 function apnCertificateFromPem(certData) {
 	if (!certData) {
@@ -12,14 +12,15 @@ function apnCertificateFromPem(certData) {
 	var pemMessages;
 	try {
 		pemMessages = forge.pem.decode(certData);
-	} catch (e) {
+	}
+	catch (e) {
 		if (e.message.match("Invalid PEM formatted message.")) {
 			throw new Error("unable to parse certificate, not a valid PEM file");
 		}
 	}
 	var certificates = [];
 
-	pemMessages.forEach(function (message) {
+	pemMessages.forEach(function(message) {
 		if (!message.type.match(new RegExp("CERTIFICATE$"))) {
 			return;
 		}

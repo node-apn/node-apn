@@ -1,26 +1,24 @@
 "use strict";
 
-var EventEmitter = require("events");
+const EventEmitter = require("events");
 
-var noop = function noop() {};
-var noopLogger = {
+const noop = () => {};
+const noopLogger = {
   fatal: noop,
   error: noop,
-  warn: noop,
-  info: noop,
+  warn : noop,
+  info : noop,
   debug: noop,
   trace: noop,
 
-  child: function child() {
-    return this;
-  }
+  child: function() { return this; }
 };
 
-var CLIENT_PRELUDE = new Buffer("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n");
+const CLIENT_PRELUDE = new Buffer("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n");
 
-module.exports = function (dependencies) {
-  var tls = dependencies.tls;
-  var protocol = dependencies.protocol;
+module.exports = function(dependencies) {
+  const tls = dependencies.tls;
+  const protocol = dependencies.protocol;
 
   function Endpoint(options) {
     EventEmitter.call(this);
@@ -40,19 +38,17 @@ module.exports = function (dependencies) {
 
   Endpoint.prototype = Object.create(EventEmitter.prototype, {
     availableStreamSlots: {
-      get: function get() {
+      get: function() {
         return this._maximumStreamSlots - this._acquiredStreamSlots;
       }
     }
   });
 
   Endpoint.prototype._setupHTTP2Pipeline = function _setupHTTP2Pipeline() {
-    var _this = this;
-
-    var serializer = new protocol.Serializer(noopLogger.child("serializer"));
-    var compressor = new protocol.Compressor(noopLogger.child("compressor"), "REQUEST");
-    var deserializer = new protocol.Deserializer(noopLogger.child("deserializer"));
-    var decompressor = new protocol.Decompressor(noopLogger.child("decompressor"), "RESPONSE");
+    const serializer = new protocol.Serializer(noopLogger.child("serializer"));
+    const compressor = new protocol.Compressor(noopLogger.child("compressor"), "REQUEST");
+    const deserializer = new protocol.Deserializer(noopLogger.child("deserializer"));
+    const decompressor = new protocol.Decompressor(noopLogger.child("decompressor"), "RESPONSE");
 
     this._connection.pipe(compressor);
     compressor.pipe(serializer);
@@ -65,9 +61,9 @@ module.exports = function (dependencies) {
     this._connection.on("RECEIVING_SETTINGS_HEADER_TABLE_SIZE", compressor.setTableSizeLimit.bind(compressor));
     this._connection.on("ACKNOWLEDGED_SETTINGS_HEADER_TABLE_SIZE", decompressor.setTableSizeLimit.bind(decompressor));
 
-    this._connection.on("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", function (maxStreams) {
-      _this._maximumStreamSlots = maxStreams;
-      _this.emit("wakeup");
+    this._connection.on("RECEIVING_SETTINGS_MAX_CONCURRENT_STREAMS", maxStreams => {
+      this._maximumStreamSlots = maxStreams;
+      this.emit("wakeup");
     });
 
     serializer.on("error", this._protocolError.bind(this, "serializer"));
@@ -114,19 +110,17 @@ module.exports = function (dependencies) {
       return;
     }
 
-    var message = "GOAWAY: " + frame.error;
-    if (frame.debug_data) {
+    let message = "GOAWAY: " + frame.error;
+    if(frame.debug_data) {
       message += " " + frame.debug_data.toString();
     }
     this._error(message);
-  };
+  }
 
   Endpoint.prototype._close = function close() {
-    var _this2 = this;
-
     // After the endpoint closes we loop through all
     // dangling streams to handle their state.
-    this._connection._streamIds.forEach(function (stream, id) {
+    this._connection._streamIds.forEach( (stream, id) => {
 
       // Ignore stream 0 (connection stream)
       if (id === 0) {
@@ -136,30 +130,29 @@ module.exports = function (dependencies) {
       // let stream = this._connection._streamIds[id];
 
       // Is stream unprocessed? (last_stream < id)
-      if (_this2.lastStream < id) {
+      if (this.lastStream < id) {
         stream.emit("unprocessed");
-      } else if (_this2.lastError) {
+
+      } else if (this.lastError) {
         // If it *has* been at least partially processed
         // and an error has occurred
-        stream.emit("error", _this2.lastError);
+        stream.emit("error", this.lastError);
       }
     });
-  };
+  }
 
   Endpoint.prototype.createStream = function createStream() {
-    var _this3 = this;
-
-    var stream = this._connection.createStream();
+    let stream = this._connection.createStream();
     this._connection._allocateId(stream);
 
     this._acquiredStreamSlots += 1;
-    stream.on("end", function () {
+    stream.on("end", () => {
       stream = null;
-      _this3._acquiredStreamSlots -= 1;
-      _this3.emit("wakeup");
+      this._acquiredStreamSlots -= 1;
+      this.emit("wakeup");
 
-      if (_this3._closePending) {
-        _this3.close();
+      if (this._closePending) {
+        this.close();
       }
     });
 

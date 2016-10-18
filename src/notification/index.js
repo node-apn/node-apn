@@ -3,8 +3,7 @@
  * Create a notification
  * @constructor
  */
-
-function Notification(payload) {
+function Notification (payload) {
 	this.encoding = "utf8";
 	this.payload = {};
 	this.compiled = false;
@@ -14,7 +13,7 @@ function Notification(payload) {
 	this.priority = 10;
 
 	if (payload) {
-		for (var key in payload) {
+		for(let key in payload) {
 			if (payload.hasOwnProperty(key)) {
 				this[key] = payload[key];
 			}
@@ -24,8 +23,11 @@ function Notification(payload) {
 
 Notification.prototype = require("./apsProperties");
 
-["payload", "expiry", "priority", "alert", "body", "locKey", "locArgs", "title", "subtitle", "titleLocKey", "titleLocArgs", "action", "actionLocKey", "launchImage", "badge", "sound", "contentAvailable", "mutableContent", "mdm", "urlArgs", "category"].forEach(function (propName) {
-	var methodName = "set" + propName[0].toUpperCase() + propName.slice(1);
+["payload", "expiry", "priority", "alert", "body", "locKey",
+"locArgs", "title", "subtitle", "titleLocKey", "titleLocArgs", "action",
+"actionLocKey", "launchImage", "badge", "sound", "contentAvailable",
+"mutableContent", "mdm", "urlArgs", "category"].forEach( propName => {
+	const methodName = "set" + propName[0].toUpperCase() + propName.slice(1);
 	Notification.prototype[methodName] = function (value) {
 		this[propName] = value;
 		return this;
@@ -33,7 +35,7 @@ Notification.prototype = require("./apsProperties");
 });
 
 Notification.prototype.headers = function headers() {
-	var mHeaders = {};
+	let mHeaders = {};
 
 	if (this.priority !== 10) {
 		mHeaders["apns-priority"] = this.priority;
@@ -52,7 +54,7 @@ Notification.prototype.headers = function headers() {
 	}
 
 	if (this.collapseId) {
-		mHeaders["apns-collapse-id"] = this.collapseId;
+	    mHeaders["apns-collapse-id"] = this.collapseId;
 	}
 
 	if (this.threadId) {
@@ -68,7 +70,7 @@ Notification.prototype.headers = function headers() {
  * @since v1.3.0
  */
 Notification.prototype.compile = function () {
-	if (!this.compiled) {
+	if(!this.compiled) {
 		this.compiled = JSON.stringify(this);
 	}
 	return this.compiled;
@@ -85,19 +87,17 @@ Notification.prototype.length = function () {
 /**
  * @private
  */
-Notification.prototype.apsPayload = function () {
+Notification.prototype.apsPayload = function() {
 	var aps = this.aps;
 
-	return Object.keys(aps).find(function (key) {
-		return aps[key] !== undefined;
-	}) ? aps : undefined;
+	return Object.keys(aps).find( key => aps[key] !== undefined ) ? aps : undefined;
 };
 
 Notification.prototype.toJSON = function () {
 	if (this.rawPayload != null) {
 		return this.rawPayload;
 	}
-
+	
 	if (typeof this._mdm === "string") {
 		return { "mdm": this._mdm };
 	}

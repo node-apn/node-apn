@@ -4,10 +4,9 @@
  *
  * Will convert to string and removes invalid characters as required.
  */
-
 function token(input) {
-  var token = void 0;
-
+  let token;
+  
   if (typeof input === "string") {
     token = input;
   } else if (Buffer.isBuffer(input)) {

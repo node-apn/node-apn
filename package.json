@@ -34,6 +34,8 @@
     "verror": "^1.8.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
     "chai": "3.x",
     "chai-as-promised": "*",
     "mocha": "*",
@@ -41,7 +43,9 @@
     "sinon-chai": "^2.6.0"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha"
+    "test": "node_modules/.bin/mocha",
+    "build": "./node_modules/.bin/babel src -d lib",
+    "prepublish": "npm test && npm run build"
   },
   "jshintConfig": {
     "node": true

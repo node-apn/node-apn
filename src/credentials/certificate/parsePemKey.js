@@ -1,25 +1,27 @@
 "use strict";
 
-var forge = require("node-forge");
+const forge = require("node-forge");
 
-var APNKey = require("./APNKey");
+const APNKey = require("./APNKey");
 
 function findAndDecryptKey(pemMessages, passphrase) {
-	var apnKey = null;
-	pemMessages.forEach(function (message) {
+	let apnKey = null;
+	pemMessages.forEach(function(message) {
 		if (!message.type.match(/KEY/)) {
 			return;
 		}
 
-		var key = forge.pki.decryptRsaPrivateKey(forge.pem.encode(message), passphrase);
+		let key = forge.pki.decryptRsaPrivateKey(forge.pem.encode(message), passphrase);
 
-		if (!key) {
-			if (message.procType && message.procType.type === "ENCRYPTED" || message.type.match(/ENCRYPTED/)) {
+		if(!key) {
+			if ((message.procType && message.procType.type === "ENCRYPTED") || message.type.match(/ENCRYPTED/)) {
 				throw new Error("unable to parse key, incorrect passphrase");
 			}
-		} else if (apnKey) {
+		}
+		else if(apnKey) {
 			throw new Error("multiple keys found in PEM file");
-		} else {
+		}
+		else {
 			apnKey = new APNKey(key);
 		}
 	});
@@ -32,19 +34,23 @@ function apnKeyFromPem(keyPem, passphrase) {
 	}
 
 	try {
-		var pemMessages = forge.pem.decode(keyPem);
-		var apnKey = findAndDecryptKey(pemMessages, passphrase);
+		let pemMessages = forge.pem.decode(keyPem);
+		let apnKey = findAndDecryptKey(pemMessages, passphrase);
 		if (apnKey) {
 			return apnKey;
 		}
-	} catch (e) {
+	}
+	catch (e) {
 		if (e.message.match(/Unsupported OID/)) {
 			throw new Error("unable to parse key, unsupported format: " + e.oid);
-		} else if (e.message.match(/Invalid PEM formatted message/)) {
+		}
+		else if(e.message.match(/Invalid PEM formatted message/)) {
 			throw new Error("unable to parse key, not a valid PEM file");
-		} else if (e.message.match(/multiple keys/)) {
+		}
+		else if (e.message.match(/multiple keys/)) {
 			throw e;
-		} else if (e.message.match(/unable to parse key/)) {
+		}
+		else if (e.message.match(/unable to parse key/)) {
 			throw e;
 		}
 	}

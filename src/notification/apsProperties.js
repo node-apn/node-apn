@@ -1,7 +1,5 @@
 "use strict";
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 module.exports = {
 	set alert(value) {
 		this.aps.alert = value;
@@ -15,9 +13,10 @@ module.exports = {
 	},
 
 	set body(value) {
-		if (_typeof(this.aps.alert) !== "object") {
+		if(typeof this.aps.alert !== "object") {
 			this.aps.alert = value;
-		} else {
+		}
+		else {
 			this.prepareAlert();
 			this.aps.alert.body = value;
 		}
@@ -101,20 +100,20 @@ module.exports = {
 	},
 
 	set urlArgs(value) {
-		if (Array.isArray(value) || value === undefined) {
+		if(Array.isArray(value) || value === undefined) {
 			this.aps["url-args"] = value;
 		}
 	},
 
 	set category(value) {
-		if (typeof value === "string" || value === undefined) {
+		if(typeof value === "string" || value === undefined) {
 			this.aps.category = value;
 		}
 	},
 
-	prepareAlert: function prepareAlert() {
-		if (_typeof(this.aps.alert) !== "object") {
-			this.aps.alert = { "body": this.aps.alert };
+	prepareAlert: function () {
+		if(typeof this.aps.alert !== "object") {
+			this.aps.alert = {"body": this.aps.alert};
 		}
 	}
 };
