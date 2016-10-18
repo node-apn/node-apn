@@ -1,6 +1,6 @@
 "use strict";
 
-var resolve = require("../../lib/credentials/resolve");
+var resolve = require("../../src/credentials/resolve");
 var fs = require("fs");
 
 describe("resolve", function() {

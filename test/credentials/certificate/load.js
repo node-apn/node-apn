@@ -9,8 +9,8 @@ describe("loadCredentials", function() {
 		cert = fs.readFileSync("test/support/initializeTest.crt");
 		key = fs.readFileSync("test/support/initializeTest.key");
 
-		const resolve = require("../../../lib/credentials/resolve");
-		loadCredentials = require("../../../lib/credentials/certificate/load")({ resolve });
+		const resolve = require("../../../src/credentials/resolve");
+		loadCredentials = require("../../../src/credentials/certificate/load")({ resolve });
 	});
 
 	it("should load a pfx file from disk", function () {

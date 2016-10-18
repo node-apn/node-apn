@@ -13,7 +13,7 @@ describe("perpareCertificate", function () {
       logger: sinon.stub(),
     };
 
-    prepareCertificate = require("../../../lib/credentials/certificate/prepare")(fakes);
+    prepareCertificate = require("../../../src/credentials/certificate/prepare")(fakes);
   });
 
   describe("with valid credentials", function() {

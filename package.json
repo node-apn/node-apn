@@ -44,7 +44,7 @@
   },
   "scripts": {
     "test": "node_modules/.bin/mocha",
-    "build": "./node_modules/.bin/babel src -d lib",
+    "build": "./node_modules/.bin/babel src -d lib && ./node_modules/.bin/babel index-es6.js -o index.js",
     "prepublish": "npm test && npm run build"
   },
   "jshintConfig": {

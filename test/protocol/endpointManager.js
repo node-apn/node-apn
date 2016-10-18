@@ -16,7 +16,7 @@ describe("Endpoint Manager", function () {
       }),
     };
 
-    EndpointManager = require("../../lib/protocol/endpointManager")(fakes);
+    EndpointManager = require("../../src/protocol/endpointManager")(fakes);
   });
 
   describe("get stream", function () {

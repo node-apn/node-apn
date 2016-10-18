@@ -1,9 +1,9 @@
 "use strict";
 
-const parsePkcs12 = require("../../../lib/credentials/certificate/parsePkcs12");
+const parsePkcs12 = require("../../../src/credentials/certificate/parsePkcs12");
 
-const APNKey = require("../../../lib/credentials/certificate/APNKey");
-const APNCertificate = require("../../../lib/credentials/certificate/APNCertificate");
+const APNKey = require("../../../src/credentials/certificate/APNKey");
+const APNCertificate = require("../../../src/credentials/certificate/APNCertificate");
 
 const fs = require("fs");
 

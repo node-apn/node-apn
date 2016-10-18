@@ -11,7 +11,7 @@ describe("perpareToken", function () {
       resolve: sinon.stub(),
     };
 
-    prepareToken = require("../../../lib/credentials/token/prepare")(fakes);
+    prepareToken = require("../../../src/credentials/token/prepare")(fakes);
   });
 
   const testOptions = {

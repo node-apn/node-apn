@@ -2,12 +2,12 @@
 
 const Client = require("./client")();
 
-const Provider = require("../lib/provider")({
+const Provider = require("../src/provider")({
   Client,
 });
 
-const Notification = require("../lib/notification");
-const token = require("../lib/token");
+const Notification = require("../src/notification");
+const token = require("../src/token");
 
 module.exports = {
   Provider,

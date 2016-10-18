@@ -1,53 +1,55 @@
-const debug = require("debug")("apn");
+"use strict";
 
-const credentials = require("./lib/credentials")({
+var debug = require("debug")("apn");
+
+var credentials = require("./lib/credentials")({
 	logger: debug
 });
 
-const config = require("./lib/config")({
+var config = require("./lib/config")({
 	logger: debug,
 	prepareCertificate: credentials.certificate,
 	prepareToken: credentials.token,
-	prepareCA: credentials.ca,
+	prepareCA: credentials.ca
 });
 
-const tls = require("tls");
+var tls = require("tls");
 
-const framer     = require("http2/lib/protocol/framer");
-const compressor = require("http2/lib/protocol/compressor");
+var framer = require("http2/lib/protocol/framer");
+var compressor = require("http2/lib/protocol/compressor");
 
-const protocol = {
-	Serializer:   framer.Serializer,
+var protocol = {
+	Serializer: framer.Serializer,
 	Deserializer: framer.Deserializer,
-	Compressor:   compressor.Compressor,
+	Compressor: compressor.Compressor,
 	Decompressor: compressor.Decompressor,
-	Connection:   require("http2/lib/protocol/connection").Connection,
+	Connection: require("http2/lib/protocol/connection").Connection
 };
 
-const Endpoint = require("./lib/protocol/endpoint")({
-	tls,
-	protocol,
+var Endpoint = require("./lib/protocol/endpoint")({
+	tls: tls,
+	protocol: protocol
 });
 
-const EndpointManager = require("./lib/protocol/endpointManager")({
-	Endpoint,
+var EndpointManager = require("./lib/protocol/endpointManager")({
+	Endpoint: Endpoint
 });
 
-const Client = require("./lib/client")({
-  config,
-  EndpointManager,
+var Client = require("./lib/client")({
+	config: config,
+	EndpointManager: EndpointManager
 });
 
-const Provider = require("./lib/provider")({
-  Client,
+var Provider = require("./lib/provider")({
+	Client: Client
 });
 
-const Notification = require("./lib/notification");
+var Notification = require("./lib/notification");
 
-const token = require("./lib/token");
+var token = require("./lib/token");
 
 module.exports = {
-	Provider,
-	Notification,
-  token,
+	Provider: Provider,
+	Notification: Notification,
+	token: token
 };

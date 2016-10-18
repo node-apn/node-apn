@@ -8,8 +8,8 @@ describe("prepareCA", function() {
   before(function () {
     cert = fs.readFileSync("test/support/initializeTest.crt");
 
-    const resolve = require("../../../lib/credentials/resolve");
-    prepareCA = require("../../../lib/credentials/ca/prepare")({ resolve });
+    const resolve = require("../../../src/credentials/resolve");
+    prepareCA = require("../../../src/credentials/ca/prepare")({ resolve });
   });
 
   it("should load a single CA certificate from disk", function () {

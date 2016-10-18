@@ -1,4 +1,4 @@
-const token = require("../lib/token");
+const token = require("../src/token");
 
 describe("token", function () {
 

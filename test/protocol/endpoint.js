@@ -56,7 +56,7 @@ describe("Endpoint", function () {
     fakes.protocol.Compressor.returns(streams.compressor);
     fakes.protocol.Decompressor.returns(streams.decompressor);
 
-    Endpoint = require("../../lib/protocol/endpoint")(fakes);
+    Endpoint = require("../../src/protocol/endpoint")(fakes);
   });
 
   describe("connect", function () {
