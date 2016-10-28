@@ -121,7 +121,7 @@ Please include as much detail as possible - especially debug logs. If the proble
 
 ## Resources
 
-* [Local and Push Notification Programming Guide: APNs Provider API][pl]
+* [Local and Push Notification Programming Guide: APNs Overview][pl]
 * [Apple Technical Note: Troubleshooting Push Notifications][tn2265]
 * [List of Projects, Applications and Companies Using Node-apn][pacapn]
 
