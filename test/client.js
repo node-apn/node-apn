@@ -17,7 +17,7 @@ describe("Client", function () {
     fakes.EndpointManager.returns(fakes.endpointManager);
     fakes.endpointManager.shutdown = sinon.stub();
 
-    Client = require("../lib/client")(fakes);
+    Client = require("../src/client")(fakes);
   });
 
   describe("constructor", function () {

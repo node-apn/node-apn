@@ -16,7 +16,7 @@ describe("Provider", function() {
     fakes.client.write = sinon.stub();
     fakes.client.shutdown = sinon.stub();
 
-    Provider = require("../lib/provider")(fakes);
+    Provider = require("../src/provider")(fakes);
   });
 
   describe("constructor", function () {

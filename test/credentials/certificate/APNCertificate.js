@@ -1,7 +1,7 @@
 "use strict";
 
-const APNCertificate = require("../../../lib/credentials/certificate/APNCertificate");
-const APNKey = require("../../../lib/credentials/certificate/APNKey");
+const APNCertificate = require("../../../src/credentials/certificate/APNCertificate");
+const APNKey = require("../../../src/credentials/certificate/APNKey");
 const forge = require("node-forge");
 const fs = require("fs");
 

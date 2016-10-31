@@ -13,7 +13,7 @@ describe("config", function () {
       prepareCA: sinon.stub(),
     };
 
-    config = require("../lib/config")(fakes);
+    config = require("../src/config")(fakes);
   });
 
   it("supplies sensible defaults", function () {
