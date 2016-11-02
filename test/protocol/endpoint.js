@@ -38,7 +38,7 @@ describe("Endpoint", function () {
       decompressor: new stream.PassThrough(),
     };
 
-    // These streams should never actually pass writable -> readable 
+    // These streams should never actually pass writable -> readable
     // otherwise the tests create an infinite loop. The real streams terminate.
     // PassThrough is just an easy way to inspect the stream behaviour.
     sinon.stub(streams.socket, "pipe");
@@ -127,7 +127,7 @@ describe("Endpoint", function () {
 
           streams.socket.emit("secureConnect");
 
-          const HTTP2_PRELUDE = new Buffer("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n");
+          const HTTP2_PRELUDE = Buffer.from("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n");
 
           expect(streams.socket.write.firstCall).to.be.calledWith(HTTP2_PRELUDE);
         });
@@ -547,7 +547,7 @@ describe("Endpoint", function () {
     });
 
     context("with error", function () {
-      const debugData = new Buffer(6);
+      const debugData = Buffer.alloc(6);
       debugData.write("error!");
 
       const formattedError = "GOAWAY: PROTOCOL_ERROR error!";

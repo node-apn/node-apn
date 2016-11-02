@@ -163,7 +163,7 @@ describe("Client", function () {
           const notification = builtNotification();
           return client.write(notification, "abcd1234")
             .then(function () {
-              expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notification.body)));
+              expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer.from(notification.body)));
             });
         });
 
@@ -253,7 +253,7 @@ describe("Client", function () {
           fakes.endpointManager.getStream.onCall(1).returns(fakes.secondStream);
 
           promise = client.write(builtNotification(), "abcd1234");
-          
+
           setImmediate(() => {
             fakes.stream.emit("unprocessed");
           });
@@ -348,7 +348,7 @@ describe("Client", function () {
       });
 
       it("writes the notification data to the pipe", function () {
-        expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(notification.body)));
+        expect(fakes.stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer.from(notification.body)));
       });
     });
 
@@ -397,7 +397,7 @@ describe("Client", function () {
 
         it("writes the notification data for each stream", function () {
           fakes.streams.forEach( stream => {
-            expect(stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(builtNotification().body)));
+            expect(stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer.from(builtNotification().body)));
           });
         });
 
@@ -456,7 +456,7 @@ describe("Client", function () {
 
         it("writes the notification data for each stream", function () {
           fakes.streams.forEach( stream => {
-            expect(stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer(builtNotification().body)));
+            expect(stream._transform).to.be.calledWithMatch(actual => actual.equals(Buffer.from(builtNotification().body)));
           });
         });
 
@@ -728,7 +728,7 @@ function FakeStream(deviceId, statusCode, response) {
       this.emit("headers", {
         ":status": statusCode
       });
-      callback(null, new Buffer(JSON.stringify(response) || ""));
+      callback(null, Buffer.from(JSON.stringify(response) || ""));
     })
   });
   fakeStream.headers = sinon.stub();

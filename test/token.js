@@ -28,13 +28,13 @@ describe("token", function () {
   context("Buffer input", function() {
     context("contains valid token", function () {
       it("returns token as string", function () {
-        expect(token(new Buffer("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19c7", "hex")))
+        expect(token(Buffer.from("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19c7", "hex")))
           .to.equal("a9d0ed10e9cfd022a61cb08753f49c5a0b0dfb784697bf9f9d750a1003da19c7");
       });
     });
 
     it("throws when input is empty", function () {
-      expect(function () { token(new Buffer([])); }).to.throw(/invalid length/);
+      expect(function () { token(Buffer.from([])); }).to.throw(/invalid length/);
     });
   });
 });
