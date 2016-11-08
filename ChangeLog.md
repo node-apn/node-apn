@@ -1,5 +1,9 @@
 ## Changelog
 
+2.1.2:
+* Add TypeScript type definitions (#441, #465)
+* Update node-http2 fork to 3.3.6 and add stream.upstream not defined check (#444)
+
 2.1.1:
 * Fix broken logger (#438)
 * Use archive URL for forked node-http2 module (#433)
