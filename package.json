@@ -18,6 +18,7 @@
     "notifications"
   ],
   "main": "index.js",
+  "types": "index.d.ts",
   "bugs": {
     "email": "florian.reinhart@gmail.com",
     "url": "https://github.com/node-apn/node-apn/issues"
