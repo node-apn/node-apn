@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "http2": "https://github.com/node-apn/node-http2/archive/apn-2.0.0.tar.gz",
+    "http2": "https://github.com/node-apn/node-http2/archive/apn-2.1.2.tar.gz",
     "node-forge": "^0.6.20",
     "jsonwebtoken": "^7.1.9",
     "verror": "^1.8.1"
