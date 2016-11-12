@@ -26,24 +26,24 @@ const protocol = {
 
 const Endpoint = require("./lib/protocol/endpoint")({
   logger: debug("apn:endpoint"),
-  tls: tls,
-  protocol: protocol,
+  tls,
+  protocol
 });
 
 const EndpointManager = require("./lib/protocol/endpointManager")({
   logger: debug("apn:endpointManager"),
-  Endpoint: Endpoint
+  Endpoint
 });
 
 const Client = require("./lib/client")({
   logger: debug("apn:client"),
-  config: config,
-  EndpointManager: EndpointManager,
+  config,
+  EndpointManager
 });
 
 const Provider = require("./lib/provider")({
   logger: debug("apn:provider"),
-  Client: Client
+  Client
 });
 
 const Notification = require("./lib/notification")({
