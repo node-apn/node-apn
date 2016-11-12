@@ -25,7 +25,7 @@ Options:
 
  - `connectionRetryLimit` {Number} The maximum number of connection failures that will be tolerated before `apn.Provider` will "give up". [See below.](#connection-retry-limit) (Defaults to: 3)
 
- - `http2Logger`{Object} provide a [bunyan logger](https://www.npmjs.com/package/bunyan) to enable logging in the underlying [http2 module](https://www.npmjs.com/package/http2). See the [http2 readme](https://www.npmjs.com/package/http2#logging) for more information.
+ - `http2Logger` {Object} provide a [bunyan logger](https://www.npmjs.com/package/bunyan) to enable logging in the underlying [http2 module](https://www.npmjs.com/package/http2). See the [http2 readme](https://www.npmjs.com/package/http2#logging) for more information.
 
 #### Provider Certificates vs. Authentication Tokens
 

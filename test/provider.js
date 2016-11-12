@@ -8,8 +8,9 @@ describe("Provider", function() {
 
   beforeEach(function () {
     fakes = {
+      logger: () => {},
       Client: sinon.stub(),
-      client: new EventEmitter(),
+      client: new EventEmitter()
     };
 
     fakes.Client.returns(fakes.client);
@@ -125,7 +126,7 @@ describe("Provider", function() {
           const provider = new Provider( { address: "testapi" } );
 
           for(let i=0; i < fakes.resolutions.length; i++) {
-            fakes.client.write.onCall(i).returns(Promise.resolve(fakes.resolutions[i])); 
+            fakes.client.write.onCall(i).returns(Promise.resolve(fakes.resolutions[i]));
           }
 
           promise = provider.send(notificationDouble(), fakes.resolutions.map( res => res.device ));
@@ -154,7 +155,7 @@ describe("Provider", function() {
   });
 
   describe("shutdown", function () {
-    it("invokes shutdown on the client", function () { 
+    it("invokes shutdown on the client", function () {
       let provider = new Provider({});
       provider.shutdown();
 
