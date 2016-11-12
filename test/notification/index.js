@@ -1,6 +1,8 @@
 "use strict";
 
-var Notification = require("../../lib/notification");
+var Notification = require("../../lib/notification")({
+	logger: () => {}
+});
 var sinon = require("sinon");
 
 describe("Notification", function() {

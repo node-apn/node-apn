@@ -1,11 +1,11 @@
-const debug = require("debug")("apn");
+const debug = require("debug");
 
 const credentials = require("./lib/credentials")({
-  logger: debug
+  logger: debug("apn:credentials")
 });
 
 const config = require("./lib/config")({
-  logger: debug,
+  logger: debug("apn:config"),
   prepareCertificate: credentials.certificate,
   prepareToken: credentials.token,
   prepareCA: credentials.ca,
@@ -25,24 +25,30 @@ const protocol = {
 };
 
 const Endpoint = require("./lib/protocol/endpoint")({
-  tls,
-  protocol,
+  logger: debug("apn:endpoint"),
+  tls: tls,
+  protocol: protocol,
 });
 
 const EndpointManager = require("./lib/protocol/endpointManager")({
-  Endpoint,
+  logger: debug("apn:endpointManager"),
+  Endpoint: Endpoint
 });
 
 const Client = require("./lib/client")({
-  config,
-  EndpointManager,
+  logger: debug("apn:client"),
+  config: config,
+  EndpointManager: EndpointManager,
 });
 
 const Provider = require("./lib/provider")({
-  Client,
+  logger: debug("apn:provider"),
+  Client: Client
 });
 
-const Notification = require("./lib/notification");
+const Notification = require("./lib/notification")({
+  logger: debug("apn:notification")
+});
 
 const token = require("./lib/token");
 
