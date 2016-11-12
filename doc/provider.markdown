@@ -73,11 +73,11 @@ For **rejected** notifications the object will take the following form
 
 ```javascript
 {
-	device: "834c8b48e6254e47435d74720b1d4a13e3e57d0bf318333c284c1db8ce8ddc58",
-	status: "410",
-	response: {
-		reason: "Unregistered"
-	}
+  device: "834c8b48e6254e47435d74720b1d4a13e3e57d0bf318333c284c1db8ce8ddc58",
+  status: "410",
+  response: {
+    reason: "Unregistered"
+  }
 }
 ```
 
@@ -87,8 +87,8 @@ If a failed notification was instead caused by an **error** then it will have an
 
 ```javascript
 {
-	device: "834c8b48e6254e47435d74720b1d4a13e3e57d0bf318333c284c1db8ce8ddc58",
-	error: Error, // An Error object containing details about the failure.
+  device: "834c8b48e6254e47435d74720b1d4a13e3e57d0bf318333c284c1db8ce8ddc58",
+  error: Error, // An Error object containing details about the failure.
 }
 ```
 
@@ -99,12 +99,12 @@ If you wish to send notifications containing emoji or other multi-byte character
 
 ### connection.shutdown()
 
-Indicate to node-apn that it should close all open connections when the queue of pending notifications is fully drained. This will allow your application to terminate. 
+Indicate to node-apn that it should close all open connections when the queue of pending notifications is fully drained. This will allow your application to terminate.
 
 **Note:** If notifications are pushed after the connection has completely shutdown a new connection will be established. However, the shutdown flag will remain and after the notifications are sent the connections will be optimistically shutdown again. Do not rely on this behaviour, it's more of a quirk.
 
 [provider-api]: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html
 [provider-auth-tokens]: https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html#//apple_ref/doc/uid/TP40008194-CH11-SW1
-[http2-response]: 
+[http2-response]:
 https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html#//apple_ref/doc/uid/TP40008194-CH11-SW2
 [jwt]: https://jwt.io

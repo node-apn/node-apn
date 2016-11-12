@@ -37,7 +37,7 @@ node-apn
 
 [npm][] is the preferred installation method:
 
-	$ npm install apn
+  $ npm install apn
 
 ## Quick Start
 
@@ -56,12 +56,12 @@ Create a new connection to the Apple Push Notification provider API, passing a d
 
 ```javascript
 var options = {
-	token: {
-		key: "path/to/key.p8",
-		keyId: "T0K3NK3Y1D",
-		teamId: "T34M1D",
-	},
-	production: false,
+  token: {
+    key: "path/to/key.p8",
+    keyId: "T0K3NK3Y1D",
+    teamId: "T34M1D",
+  },
+  production: false,
 };
 
 var apnProvider = new apn.Provider(options);
@@ -97,7 +97,7 @@ Send the notification to the API with `send`, which returns a promise.
 
 ```javascript
 apnProvider.send(note, deviceToken).then( (result) => {
-	// see documentation for an explanation of result
+  // see documentation for an explanation of result
 });
 ```
 

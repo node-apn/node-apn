@@ -6,119 +6,119 @@ const APNCertificate = require("../../../lib/credentials/certificate/APNCertific
 const APNKey = require("../../../lib/credentials/certificate/APNKey");
 
 describe("parseCredentials", function() {
-	let fakes, parseCredentials;
-	
-	const pfxKey = new APNKey({n: 1, e: 1 });
-	const pfxCert = new APNCertificate({publicKey: {}, validity: {}, subject: {} });
+  let fakes, parseCredentials;
 
-	const pemKey = new APNKey({n: 2, e: 1 });
-	const pemCert = new APNCertificate({publicKey: {}, validity: {}, subject: {} });
-	
-	beforeEach(function() {
-		fakes = {
-			parsePkcs12: sinon.stub(),
-			parsePemKey: sinon.stub(),
-			parsePemCert: sinon.stub(),
-		};
+  const pfxKey = new APNKey({n: 1, e: 1 });
+  const pfxCert = new APNCertificate({publicKey: {}, validity: {}, subject: {} });
 
-		fakes.parsePemKey.withArgs("pemkey").returns(pemKey);
+  const pemKey = new APNKey({n: 2, e: 1 });
+  const pemCert = new APNCertificate({publicKey: {}, validity: {}, subject: {} });
 
-		fakes.parsePemKey.withArgs("pemcert").returns(pemCert);
+  beforeEach(function() {
+    fakes = {
+      parsePkcs12: sinon.stub(),
+      parsePemKey: sinon.stub(),
+      parsePemCert: sinon.stub(),
+    };
 
-		parseCredentials = require("../../../lib/credentials/certificate/parse")(fakes);
-	});
+    fakes.parsePemKey.withArgs("pemkey").returns(pemKey);
 
-	describe("with PFX file", function() {
-		it("returns the parsed key", function() {
-			fakes.parsePkcs12.withArgs("pfxData").returns({ key: pfxKey, certificates: [pfxCert] });
+    fakes.parsePemKey.withArgs("pemcert").returns(pemCert);
 
-			const parsed = parseCredentials({ pfx: "pfxData" });
-			expect(parsed.key).to.be.an.instanceof(APNKey);
-		});
+    parseCredentials = require("../../../lib/credentials/certificate/parse")(fakes);
+  });
 
-		it("returns the parsed certificates", function() {
-			fakes.parsePkcs12.withArgs("pfxData").returns({ key: pfxKey, certificates: [pfxCert] });
+  describe("with PFX file", function() {
+    it("returns the parsed key", function() {
+      fakes.parsePkcs12.withArgs("pfxData").returns({ key: pfxKey, certificates: [pfxCert] });
 
-			const parsed = parseCredentials({ pfx: "pfxData" });
-			expect(parsed.certificates[0]).to.be.an.instanceof(APNCertificate);
-		});
+      const parsed = parseCredentials({ pfx: "pfxData" });
+      expect(parsed.key).to.be.an.instanceof(APNKey);
+    });
 
-		describe("having passphrase", function() {
-			beforeEach(function() {
-				fakes.parsePkcs12.withArgs("encryptedPfxData", "apntest").returns({ key: pfxKey, certificates: [pfxCert] });
-				fakes.parsePkcs12.withArgs("encryptedPfxData", sinon.match.any).throws(new Error("unable to read credentials, incorrect passphrase"));
-			});
-			
-			it("returns the parsed key", function() {
-				const parsed = parseCredentials({ pfx: "encryptedPfxData", passphrase: "apntest" });
-				expect(parsed.key).to.be.an.instanceof(APNKey);
-			});
+    it("returns the parsed certificates", function() {
+      fakes.parsePkcs12.withArgs("pfxData").returns({ key: pfxKey, certificates: [pfxCert] });
 
-			it("throws when passphrase is incorrect", function() {
-				expect(function() {
-					parseCredentials({ pfx: "encryptedPfxData", passphrase: "incorrectpassphrase" });
-				}).to.throw(/incorrect passphrase/);
-			});
+      const parsed = parseCredentials({ pfx: "pfxData" });
+      expect(parsed.certificates[0]).to.be.an.instanceof(APNCertificate);
+    });
 
-			it("throws when passphrase is not supplied", function() {
-				expect(function() {
-					parseCredentials({ pfx: "encryptedPfxData" });
-				}).to.throw(/incorrect passphrase/);
-			});
-		});
-	});
+    describe("having passphrase", function() {
+      beforeEach(function() {
+        fakes.parsePkcs12.withArgs("encryptedPfxData", "apntest").returns({ key: pfxKey, certificates: [pfxCert] });
+        fakes.parsePkcs12.withArgs("encryptedPfxData", sinon.match.any).throws(new Error("unable to read credentials, incorrect passphrase"));
+      });
 
-	describe("with PEM key", function() {
-		it("returns the parsed key", function() {
-			fakes.parsePemKey.withArgs("pemKeyData").returns(pemKey);
+      it("returns the parsed key", function() {
+        const parsed = parseCredentials({ pfx: "encryptedPfxData", passphrase: "apntest" });
+        expect(parsed.key).to.be.an.instanceof(APNKey);
+      });
 
-			const parsed = parseCredentials({ key: "pemKeyData" });
-			expect(parsed.key).to.be.an.instanceof(APNKey);
-		});
+      it("throws when passphrase is incorrect", function() {
+        expect(function() {
+          parseCredentials({ pfx: "encryptedPfxData", passphrase: "incorrectpassphrase" });
+        }).to.throw(/incorrect passphrase/);
+      });
 
-		describe("having passphrase", function() {
-			beforeEach(function() {
-				fakes.parsePemKey.withArgs("encryptedPemKeyData", "apntest").returns(pemKey);
-				fakes.parsePemKey.withArgs("encryptedPemKeyData", sinon.match.any).throws(new Error("unable to load key, incorrect passphrase"));
-			});
+      it("throws when passphrase is not supplied", function() {
+        expect(function() {
+          parseCredentials({ pfx: "encryptedPfxData" });
+        }).to.throw(/incorrect passphrase/);
+      });
+    });
+  });
 
-			it("returns the parsed key", function() {
-				const parsed = parseCredentials({ key: "encryptedPemKeyData", passphrase: "apntest" });
-				expect(parsed.key).to.be.an.instanceof(APNKey);
-			});
+  describe("with PEM key", function() {
+    it("returns the parsed key", function() {
+      fakes.parsePemKey.withArgs("pemKeyData").returns(pemKey);
 
-			it("throws when passphrase is incorrect", function() {
-				expect(function() {
-					parseCredentials({ key: "encryptedPemKeyData", passphrase: "incorrectpassphrase" });
-				}).to.throw(/incorrect passphrase/);
-			});
+      const parsed = parseCredentials({ key: "pemKeyData" });
+      expect(parsed.key).to.be.an.instanceof(APNKey);
+    });
 
-			it("throws when passphrase is not supplied", function() {
-				expect(function() {
-					parseCredentials({ key: "encryptedPemKeyData" });
-				}).to.throw(/incorrect passphrase/);
-			});
-		});
-	});
+    describe("having passphrase", function() {
+      beforeEach(function() {
+        fakes.parsePemKey.withArgs("encryptedPemKeyData", "apntest").returns(pemKey);
+        fakes.parsePemKey.withArgs("encryptedPemKeyData", sinon.match.any).throws(new Error("unable to load key, incorrect passphrase"));
+      });
 
-	describe("with PEM certificate", function() {
-		it("returns the parsed certificate", function() {
-			fakes.parsePemCert.withArgs("pemCertData").returns([pemCert]);
+      it("returns the parsed key", function() {
+        const parsed = parseCredentials({ key: "encryptedPemKeyData", passphrase: "apntest" });
+        expect(parsed.key).to.be.an.instanceof(APNKey);
+      });
 
-			const parsed = parseCredentials({ cert: "pemCertData" });
-			expect(parsed.certificates[0]).to.be.an.instanceof(APNCertificate);
-		});
-	});
+      it("throws when passphrase is incorrect", function() {
+        expect(function() {
+          parseCredentials({ key: "encryptedPemKeyData", passphrase: "incorrectpassphrase" });
+        }).to.throw(/incorrect passphrase/);
+      });
 
-	describe("both PEM and PFX data is supplied", function() {
-		it("it prefers PFX to PEM", function() {
-			fakes.parsePkcs12.withArgs("pfxData").returns({ key: pfxKey, certificates: [pfxCert] });
-			fakes.parsePemKey.withArgs("pemKeyData").returns(pemKey);
-			fakes.parsePemCert.withArgs("pemCertData").returns([pemCert]);
+      it("throws when passphrase is not supplied", function() {
+        expect(function() {
+          parseCredentials({ key: "encryptedPemKeyData" });
+        }).to.throw(/incorrect passphrase/);
+      });
+    });
+  });
 
-			const parsed = parseCredentials({ pfx: "pfxData", key: "pemKeyData", cert: "pemCertData"});
-			expect(parsed.key).to.equal(pfxKey);
-			expect(parsed.certificates[0]).to.equal(pfxCert);
-		});
-	});
+  describe("with PEM certificate", function() {
+    it("returns the parsed certificate", function() {
+      fakes.parsePemCert.withArgs("pemCertData").returns([pemCert]);
+
+      const parsed = parseCredentials({ cert: "pemCertData" });
+      expect(parsed.certificates[0]).to.be.an.instanceof(APNCertificate);
+    });
+  });
+
+  describe("both PEM and PFX data is supplied", function() {
+    it("it prefers PFX to PEM", function() {
+      fakes.parsePkcs12.withArgs("pfxData").returns({ key: pfxKey, certificates: [pfxCert] });
+      fakes.parsePemKey.withArgs("pemKeyData").returns(pemKey);
+      fakes.parsePemCert.withArgs("pemCertData").returns([pemCert]);
+
+      const parsed = parseCredentials({ pfx: "pfxData", key: "pemKeyData", cert: "pemCertData"});
+      expect(parsed.key).to.equal(pfxKey);
+      expect(parsed.certificates[0]).to.equal(pfxCert);
+    });
+  });
 });

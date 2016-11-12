@@ -29,7 +29,7 @@ apn.Client.write(notification, device)
 
 #### `sent`:
 ```javascript
-{ 
+{
   device: device
 }
 ```
@@ -37,7 +37,7 @@ apn.Client.write(notification, device)
 #### `rejected`:
 ```javascript
 {
-  device: device, 
+  device: device,
   status: "410", // For implementation reasons, the status code must be a string, not a number
   response: {
     reason: "Unregistered"

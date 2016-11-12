@@ -13,7 +13,7 @@ It's worth it!
 * `apn.Connection` has been renamed to `apn.Provider`
 * `apn.Feedback` has been removed
 * `apn.Device` has been removed - all tokens are now hex-encoded strings
-* `apn.token` is provided to validate tokens and convert from `Buffer` if 
+* `apn.token` is provided to validate tokens and convert from `Buffer` if
   necessary
 * Notifications are now required to have an associated `topic`
 * `pushNotification(notification, tokens)` is now simply, `send(notification, recipients)`
@@ -28,15 +28,15 @@ Below is an example use of v1.7 and how it would be converted to use v2.0
 
 ```javascript
 function setup() {
-    var connection = new apn.Connection(configuration);
-    connection.on("transmissionError", notificationFailed);
+  var connection = new apn.Connection(configuration);
+  connection.on("transmissionError", notificationFailed);
 }
 
 func sendNotification(user) {
-    var note = new apn.Notification();
-    note.alert = "Hello " + user.name;
+  var note = new apn.Notification();
+  note.alert = "Hello " + user.name;
 
-    connection.pushNotification(note, user.token);
+  connection.pushNotification(note, user.token);
 }
 ```
 
@@ -44,28 +44,28 @@ func sendNotification(user) {
 
 ```javascript
 function setup() {
-    let connection = new apn.Provider(configuration);
+  let connection = new apn.Provider(configuration);
 }
 
 func sendNotification(user) {
-    let note = new apn.Notification();
-    note.alert = "Hello " + user.name;
-    note.topic = "io.github.node-apn.test"
+  let note = new apn.Notification();
+  note.alert = "Hello " + user.name;
+  note.topic = "io.github.node-apn.test"
 
-    connection.send(note, user.token).then( (response) => {
-        response.sent.forEach( (token) => {
-            notificationSent(user, token);
-        });
-        response.failed.forEach( (failure) => {
-            if (failure.error) {
-                // A transport-level error occurred (e.g. network problem)
-                notificationError(user, token, failure.error);
-            } else {
-                // `failure.status` is the HTTP status code
-                // `failure.response` is the JSON payload 
-                notificationFailed(user, token, failure.status, failure.response);
-            }
-        });
+  connection.send(note, user.token).then( (response) => {
+    response.sent.forEach( (token) => {
+      notificationSent(user, token);
     });
+    response.failed.forEach( (failure) => {
+      if (failure.error) {
+        // A transport-level error occurred (e.g. network problem)
+        notificationError(user, token, failure.error);
+      } else {
+        // `failure.status` is the HTTP status code
+        // `failure.response` is the JSON payload
+        notificationFailed(user, token, failure.status, failure.response);
+      }
+    });
+  });
 }
 ```

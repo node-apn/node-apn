@@ -1,9 +1,9 @@
 {
-	"expr": true,
-	"strict": false,
-	"mocha": true,
-	"node": true,
-	"globals": {
-		"expect": true
-	}
+  "expr": true,
+  "strict": false,
+  "mocha": true,
+  "node": true,
+  "globals": {
+    "expect": true
+  }
 }
