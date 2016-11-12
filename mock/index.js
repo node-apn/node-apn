@@ -6,7 +6,7 @@ const Client = require("./client")({
 
 const Provider = require("../lib/provider")({
   logger: () => {},
-  Client: Client,
+  Client
 });
 
 const Notification = require("../lib/notification")({
@@ -18,5 +18,5 @@ module.exports = {
   Provider,
   Notification,
   Client,
-  token,
+  token
 };
