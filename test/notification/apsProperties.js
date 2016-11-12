@@ -1,6 +1,8 @@
 "use strict";
 
-const Notification = require("../../lib/notification");
+const Notification = require("../../lib/notification")({
+  logger: () => {}
+});
 
 describe("Notification", function() {
 

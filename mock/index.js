@@ -1,17 +1,22 @@
 "use strict";
 
-const Client = require("./client")();
-
-const Provider = require("../lib/provider")({
-  Client,
+const Client = require("./client")({
+  logger: () => {}
 });
 
-const Notification = require("../lib/notification");
+const Provider = require("../lib/provider")({
+  logger: () => {},
+  Client
+});
+
+const Notification = require("../lib/notification")({
+  logger: () => {}
+});
 const token = require("../lib/token");
 
 module.exports = {
   Provider,
   Notification,
   Client,
-  token,
+  token
 };

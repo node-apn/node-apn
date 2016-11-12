@@ -25,6 +25,8 @@ Options:
 
  - `connectionRetryLimit` {Number} The maximum number of connection failures that will be tolerated before `apn.Provider` will "give up". [See below.](#connection-retry-limit) (Defaults to: 3)
 
+ - `http2Logger` {Object} provide a [bunyan logger](https://www.npmjs.com/package/bunyan) to enable logging in the underlying [http2 module](https://www.npmjs.com/package/http2). See the [http2 readme](https://www.npmjs.com/package/http2#logging) for more information.
+
 #### Provider Certificates vs. Authentication Tokens
 
 Apple have introduced a new means of authentication with the APNs - [Provider Authentication Tokens][provider-auth-tokens]. These replace the old-style Certificate/Key pairs with tokens based on the [JWT][jwt] standard. The new system is superior in a number of ways:
