@@ -9,6 +9,7 @@ describe("perpareToken", function () {
     fakes = {
       sign: sinon.stub(),
       resolve: sinon.stub(),
+      decode: sinon.stub()
     };
 
     prepareToken = require("../../../lib/credentials/token/prepare")(fakes);
@@ -20,17 +21,17 @@ describe("perpareToken", function () {
     teamId: "abcTeamId",
   };
 
-  context("with valid options", function() {
+  context("with valid options", function () {
     let token;
 
-    beforeEach(function() {
+    beforeEach(function () {
       fakes.resolve.withArgs("key.pem").returns("keyData");
       fakes.sign.returns("generated-token");
 
       token = prepareToken(testOptions);
     });
 
-    describe("return value", function (){
+    describe("return value", function () {
 
       describe("`current` property", function () {
         it("is initialized to a signed token", function () {
@@ -62,10 +63,10 @@ describe("perpareToken", function () {
           expect(token.generation).to.equal(generation + 1);
         });
 
-        it("invokes the sign method with the correct arguments", function (){
+        it("invokes the sign method with the correct arguments", function () {
           expect(fakes.sign).to.have.been.calledWith(
             sinon.match({}), // empty payload
-            "keyData", 
+            "keyData",
             sinon.match({
               algorithm: "ES256",
               issuer: "abcTeamId",
@@ -107,6 +108,33 @@ describe("perpareToken", function () {
           expect(token.current).to.equal("generated-token");
         });
       });
+
+      context("`isExpired` called with expired token", function () {
+        let token;
+        beforeEach(function () {
+          fakes.resolve.withArgs("key.pem").returns("keyData");
+          fakes.decode.onCall(0).returns({iat:Math.floor(Date.now() / 1000)-1});
+          token = prepareToken(testOptions);
+        });
+
+        it("token is not expired", function () {
+          expect(token.isExpired(0)).to.equal(true);
+        });
+      });
+
+      context("`isExpired` called with valid token", function () {
+        let token;
+        beforeEach(function () {
+          fakes.resolve.withArgs("key.pem").returns("keyData");
+          fakes.decode.onCall(0).returns({iat:Math.floor(Date.now() / 1000)});
+          token = prepareToken(testOptions);
+        });
+
+        it("token is not expired", function () {
+          expect(token.isExpired(5)).to.equal(false);
+        });
+      });
+      
     });
   });
 
