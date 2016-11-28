@@ -122,6 +122,7 @@ describe("Client", function () {
                 generation: 0,
                 current: "fake-token",
                 regenerate: sinon.stub(),
+                isExpired: sinon.stub()
               };
 
               client = new Client( { address: "testapi", token: fakes.token } );
@@ -521,6 +522,7 @@ describe("Client", function () {
           generation: 0,
           current: "fake-token",
           regenerate: sinon.stub(),
+          isExpired: sinon.stub()
         }
 
         fakes.streams = [
