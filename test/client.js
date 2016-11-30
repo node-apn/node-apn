@@ -661,6 +661,20 @@ describe("Client", function () {
               expect(fakes.token.generation).to.equal(1);
             });
         });
+
+        it("internal server error", function () {
+          fakes.stream = new FakeStream("abcd1234", "500", { reason: "InternalServerError"});
+          fakes.stream.connection = sinon.stub();
+          fakes.stream.connection.close = sinon.stub();
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+          let client = new Client({
+            address: "testapi",
+            token: fakes.token
+          });
+          
+          return expect(client.write(builtNotification(), "abcd1234")).to.eventually.have.deep.property("error.jse_shortmsg","Error 500, stream ended unexpectedly");
+        });
       });
     });
   });
