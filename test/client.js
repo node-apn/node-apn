@@ -4,6 +4,32 @@ const sinon = require("sinon");
 const stream = require("stream");
 const EventEmitter = require("events");
 
+function builtNotification() {
+  return {
+    headers: {},
+    body: JSON.stringify({ aps: { badge: 1 } }),
+  };
+}
+
+function FakeStream(deviceId, statusCode, response) {
+  const fakeStream = new stream.Transform({
+    transform: sinon.spy(function(chunk, encoding, callback) {
+      expect(this.headers).to.be.calledOnce;
+
+      const headers = this.headers.firstCall.args[0];
+      expect(headers[":path"].substring(10)).to.equal(deviceId);
+
+      this.emit("headers", {
+        ":status": statusCode
+      });
+      callback(null, Buffer.from(JSON.stringify(response) || ""));
+    })
+  });
+  fakeStream.headers = sinon.stub();
+
+  return fakeStream;
+}
+
 describe("Client", function () {
   let fakes, Client;
 
@@ -663,7 +689,7 @@ describe("Client", function () {
         });
 
         it("internal server error", function () {
-          fakes.stream = new FakeStream("abcd1234", "500", { reason: "InternalServerError"});
+          fakes.stream = new FakeStream("abcd1234", "500", { reason: "InternalServerError" });
           fakes.stream.connection = sinon.stub();
           fakes.stream.connection.close = sinon.stub();
           fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
@@ -744,29 +770,3 @@ describe("Client", function () {
     });
   });
 });
-
-function builtNotification() {
-  return {
-    headers: {},
-    body: JSON.stringify({ aps: { badge: 1 } }),
-  };
-}
-
-function FakeStream(deviceId, statusCode, response) {
-  const fakeStream = new stream.Transform({
-    transform: sinon.spy(function(chunk, encoding, callback) {
-      expect(this.headers).to.be.calledOnce;
-
-      const headers = this.headers.firstCall.args[0];
-      expect(headers[":path"].substring(10)).to.equal(deviceId);
-
-      this.emit("headers", {
-        ":status": statusCode
-      });
-      callback(null, Buffer.from(JSON.stringify(response) || ""));
-    })
-  });
-  fakeStream.headers = sinon.stub();
-
-  return fakeStream;
-}
