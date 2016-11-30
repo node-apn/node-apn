@@ -642,6 +642,25 @@ describe("Client", function () {
 
           return expect(client.write(builtNotification(), "adfe5969")).to.eventually.have.property("status", "403");
         });
+
+        it("regenerate token", function () {
+          fakes.stream = new FakeStream("abcd1234", "200");
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+          fakes.token.isExpired = function (current, validSeconds) {
+            return true;
+          }
+
+          let client = new Client({
+            address: "testapi",
+            token: fakes.token
+          });
+          
+          return client.write(builtNotification(), "abcd1234")
+            .then(function () {
+              expect(fakes.token.generation).to.equal(1);
+            });
+        });
       });
     });
   });
