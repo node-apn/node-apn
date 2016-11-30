@@ -18,23 +18,23 @@ describe("Endpoint", function () {
   beforeEach(function () {
     fakes = {
       tls: {
-        connect: sinon.stub(),
+        connect: sinon.stub()
       },
       protocol: {
-        Connection:   sinon.stub(),
-        Serializer:   sinon.stub(),
+        Connection: sinon.stub(),
+        Serializer: sinon.stub(),
         Deserializer: sinon.stub(),
-        Compressor:   sinon.stub(),
+        Compressor: sinon.stub(),
         Decompressor: sinon.stub(),
       },
     };
 
     streams = {
-      socket:       new stream.PassThrough(),
-      connection:   new stream.PassThrough(),
-      serializer:   new stream.PassThrough(),
+      socket: new stream.PassThrough(),
+      connection: new stream.PassThrough(),
+      serializer: new stream.PassThrough(),
       deserializer: new stream.PassThrough(),
-      compressor:   new stream.PassThrough(),
+      compressor: new stream.PassThrough(),
       decompressor: new stream.PassThrough(),
     };
 
@@ -74,9 +74,13 @@ describe("Endpoint", function () {
 
           beforeEach(function () {
             new Endpoint({
-              address: "localtest", host: "127.0.0.1", port: 443,
-              pfx: "pfxData", cert: "certData",
-              key: "keyData", passphrase: "p4ssphr4s3"
+              address: "localtest",
+              host: "127.0.0.1",
+              port: 443,
+              pfx: "pfxData",
+              cert: "certData",
+              key: "keyData",
+              passphrase: "p4ssphr4s3"
             });
           });
 
@@ -105,17 +109,18 @@ describe("Endpoint", function () {
         });
 
         context("host is not omitted", function () {
-            it("falls back on 'address'", function () {
-              new Endpoint({
-                address: "localtest", port: 443
-              });
-
-              expect(fakes.tls.connect).to.be.calledWith(sinon.match({
-                host: "localtest",
-                port: 443,
-                servername: "localtest"
-              }));
+          it("falls back on 'address'", function () {
+            new Endpoint({
+              address: "localtest",
+              port: 443
             });
+
+            expect(fakes.tls.connect).to.be.calledWith(sinon.match({
+              host: "localtest",
+              port: 443,
+              servername: "localtest"
+            }));
+          });
         });
       });
 
@@ -372,10 +377,11 @@ describe("Endpoint", function () {
       streams.connection._streamIds[0] = new stream.PassThrough();
 
       promises = [];
+
       function erroringStream() {
         let s = new stream.PassThrough();
-        promises.push(new Promise( resolve => {
-          s.on("error", function(err) {
+        promises.push(new Promise(resolve => {
+          s.on("error", function (err) {
             resolve(err);
           });
         }));
@@ -419,7 +425,7 @@ describe("Endpoint", function () {
         streams.connection.emit("error", "PROTOCOL_ERROR");
         streams.socket.emit("close", false);
 
-        return Promise.all(promises).then( responses => {
+        return Promise.all(promises).then(responses => {
           expect(responses[0]).to.match(/connection error: PROTOCOL_ERROR/);
           expect(responses[1]).to.match(/connection error: PROTOCOL_ERROR/);
           expect(responses[2]).to.match(/connection error: PROTOCOL_ERROR/);
@@ -432,7 +438,7 @@ describe("Endpoint", function () {
         streams.serializer.emit("error", "PROTOCOL_ERROR");
         streams.socket.emit("close", false);
 
-        return Promise.all(promises).then( responses => {
+        return Promise.all(promises).then(responses => {
           expect(responses[0]).to.match(/serializer error: PROTOCOL_ERROR/);
           expect(responses[1]).to.match(/serializer error: PROTOCOL_ERROR/);
           expect(responses[2]).to.match(/serializer error: PROTOCOL_ERROR/);
@@ -445,7 +451,7 @@ describe("Endpoint", function () {
         streams.compressor.emit("error", "PROTOCOL_ERROR");
         streams.socket.emit("close", false);
 
-        return Promise.all(promises).then( responses => {
+        return Promise.all(promises).then(responses => {
           expect(responses[0]).to.match(/compressor error: PROTOCOL_ERROR/);
           expect(responses[1]).to.match(/compressor error: PROTOCOL_ERROR/);
           expect(responses[2]).to.match(/compressor error: PROTOCOL_ERROR/);
@@ -458,7 +464,7 @@ describe("Endpoint", function () {
         streams.deserializer.emit("error", "PROTOCOL_ERROR");
         streams.socket.emit("close", false);
 
-        return Promise.all(promises).then( responses => {
+        return Promise.all(promises).then(responses => {
           expect(responses[0]).to.match(/deserializer error: PROTOCOL_ERROR/);
           expect(responses[1]).to.match(/deserializer error: PROTOCOL_ERROR/);
           expect(responses[2]).to.match(/deserializer error: PROTOCOL_ERROR/);
@@ -471,7 +477,7 @@ describe("Endpoint", function () {
         streams.decompressor.emit("error", "PROTOCOL_ERROR");
         streams.socket.emit("close", false);
 
-        return Promise.all(promises).then( responses => {
+        return Promise.all(promises).then(responses => {
           expect(responses[0]).to.match(/decompressor error: PROTOCOL_ERROR/);
           expect(responses[1]).to.match(/decompressor error: PROTOCOL_ERROR/);
           expect(responses[2]).to.match(/decompressor error: PROTOCOL_ERROR/);
@@ -492,7 +498,9 @@ describe("Endpoint", function () {
 
     context("no error", function () {
       it("does not emit an error", function () {
-        streams.connection.emit("GOAWAY", { error: "NO_ERROR" });
+        streams.connection.emit("GOAWAY", {
+          error: "NO_ERROR"
+        });
 
         expect(errorSpy).to.not.be.called;
       });
@@ -513,7 +521,10 @@ describe("Endpoint", function () {
           let spy = sinon.spy();
           streams.connection._streamIds[5].on("unprocessed", spy);
 
-          streams.connection.emit("GOAWAY", { error: "NO_ERROR", last_stream: 5 });
+          streams.connection.emit("GOAWAY", {
+            error: "NO_ERROR",
+            last_stream: 5
+          });
           streams.socket.emit("close");
 
           expect(spy).to.not.be.called;
@@ -526,7 +537,10 @@ describe("Endpoint", function () {
           let spy9 = sinon.spy();
           streams.connection._streamIds[9].on("unprocessed", spy9);
 
-          streams.connection.emit("GOAWAY", { error: "NO_ERROR", last_stream: 5 });
+          streams.connection.emit("GOAWAY", {
+            error: "NO_ERROR",
+            last_stream: 5
+          });
           streams.socket.emit("close");
 
           expect(spy7).to.be.calledOnce;
@@ -538,7 +552,10 @@ describe("Endpoint", function () {
           streams.connection._streamIds[5].on("error", errorSpy);
           streams.connection._streamIds[7].on("error", errorSpy);
 
-          streams.connection.emit("GOAWAY", { error: "NO_ERROR", last_stream: 7 });
+          streams.connection.emit("GOAWAY", {
+            error: "NO_ERROR",
+            last_stream: 7
+          });
           streams.socket.emit("close");
 
           expect(errorSpy).to.not.be.called;
@@ -553,7 +570,10 @@ describe("Endpoint", function () {
       const formattedError = "GOAWAY: PROTOCOL_ERROR error!";
 
       beforeEach(function () {
-        frame = { error: "PROTOCOL_ERROR", debug_data: debugData };
+        frame = {
+          error: "PROTOCOL_ERROR",
+          debug_data: debugData
+        };
       });
 
       it("emits an error with the type and debug data", function () {
@@ -723,6 +743,38 @@ describe("Endpoint", function () {
       endpoint.destroy();
 
       expect(streams.socket.destroy).to.be.called.once;
+    });
+  });
+
+  describe("ping", function () {
+    let endpoint;
+    beforeEach(function () {
+      streams.connection.ping = (a) => {};
+      sinon.stub(streams.connection, "ping", (callback) => {
+        callback();
+      });
+      this.clock = sinon.useFakeTimers();
+      endpoint = new Endpoint({
+        heartBeat: 1
+      });
+    });
+    afterEach(function () {
+      this.clock.restore();
+    });
+
+    it("should update last success pinged time", function () {
+      this.clock.tick(10);
+      expect(endpoint._lastSuccessPingedTime).to.not.equal(null);
+    });
+
+    it("should throw error when pinged failed", function () {
+      endpoint._lastSuccessPingedTime = Date.now() - endpoint._PingedThreshold;
+      try {
+        this.clock.tick(10);
+      } catch (error) {
+        var e = error;
+      }
+      expect(endpoint.lastError).to.have.string("Not receiving Ping response after");
     });
   });
 });
