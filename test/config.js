@@ -29,7 +29,7 @@ describe("config", function () {
       port: 443,
       rejectUnauthorized: true,
       connectionRetryLimit: 10,
-      heartBeat: 60000
+      heartBeat: 60000,
     });
   });
 

@@ -9,7 +9,7 @@ describe("perpareToken", function () {
     fakes = {
       sign: sinon.stub(),
       resolve: sinon.stub(),
-      decode: sinon.stub()
+      decode: sinon.stub(),
     };
 
     prepareToken = require("../../../lib/credentials/token/prepare")(fakes);
@@ -21,17 +21,17 @@ describe("perpareToken", function () {
     teamId: "abcTeamId",
   };
 
-  context("with valid options", function () {
+  context("with valid options", function() {
     let token;
 
-    beforeEach(function () {
+    beforeEach(function() {
       fakes.resolve.withArgs("key.pem").returns("keyData");
       fakes.sign.returns("generated-token");
 
       token = prepareToken(testOptions);
     });
 
-    describe("return value", function () {
+    describe("return value", function (){
 
       describe("`current` property", function () {
         it("is initialized to a signed token", function () {
@@ -63,7 +63,7 @@ describe("perpareToken", function () {
           expect(token.generation).to.equal(generation + 1);
         });
 
-        it("invokes the sign method with the correct arguments", function () {
+        it("invokes the sign method with the correct arguments", function (){
           expect(fakes.sign).to.have.been.calledWith(
             sinon.match({}), // empty payload
             "keyData",
