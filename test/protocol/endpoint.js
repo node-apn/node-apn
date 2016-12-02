@@ -768,7 +768,7 @@ describe("Endpoint", function () {
     });
 
     it("should throw error when pinged failed", function () {
-      endpoint._lastSuccessPingedTime = Date.now() - endpoint._PingedThreshold;
+      endpoint._lastSuccessPingedTime = Date.now() - endpoint._pingedThreshold;
       try {
         this.clock.tick(10);
       } catch (error) {
