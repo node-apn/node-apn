@@ -66,7 +66,7 @@ describe("perpareToken", function () {
         it("invokes the sign method with the correct arguments", function (){
           expect(fakes.sign).to.have.been.calledWith(
             sinon.match({}), // empty payload
-            "keyData",
+            "keyData", 
             sinon.match({
               algorithm: "ES256",
               issuer: "abcTeamId",
