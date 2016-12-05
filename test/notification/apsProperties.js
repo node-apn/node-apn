@@ -673,6 +673,32 @@ describe("Notification", function() {
       });
     });
 
+    describe("thread-id", function() {
+      it("defaults to undefined", function() {
+        expect(compiledOutput()).to.not.have.deep.property("aps.thread\-id");
+      });
+
+      it("can be set to a string", function() {
+        note.threadId = "the-thread-id";
+
+        expect(compiledOutput()).to.have.deep.property("aps.thread\-id", "the-thread-id");
+      });
+
+      it("can be set to undefined", function() {
+        note.threadId = "the-thread-id";
+        note.threadId = undefined;
+
+        expect(compiledOutput()).to.not.have.deep.property("aps.thread\-id");
+      });
+
+      describe("setThreadId", function () {
+        it("is chainable", function () {
+          expect(note.setThreadId("the-thread-id")).to.equal(note);
+          expect(compiledOutput()).to.have.deep.property("aps.thread\-id", "the-thread-id");
+        });
+      });
+    });
+
     context("when no aps properties are set", function() {
       it("is not present", function() {
         expect(compiledOutput().aps).to.be.undefined;
