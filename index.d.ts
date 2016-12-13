@@ -163,3 +163,5 @@ export class Notification {
    */
   public urlArgs: string[];
 }
+
+export function token(token: (string | Buffer)) : string
