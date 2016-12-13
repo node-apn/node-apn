@@ -137,10 +137,10 @@ notification.aps.category = "nodejs";
     "alert":{
       "body":"Hello, world!",
       "title":"node-apn",
-      "action":"npm install",
-      "mutable-content": 1
+      "action":"npm install"
     },
     "badge":10,
+    "mutable-content": 1,
     "category":"nodejs"
   }
 }
