@@ -61,6 +61,7 @@ export interface ResponseFailure {
   status?: string;
   response?: {
     reason: string;
+    timestamp?: string;
   };
 }
 
