@@ -59,11 +59,11 @@ func sendNotification(user) {
     response.failed.forEach( (failure) => {
       if (failure.error) {
         // A transport-level error occurred (e.g. network problem)
-        notificationError(user, token, failure.error);
+        notificationError(user, failure.device, failure.error);
       } else {
         // `failure.status` is the HTTP status code
         // `failure.response` is the JSON payload
-        notificationFailed(user, token, failure.status, failure.response);
+        notificationFailed(user, failure.device, failure.status, failure.response);
       }
     });
   });
