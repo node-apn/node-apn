@@ -179,4 +179,4 @@ Multiple notifications with same collapse identifier are displayed to the user a
 
 > When displaying notifications, the system visually groups notifications with the same thread identifier together.
 
-[pl]:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html "Local and Push Notification Programming Guide: Apple Push Notification Service"
+[pl]:https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html "Local and Push Notification Programming Guide: Apple Push Notification Service"
