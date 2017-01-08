@@ -91,7 +91,7 @@ This table shows the name of the setter, with the key-path of the underlying pro
 | `alert`             | `aps.alert`                 | `String` or `Object`|
 | `body`              | `aps.alert.body`            | `String`            |
 | `locKey`            | `aps.alert.loc-key`         | `String`            |
-| `locArgs`           | `aps.alert.loc-args`        | `String`            |
+| `locArgs`           | `aps.alert.loc-args`        | `Array`             |
 | `title`             | `aps.alert.title`           | `String`            |
 | `titleLocKey`       | `aps.alert.title-loc-key`   | `String`            |
 | `titleLocArgs`      | `aps.alert.title-loc-args`  | `Array`             |
