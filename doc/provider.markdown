@@ -88,7 +88,7 @@ If a failed notification was instead caused by an **error** then it will have an
 ```javascript
 {
   device: "834c8b48e6254e47435d74720b1d4a13e3e57d0bf318333c284c1db8ce8ddc58",
-  error: Error, // An Error object containing details about the failure.
+  error: Error // An Error object containing details about the failure.
 }
 ```
 
