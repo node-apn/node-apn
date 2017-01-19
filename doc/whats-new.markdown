@@ -47,7 +47,7 @@ function setup() {
   let connection = new apn.Provider(configuration);
 }
 
-func sendNotification(user) {
+function sendNotification(user) {
   let note = new apn.Notification();
   note.alert = "Hello " + user.name;
   note.topic = "io.github.node-apn.test"
