@@ -59,9 +59,9 @@ var options = {
   token: {
     key: "path/to/key.p8",
     keyId: "T0K3NK3Y1D",
-    teamId: "T34M1D",
+    teamId: "T34M1D"
   },
-  production: false,
+  production: false
 };
 
 var apnProvider = new apn.Provider(options);
