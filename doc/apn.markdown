@@ -17,9 +17,9 @@ let provider = new apn.Provider({
   token: {
     key: "path/to/key.pem",
     keyId: "key-id",
-    teamId: "developer-team-id",
+    teamId: "developer-team-id"
   },
-  production: false,
+  production: false
 );
 ```
 
