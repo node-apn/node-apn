@@ -45,6 +45,7 @@ describe("Endpoint", function () {
     sinon.stub(streams.connection, "pipe");
 
     streams.connection._allocateId = sinon.stub();
+    streams.connection.ping = sinon.stub();
 
     streams.compressor.setTableSizeLimit = sinon.spy();
     streams.decompressor.setTableSizeLimit = sinon.spy();
