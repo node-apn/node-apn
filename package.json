@@ -28,11 +28,11 @@
     "url": "https://github.com/node-apn/node-apn.git"
   },
   "dependencies": {
-    "debug": "^2.3.2",
+    "debug": "^2.6.0",
     "http2": "https://github.com/node-apn/node-http2/archive/apn-2.1.2.tar.gz",
-    "node-forge": "^0.6.45",
-    "jsonwebtoken": "^7.1.9",
-    "verror": "^1.8.1"
+    "node-forge": "^0.6.48",
+    "jsonwebtoken": "^7.2.1",
+    "verror": "^1.9.0"
   },
   "devDependencies": {
     "chai": "3.x",
