@@ -1,5 +1,10 @@
 ## Changelog
 
+2.1.3:
+* Add thread-id to notification payload (#484)
+* Workaround an issue where APNS would return an HTTP 500 and make the connection unusable (#449, #480)
+* Regularily renew JSON web token (#449, #480)
+
 2.1.2:
 * Add TypeScript type definitions (#441, #465)
 * Update node-http2 fork to 3.3.6 and add stream.upstream not defined check (#444)
