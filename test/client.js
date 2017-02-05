@@ -4,6 +4,32 @@ const sinon = require("sinon");
 const stream = require("stream");
 const EventEmitter = require("events");
 
+function builtNotification() {
+  return {
+    headers: {},
+    body: JSON.stringify({ aps: { badge: 1 } }),
+  };
+}
+
+function FakeStream(deviceId, statusCode, response) {
+  const fakeStream = new stream.Transform({
+    transform: sinon.spy(function(chunk, encoding, callback) {
+      expect(this.headers).to.be.calledOnce;
+
+      const headers = this.headers.firstCall.args[0];
+      expect(headers[":path"].substring(10)).to.equal(deviceId);
+
+      this.emit("headers", {
+        ":status": statusCode
+      });
+      callback(null, Buffer.from(JSON.stringify(response) || ""));
+    })
+  });
+  fakeStream.headers = sinon.stub();
+
+  return fakeStream;
+}
+
 describe("Client", function () {
   let fakes, Client;
 
@@ -122,6 +148,7 @@ describe("Client", function () {
                 generation: 0,
                 current: "fake-token",
                 regenerate: sinon.stub(),
+                isExpired: sinon.stub()
               };
 
               client = new Client( { address: "testapi", token: fakes.token } );
@@ -521,6 +548,7 @@ describe("Client", function () {
           generation: 0,
           current: "fake-token",
           regenerate: sinon.stub(),
+          isExpired: sinon.stub()
         }
 
         fakes.streams = [
@@ -640,6 +668,39 @@ describe("Client", function () {
 
           return expect(client.write(builtNotification(), "adfe5969")).to.eventually.have.property("status", "403");
         });
+
+        it("regenerate token", function () {
+          fakes.stream = new FakeStream("abcd1234", "200");
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+          fakes.token.isExpired = function (current, validSeconds) {
+            return true;
+          }
+
+          let client = new Client({
+            address: "testapi",
+            token: fakes.token
+          });
+          
+          return client.write(builtNotification(), "abcd1234")
+            .then(function () {
+              expect(fakes.token.generation).to.equal(1);
+            });
+        });
+
+        it("internal server error", function () {
+          fakes.stream = new FakeStream("abcd1234", "500", { reason: "InternalServerError" });
+          fakes.stream.connection = sinon.stub();
+          fakes.stream.connection.close = sinon.stub();
+          fakes.endpointManager.getStream.onCall(0).returns(fakes.stream);
+
+          let client = new Client({
+            address: "testapi",
+            token: fakes.token
+          });
+          
+          return expect(client.write(builtNotification(), "abcd1234")).to.eventually.have.deep.property("error.jse_shortmsg","Error 500, stream ended unexpectedly");
+        });
       });
     });
   });
@@ -709,29 +770,3 @@ describe("Client", function () {
     });
   });
 });
-
-function builtNotification() {
-  return {
-    headers: {},
-    body: JSON.stringify({ aps: { badge: 1 } }),
-  };
-}
-
-function FakeStream(deviceId, statusCode, response) {
-  const fakeStream = new stream.Transform({
-    transform: sinon.spy(function(chunk, encoding, callback) {
-      expect(this.headers).to.be.calledOnce;
-
-      const headers = this.headers.firstCall.args[0];
-      expect(headers[":path"].substring(10)).to.equal(deviceId);
-
-      this.emit("headers", {
-        ":status": statusCode
-      });
-      callback(null, Buffer.from(JSON.stringify(response) || ""));
-    })
-  });
-  fakeStream.headers = sinon.stub();
-
-  return fakeStream;
-}

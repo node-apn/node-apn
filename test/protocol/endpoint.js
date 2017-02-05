@@ -18,7 +18,7 @@ describe("Endpoint", function () {
   beforeEach(function () {
     fakes = {
       tls: {
-        connect: sinon.stub(),
+        connect: sinon.stub()
       },
       protocol: {
         Connection:   sinon.stub(),
@@ -110,12 +110,12 @@ describe("Endpoint", function () {
                 address: "localtest", port: 443
               });
 
-              expect(fakes.tls.connect).to.be.calledWith(sinon.match({
-                host: "localtest",
-                port: 443,
-                servername: "localtest"
-              }));
-            });
+            expect(fakes.tls.connect).to.be.calledWith(sinon.match({
+              host: "localtest",
+              port: 443,
+              servername: "localtest"
+            }));
+          });
         });
       });
 
@@ -723,6 +723,38 @@ describe("Endpoint", function () {
       endpoint.destroy();
 
       expect(streams.socket.destroy).to.be.called.once;
+    });
+  });
+
+  describe("ping", function () {
+    let endpoint;
+    beforeEach(function () {
+      streams.connection.ping = (a) => {};
+      sinon.stub(streams.connection, "ping", (callback) => {
+        callback();
+      });
+      this.clock = sinon.useFakeTimers();
+      endpoint = new Endpoint({
+        heartBeat: 1
+      });
+    });
+    afterEach(function () {
+      this.clock.restore();
+    });
+
+    it("should update last success pinged time", function () {
+      this.clock.tick(10);
+      expect(endpoint._lastSuccessPingedTime).to.not.equal(null);
+    });
+
+    it("should throw error when pinged failed", function () {
+      endpoint._lastSuccessPingedTime = Date.now() - endpoint._pingedThreshold;
+      try {
+        this.clock.tick(10);
+      } catch (error) {
+        var e = error;
+      }
+      expect(endpoint.lastError).to.have.string("Not receiving Ping response after");
     });
   });
 });

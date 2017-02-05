@@ -9,6 +9,7 @@ describe("perpareToken", function () {
     fakes = {
       sign: sinon.stub(),
       resolve: sinon.stub(),
+      decode: sinon.stub(),
     };
 
     prepareToken = require("../../../lib/credentials/token/prepare")(fakes);
@@ -107,6 +108,33 @@ describe("perpareToken", function () {
           expect(token.current).to.equal("generated-token");
         });
       });
+
+      context("`isExpired` called with expired token", function () {
+        let token;
+        beforeEach(function () {
+          fakes.resolve.withArgs("key.pem").returns("keyData");
+          fakes.decode.onCall(0).returns({iat:Math.floor(Date.now() / 1000)-1});
+          token = prepareToken(testOptions);
+        });
+
+        it("token is not expired", function () {
+          expect(token.isExpired(0)).to.equal(true);
+        });
+      });
+
+      context("`isExpired` called with valid token", function () {
+        let token;
+        beforeEach(function () {
+          fakes.resolve.withArgs("key.pem").returns("keyData");
+          fakes.decode.onCall(0).returns({iat:Math.floor(Date.now() / 1000)});
+          token = prepareToken(testOptions);
+        });
+
+        it("token is not expired", function () {
+          expect(token.isExpired(5)).to.equal(false);
+        });
+      });
+      
     });
   });
 
