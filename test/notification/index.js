@@ -77,6 +77,17 @@ describe("Notification", function() {
 			});
 		});
 
+		describe("when aps properties are given by setters", function() {
+			it("should not mutate the originally given paylaod object", function() {
+				let payload = {"foo": "bar", "baz": 1};
+				note.payload = payload;
+				note.badge = 1;
+				note.sound = "ping.aiff";
+				note.toJSON();
+				expect(payload).to.deep.equal({"foo": "bar", "baz": 1});
+			});
+		});
+
 		describe("when aps payload is present", function() {
 			beforeEach(function() {
 				note.payload = {"foo": "bar", "baz": 1, "aps": { "badge": 1, "alert": "Hi there!" }};
