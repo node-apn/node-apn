@@ -1,3 +1,7 @@
+/// <reference types="node" />
+
+import { EventEmitter } from 'events';
+
 export interface ProviderToken {
   /**
    * The filename of the provider token key (as supplied by Apple) to load from disk, or a Buffer/String containing the key data.
@@ -70,7 +74,7 @@ export interface Responses {
   failed: ResponseFailure[];
 }
 
-export class Provider {
+export class Provider extends EventEmitter {
   constructor(options: ProviderOptions);
   /**
    * This is main interface for sending notifications. Create a Notification object and pass it in, along with a single recipient or an array of them and node-apn will take care of the rest, delivering a copy of the notification to each recipient.
