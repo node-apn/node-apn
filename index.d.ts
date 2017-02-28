@@ -56,6 +56,28 @@ export interface ProviderOptions {
   connectionRetryLimit?: number;
 }
 
+interface ApsAlert {
+  body?: string
+  "loc-key"?: string
+  "loc-args"?: any[]
+  title?: string
+  "title-loc-key"?: string
+  "title-loc-args"?: any[]
+  action?: string
+  "action-loc-key"?: string
+}
+
+interface Aps {
+  alert?: string | ApsAlert
+  "launch-image"?: string
+  badge?: number
+  sound?: string
+  "content-available"?: undefined | 1
+  "mutable-content"?: undefined | 1
+  "url-args"?: string[]
+  category?: string
+}
+
 export interface ResponseSent {
   device: string;
 }
@@ -134,6 +156,8 @@ export class Notification {
    * This Object is JSON encoded and sent as the notification payload. When properties have been set on notification.aps (either directly or with convenience setters) these are added to the payload just before it is sent. If payload already contains an aps property it is replaced.
    */
   public payload: any;
+  public aps: Aps;
+
   /**
    * If supplied this payload will be encoded and transmitted as-is. The convenience setters will have no effect on the JSON output.
    */
