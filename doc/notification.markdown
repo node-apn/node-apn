@@ -1,6 +1,6 @@
 ## Class: apn.Notification
 
-A `Notification` enapsulates data to be sent to a device and handles JSON encoding for transmission. See the [payload documentation][pl] for more details.
+A `Notification` encapsulates data to be sent to a device and handles JSON encoding for transmission. See the [payload documentation][pl] for more details.
 
 ### Initialization
 
