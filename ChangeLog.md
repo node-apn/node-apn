@@ -2,7 +2,7 @@
 
 2.1.4:
 * Update APN dev endpoint (#528)
-* Update node-http2 fork to 2.1.3 (#471)
+* Update node-http2 fork to 2.1.4 (#471)
 
 2.1.3:
 * Add thread-id to notification payload (#484)
