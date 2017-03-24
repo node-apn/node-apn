@@ -1,5 +1,10 @@
 ## Changelog
 
+2.1.4:
+* Don't mutate passed in payload object
+* Change APNs development endpoint to api.development.push.apple.com
+* Update node-http2 fork
+
 2.1.3:
 * Add thread-id to notification payload (#484)
 * Workaround an issue where APNS would return an HTTP 500 and make the connection unusable (#449, #480)
