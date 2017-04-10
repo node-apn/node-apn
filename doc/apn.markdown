@@ -20,7 +20,7 @@ let provider = new apn.Provider({
     teamId: "developer-team-id"
   },
   production: false
-);
+});
 ```
 
 See the [Provider documentation](provider.markdown) for more information.
