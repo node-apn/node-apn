@@ -57,7 +57,7 @@ Create a new connection to the Apple Push Notification provider API, passing a d
 ```javascript
 var options = {
   token: {
-    key: "path/to/key.pem",
+    key: "path/to/APNsAuthKey_XXXXXXXXXX.p8",
     keyId: "key-id",
     teamId: "developer-team-id"
   },
