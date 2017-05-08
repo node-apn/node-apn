@@ -104,6 +104,7 @@ This table shows the name of the setter, with the key-path of the underlying pro
 | `mutableContent`    | `aps.mutable-content`       | `1`                 |
 | `urlArgs`           | `aps.url-args`              | `Array`             |
 | `category`          | `aps.category`              | `String`            |
+| `threadId`          | `aps.thread-id`             | `String`            |
 | `mdm`               | `mdm`                       | `String`            |
 
 When the notification is transmitted these properties will be added to the output before encoding.
@@ -174,9 +175,5 @@ Provide one of the following values:
 #### notification.collapseId
 
 Multiple notifications with same collapse identifier are displayed to the user as a single notification. The value should not exceed 64 bytes.
-
-#### notification.threadId
-
-> When displaying notifications, the system visually groups notifications with the same thread identifier together.
 
 [pl]:https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html "Local and Push Notification Programming Guide: Apple Push Notification Service"
