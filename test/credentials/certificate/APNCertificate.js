@@ -65,14 +65,14 @@ describe("APNCertificate", function() {
       expect(new APNCertificate(cert).validity())
         .to.have.property("notBefore")
         .and
-        .to.eql(new Date("2015-01-01T00:00:00"));
+        .to.eql(new Date("2015-01-01T00:00:00Z"));
     });
 
     it("returns an object containing notAfter", function() {
       expect(new APNCertificate(cert).validity())
         .to.have.property("notAfter")
         .and
-        .to.eql(new Date("2025-01-01T00:00:00"));
+        .to.eql(new Date("2025-01-01T00:00:00Z"));
     });
   });
 
