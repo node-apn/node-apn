@@ -1,5 +1,11 @@
 ## Changelog
 
+2.1.5:
+* Improve typescript type definitions (#536)
+* Several documentation improvements (#537, #547, #550, #555, #560, #560)
+* Update dependencies (#566)
+* Update .gitignore and add .nvmrc (#573)
+
 2.1.4:
 * Don't mutate passed in payload object
 * Change APNs development endpoint to api.development.push.apple.com
