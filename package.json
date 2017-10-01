@@ -28,17 +28,17 @@
     "url": "https://github.com/node-apn/node-apn.git"
   },
   "dependencies": {
-    "debug": "^2.6.8",
-    "http2": "https://github.com/node-apn/node-http2/archive/apn-2.1.4.tar.gz",
+    "debug": "^3.1.0",
+    "http2": "^3.3.7",
+    "jsonwebtoken": "^8.0.1",
     "node-forge": "^0.7.1",
-    "jsonwebtoken": "^7.4.1",
     "verror": "^1.10.0"
   },
   "devDependencies": {
-    "chai": "3.x",
+    "chai": "^3.5.0",
     "chai-as-promised": "*",
     "mocha": "*",
-    "sinon": "^1.12.2",
+    "sinon": "^1.17.7",
     "sinon-chai": "^2.6.0"
   },
   "scripts": {
