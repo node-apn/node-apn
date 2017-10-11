@@ -37,7 +37,9 @@ node-apn
 
 [npm][] is the preferred installation method:
 
-  $ npm install apn --save
+```bash
+$ npm install apn --save
+```
 
 ## Quick Start
 
