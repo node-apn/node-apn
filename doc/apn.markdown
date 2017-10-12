@@ -2,9 +2,9 @@
 
 node-apn provides a non-blocking, fully managed interface to push notifications to iOS devices using the Apple Push Notification System.
 
-To being using the APN Module simply `let apn = require('apn')`.
+To begin using the APN Module simply `let apn = require('apn')`.
 
-If you are not familiar with how the Apple Push Notificaion System (APNS) works, it is recommended that you read the [Local and Push Notification Programming Guide][programming-guide], in particular the section on [The Path of a Remote Notification][push-path].
+If you are not familiar with how the Apple Push Notification System (APNS) works, it is recommended that you read the [Local and Push Notification Programming Guide][programming-guide], in particular the section on [The Path of a Remote Notification][push-path].
 
 ## The Basics
 
