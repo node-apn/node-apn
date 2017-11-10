@@ -2,6 +2,7 @@
 
 const sinon = require("sinon");
 const stream = require("stream");
+const EventEmitter = require("events");
 
 const bunyanLogger = sinon.match({
   fatal: sinon.match.func,
@@ -15,10 +16,13 @@ const bunyanLogger = sinon.match({
 describe("Endpoint", function () {
   let fakes, streams, Endpoint;
 
-  beforeEach(function () {
+  beforeEach(function () {    
     fakes = {
       tls: {
         connect: sinon.stub()
+      },
+      http: {
+        request: sinon.stub()
       },
       protocol: {
         Connection:   sinon.stub(),
@@ -30,18 +34,20 @@ describe("Endpoint", function () {
     };
 
     streams = {
-      socket:       new stream.PassThrough(),
-      connection:   new stream.PassThrough(),
-      serializer:   new stream.PassThrough(),
-      deserializer: new stream.PassThrough(),
-      compressor:   new stream.PassThrough(),
-      decompressor: new stream.PassThrough(),
+      socket:         new stream.PassThrough(),
+      tunneledSocket: new stream.PassThrough(),
+      connection:     new stream.PassThrough(),
+      serializer:     new stream.PassThrough(),
+      deserializer:   new stream.PassThrough(),
+      compressor:     new stream.PassThrough(),
+      decompressor:   new stream.PassThrough(),
     };
 
     // These streams should never actually pass writable -> readable
     // otherwise the tests create an infinite loop. The real streams terminate.
     // PassThrough is just an easy way to inspect the stream behaviour.
     sinon.stub(streams.socket, "pipe");
+    sinon.stub(streams.tunneledSocket, "pipe");
     sinon.stub(streams.connection, "pipe");
 
     streams.connection._allocateId = sinon.stub();
@@ -105,10 +111,10 @@ describe("Endpoint", function () {
         });
 
         context("host is not omitted", function () {
-            it("falls back on 'address'", function () {
-              new Endpoint({
-                address: "localtest", port: 443
-              });
+          it("falls back on 'address'", function () {
+            new Endpoint({
+              address: "localtest", port: 443
+            });
 
             expect(fakes.tls.connect).to.be.calledWith(sinon.match({
               host: "localtest",
@@ -161,6 +167,138 @@ describe("Endpoint", function () {
 
         expect(endSpy).to.have.been.calledOnce;
       });
+    });
+
+    context("using an HTTP proxy", function () {
+      let endpointOptions;
+      let fakeHttpRequest;
+
+      beforeEach(function(){
+        endpointOptions = {
+          address: "localtest", 
+          port: 443,
+          proxy: {host: "proxyaddress", port: 8080}
+        };
+
+        fakeHttpRequest = new EventEmitter();
+        Object.assign(fakeHttpRequest, {
+          end: sinon.stub()
+        });        
+
+        fakes.http.request
+          .withArgs(sinon.match({
+            host: "proxyaddress",
+            port: 8080,
+            method: "CONNECT",
+            headers: { Connection: "Keep-Alive" },
+            path: "localtest:443",
+          }))
+          .returns(fakeHttpRequest);
+      });
+
+      it("sends an HTTP CONNECT request to the proxy", function () {
+        const endpoint = new Endpoint(endpointOptions);
+        
+        expect(fakeHttpRequest.end).to.have.been.called.once;
+      });
+
+      it("bubbles error events from the HTTP request", function () {
+        const endpoint = new Endpoint(endpointOptions);
+        const errorSpy = sinon.spy();
+        endpoint.on("error", errorSpy);
+
+        fakeHttpRequest.emit("error", "this should be bubbled");
+
+        expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+      });
+
+      it("opens tls socket using the tunnel socket from the HTTP request", function() {
+        const endpoint = new Endpoint(endpointOptions);
+        const httpSocket = {the: "HTTP socket"};
+        fakeHttpRequest.emit("connect", null, httpSocket);
+
+        expect(fakes.tls.connect).to.have.been.called.once;
+        expect(fakes.tls.connect).to.have.been.calledWith(sinon.match({
+          socket: httpSocket,
+          host: "localtest",
+          port: 443
+        }));
+      });
+
+      it("uses all the additional options when openning the tls socket using the tunnel socket from the HTTP request", function() {
+        endpointOptions = Object.assign(endpointOptions, {
+          address: "localtestaddress", host: "localtest", port: 443,
+          pfx: "pfxData", cert: "certData",
+          key: "keyData", passphrase: "p4ssphr4s3",
+          rejectUnauthorized: true,
+          ALPNProtocols: ["h2"]
+        });
+        const endpoint = new Endpoint(endpointOptions);
+        const httpSocket = {the: "HTTP socket"};
+        fakeHttpRequest.emit("connect", null, httpSocket);
+
+        expect(fakes.tls.connect).to.have.been.calledWith(sinon.match({
+          socket: httpSocket,
+          host: "localtest",
+          port: 443,
+          servername: "localtestaddress",
+          pfx: "pfxData", cert: "certData",
+          key: "keyData", passphrase: "p4ssphr4s3",
+          rejectUnauthorized: true,
+          ALPNProtocols: ["h2"]
+        }));
+      });
+
+      context("tunnel established", function () {
+        let endpoint;
+        let httpSocket;
+        
+        beforeEach(function(){          
+          endpoint = new Endpoint(endpointOptions);
+          httpSocket = {the: "HTTP socket"};
+
+          fakes.tls.connect.withArgs(sinon.match({
+            socket: httpSocket,
+            host: "localtest",
+            port: 443
+          })).returns(streams.tunneledSocket);
+          sinon.spy(streams.tunneledSocket, "write");
+
+          fakeHttpRequest.emit("connect", null, httpSocket);
+        });
+
+        it("writes the HTTP/2 prelude", function () {          
+          const HTTP2_PRELUDE = Buffer.from("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n");
+          
+          expect(streams.tunneledSocket.write.firstCall).to.be.calledWith(HTTP2_PRELUDE);
+        });
+
+        it("emits 'connect' event once secure connection with end host is established", function () {          
+          const connect = sinon.spy();
+
+          endpoint.on("connect", connect);
+          streams.tunneledSocket.emit("secureConnect");
+          expect(connect).to.be.calledOnce;
+        });
+
+        it("bubbles error events", function () {
+          const errorSpy = sinon.spy();
+          endpoint.on("error", errorSpy);
+  
+          streams.tunneledSocket.emit("error", "this should be bubbled");
+  
+          expect(errorSpy).to.have.been.calledWith("this should be bubbled");
+        });
+  
+        it("bubbles end events", function () {
+          const endSpy = sinon.spy();
+          endpoint.on("end", endSpy);
+  
+          streams.tunneledSocket.emit("end");
+  
+          expect(endSpy).to.have.been.calledOnce;
+        });
+      });      
     });
 
     describe("HTTP/2 layer", function () {

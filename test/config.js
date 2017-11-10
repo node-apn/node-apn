@@ -27,6 +27,7 @@ describe("config", function () {
       production: false,
       address: "api.development.push.apple.com",
       port: 443,
+      proxy: null,
       rejectUnauthorized: true,
       connectionRetryLimit: 10,
       heartBeat: 60000,
