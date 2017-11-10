@@ -12,6 +12,7 @@ const config = require("./lib/config")({
 });
 
 const tls = require("tls");
+const http = require("http");
 
 const framer     = require("http2/lib/protocol/framer");
 const compressor = require("http2/lib/protocol/compressor");
@@ -26,6 +27,7 @@ const protocol = {
 
 const Endpoint = require("./lib/protocol/endpoint")({
   tls,
+  http,
   protocol,
 });
 

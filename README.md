@@ -75,6 +75,29 @@ For more information about configuration options consult the [provider documenta
 
 Help with preparing the key and certificate files for connection can be found in the [wiki][certificateWiki]
 
+#### Connecting through an HTTP proxy
+
+If you need to connect through an HTTP proxy, you simply need to provide the `proxy: {host, port}` option when creating the provider. For example:
+
+```javascript
+var options = {
+  token: {
+    key: "path/to/APNsAuthKey_XXXXXXXXXX.p8",
+    keyId: "key-id",
+    teamId: "developer-team-id"
+  },
+  proxy: {
+    host: "192.168.10.92",
+    port: 8080
+  }
+  production: false
+};
+
+var apnProvider = new apn.Provider(options);
+```
+
+The provider will first send an HTTP CONNECT request to the specified proxy in order to establish an HTTP tunnel. Once established, it will create a new secure connection to the Apple Push Notification provider API through the tunnel.
+
 ### Sending a notification
 To send a notification you will first need a device token from your app as a string
 
