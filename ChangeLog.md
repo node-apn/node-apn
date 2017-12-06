@@ -1,5 +1,12 @@
 ## Changelog
 
+3.0.0:
+
+* Native Node.js HTTP/2 client
+* Requires Node.js 8.9.1 or later
+* Breaking changes:
+    * The `status` property of notification results has changed from `string` to `number`
+
 2.1.5:
 * Improve typescript type definitions (#536)
 * Several documentation improvements (#537, #547, #550, #555, #560, #560)
@@ -29,7 +36,7 @@
 * JSON Web Token support (#401)
 * Add `threadId` property for notifications
 * Fix a leak caused when an error is emitted from the endpoint manager
-    - Queued notifications would resolve as errored but would remain in the queue, leading them to be repeatedly rejected without termination and causing an error log from node
+    * Queued notifications would resolve as errored but would remain in the queue, leading them to be repeatedly rejected without termination and causing an error log from node
 
 2.0.0:
 
