@@ -1,11 +1,14 @@
 ## Changelog
 
 3.0.0:
-
 * Native Node.js HTTP/2 client
 * Requires Node.js 8.9.1 or later
 * Breaking changes:
     * The `status` property of notification results has changed from `string` to `number`
+
+2.2.0:
+* Proxy support (#163)
+* Updated dependencies
 
 2.1.5:
 * Improve typescript type definitions (#536)

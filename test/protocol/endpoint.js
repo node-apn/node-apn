@@ -199,7 +199,7 @@ describe("Endpoint", function () {
       it("sends an HTTP CONNECT request to the proxy", function () {
         const endpoint = new Endpoint(endpointOptions);
         
-        expect(fakeHttpRequest.end).to.have.been.called.once;
+        expect(fakeHttpRequest.end).to.have.been.calledOnce;
       });
 
       it("bubbles error events from the HTTP request", function () {
@@ -217,7 +217,7 @@ describe("Endpoint", function () {
         const httpSocket = {the: "HTTP socket"};
         fakeHttpRequest.emit("connect", null, httpSocket);
 
-        expect(fakes.tls.connect).to.have.been.called.once;
+        expect(fakes.tls.connect).to.have.been.calledOnce;
         expect(fakes.tls.connect).to.have.been.calledWith(sinon.match({
           socket: httpSocket,
           host: "localtest",
@@ -860,7 +860,7 @@ describe("Endpoint", function () {
     it("destroys the underlying socket", function () {
       endpoint.destroy();
 
-      expect(streams.socket.destroy).to.be.called.once;
+      expect(streams.socket.destroy).to.be.calledOnce;
     });
   });
 
@@ -868,7 +868,7 @@ describe("Endpoint", function () {
     let endpoint;
     beforeEach(function () {
       streams.connection.ping = (a) => {};
-      sinon.stub(streams.connection, "ping", (callback) => {
+      sinon.stub(streams.connection, "ping").callsFake((callback) => {
         callback();
       });
       this.clock = sinon.useFakeTimers();

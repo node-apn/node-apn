@@ -526,10 +526,12 @@ describe("Client", function () {
     //       });
     //     });
 
-    //     it("resolves with 2 errors", function () {
-    //       return promises.then( response => {
-    //         expect(response[1]).to.deep.equal({ device: "adfe5969", error: new Error("endpoint failed") });
-    //         expect(response[2]).to.deep.equal({ device: "abcd1335", error: new Error("endpoint failed") });
+    //    it("resolves with 2 errors", function () {
+    //      return promises.then( response => {
+    //        expect(response[1]).to.have.property("device", "adfe5969");
+    //        expect(response[1]).to.have.nested.property("error.message", "endpoint failed");
+    //        expect(response[2]).to.have.property("device", "abcd1335");
+    //        expect(response[2]).to.have.nested.property("error.message", "endpoint failed");
     //       })
     //     });
 
@@ -699,10 +701,10 @@ describe("Client", function () {
     //         token: fakes.token
     //       });
           
-    //       return expect(client.write(builtNotification(), "abcd1234")).to.eventually.have.deep.property("error.jse_shortmsg","Error 500, stream ended unexpectedly");
-    //     });
-    //   });
-    // });
+    //      return expect(client.write(builtNotification(), "abcd1234")).to.eventually.have.nested.property("error.jse_shortmsg","Error 500, stream ended unexpectedly");
+    //    });
+    //  });
+    //});
   });
 
   describe("shutdown", function () {

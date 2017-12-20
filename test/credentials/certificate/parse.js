@@ -46,7 +46,7 @@ describe("parseCredentials", function() {
     describe("having passphrase", function() {
       beforeEach(function() {
         fakes.parsePkcs12.withArgs("encryptedPfxData", "apntest").returns({ key: pfxKey, certificates: [pfxCert] });
-        fakes.parsePkcs12.withArgs("encryptedPfxData", sinon.match.any).throws(new Error("unable to read credentials, incorrect passphrase"));
+        fakes.parsePkcs12.withArgs("encryptedPfxData", sinon.match((value) => {return value !== "apntest"})).throws(new Error("unable to read credentials, incorrect passphrase"));
       });
 
       it("returns the parsed key", function() {
@@ -79,7 +79,7 @@ describe("parseCredentials", function() {
     describe("having passphrase", function() {
       beforeEach(function() {
         fakes.parsePemKey.withArgs("encryptedPemKeyData", "apntest").returns(pemKey);
-        fakes.parsePemKey.withArgs("encryptedPemKeyData", sinon.match.any).throws(new Error("unable to load key, incorrect passphrase"));
+        fakes.parsePemKey.withArgs("encryptedPemKeyData", sinon.match((value) => {return value !== "apntest"})).throws(new Error("unable to load key, incorrect passphrase"));
       });
 
       it("returns the parsed key", function() {

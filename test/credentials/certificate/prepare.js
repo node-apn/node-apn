@@ -85,7 +85,7 @@ describe("perpareCertificate", function () {
       });
 
       it("contains the CA data", function() {
-        return expect(credentials).to.have.deep.property("ca[0]", "myCaData");
+        return expect(credentials).to.have.nested.property("ca[0]", "myCaData");
       });
 
       it("includes passphrase", function() {
