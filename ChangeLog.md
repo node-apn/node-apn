@@ -1,5 +1,9 @@
 ## Changelog
 
+2.2.0:
+* Proxy support (#163)
+* Updated dependencies
+
 2.1.5:
 * Improve typescript type definitions (#536)
 * Several documentation improvements (#537, #547, #550, #555, #560, #560)
