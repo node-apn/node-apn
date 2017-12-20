@@ -141,12 +141,11 @@ describe("Provider", function() {
 
         it("resolves with the device token, status code and response or error of the unsent notifications", function () {
           return promise.then( (response) => {
-            expect(response.failed).to.deep.equal([
-              { device: "adfe5969", status: "400", response: { reason: "MissingTopic" }},
-              { device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }},
-              { device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }},
-              { device: "fbcde238", error: new Error("connection failed") },
-            ]);
+            expect(response.failed[0]).to.deep.equal({ device: "adfe5969", status: "400", response: { reason: "MissingTopic" }});
+            expect(response.failed[1]).to.deep.equal({ device: "abcd1335", status: "410", response: { reason: "BadDeviceToken", timestamp: 123456789 }});
+            expect(response.failed[2]).to.deep.equal({ device: "aabbc788", status: "413", response: { reason: "PayloadTooLarge" }});
+            expect(response.failed[3]).to.have.property("device", "fbcde238");
+            expect(response.failed[3]).to.have.nested.property("error.message", "connection failed");
           });
         });
       });

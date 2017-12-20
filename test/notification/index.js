@@ -18,7 +18,7 @@ describe("Notification", function() {
 			expect(note.payload).to.deep.equal({"foo": "bar"});
 			expect(note.priority).to.equal(5);
 			expect(note.topic).to.equal("io.apn.node");
-			expect(compiledOutput()).to.have.deep.property("aps.badge", 5);
+			expect(compiledOutput()).to.have.nested.property("aps.badge", 5);
 		});
 	});
 
@@ -63,8 +63,8 @@ describe("Notification", function() {
 			});
 
 			it("contains the correct aps properties", function() {
-				expect(compiledOutput()).to.have.deep.property("aps.badge", 1);
-				expect(compiledOutput()).to.have.deep.property("aps.alert", "Hi there!");
+				expect(compiledOutput()).to.have.nested.property("aps.badge", 1);
+				expect(compiledOutput()).to.have.nested.property("aps.alert", "Hi there!");
 			});
 		});
 	});

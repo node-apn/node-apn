@@ -17,13 +17,12 @@ describe("Notification", function() {
 
       it("can be set to a string", function() {
         note.alert = "hello";
-        expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
+        expect(compiledOutput()).to.have.nested.property("aps.alert", "hello");
       });
 
       it("can be set to an object", function() {
         note.alert = {"body": "hello"};
-        expect(compiledOutput()).to.have.deep.property("aps.alert")
-          .that.deep.equals({"body": "hello"});
+        expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {"body": "hello"});
       });
 
       it("can be set to undefined", function() {
@@ -35,7 +34,7 @@ describe("Notification", function() {
       describe("setAlert", function () {
         it("is chainable", function () {
           expect(note.setAlert("hello")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
+          expect(compiledOutput()).to.have.nested.property("aps.alert", "hello");
         });
       });
     });
@@ -52,7 +51,7 @@ describe("Notification", function() {
 
       it("sets alert as a string by default", function () {
         note.body = "Hello, world";
-        expect(compiledOutput()).to.have.deep.property("aps.alert", "Hello, world");
+        expect(compiledOutput()).to.have.nested.property("aps.alert", "Hello, world");
       });
 
       context("alert is already an Object", function () {
@@ -66,14 +65,14 @@ describe("Notification", function() {
 
         it("sets the value correctly", function () {
           note.body = "Hello, world";
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
       });
 
       describe("setBody", function () {
         it("is chainable", function () {
           expect(note.setBody("hello")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert", "hello");
+          expect(compiledOutput()).to.have.nested.property("aps.alert", "hello");
         });
       });
     });
@@ -81,7 +80,7 @@ describe("Notification", function() {
     describe("locKey", function () {
       it("sets the aps.alert.loc-key property", function () {
         note.locKey = "hello_world";
-        expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "hello_world");
+        expect(compiledOutput()).to.have.nested.property("aps.alert.loc\-key", "hello_world");
       });
 
       context("alert is already an object", function () {
@@ -91,8 +90,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "loc-key": "hello_world"});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "loc-key": "hello_world"});
         });
       });
 
@@ -103,18 +101,18 @@ describe("Notification", function() {
         });
 
         it("retains the alert body correctly", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Good Morning");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Good Morning");
         });
 
         it("sets the aps.alert.loc-key property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "good_morning");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.loc\-key", "good_morning");
         });
       });
 
       describe("setLocKey", function () {
         it("is chainable", function () {
           expect(note.setLocKey("good_morning")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-key", "good_morning");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.loc\-key", "good_morning");
         });
       });
     });
@@ -122,8 +120,7 @@ describe("Notification", function() {
     describe("locArgs", function () {
       it("sets the aps.alert.loc-args property", function () {
         note.locArgs = ["arg1", "arg2"];
-        expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
-          .that.deep.equals(["arg1", "arg2"]);
+        expect(compiledOutput()).to.have.deep.nested.property("aps.alert.loc\-args", ["arg1", "arg2"]);
       });
 
       context("alert is already an object", function () {
@@ -133,8 +130,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "loc-args": ["Hi there"]});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "loc-args": ["Hi there"]});
         });
       });
 
@@ -145,20 +141,18 @@ describe("Notification", function() {
         });
 
         it("retains the alert body", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
 
         it("sets the aps.alert.loc-args property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
-            .that.deep.equals(["Hi there"]);
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert.loc\-args", ["Hi there"]);
         });
       });
 
       describe("setLocArgs", function () {
         it("is chainable", function () {
           expect(note.setLocArgs(["Robert"])).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.loc\-args")
-            .that.deep.equals(["Robert"]);
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert.loc\-args", ["Robert"]);
         });
       });
     });
@@ -166,7 +160,7 @@ describe("Notification", function() {
     describe("title", function () {
       it("sets the aps.alert.title property", function () {
         note.title = "node-apn";
-        expect(compiledOutput()).to.have.deep.property("aps.alert.title", "node-apn");
+        expect(compiledOutput()).to.have.nested.property("aps.alert.title", "node-apn");
       });
 
       context("alert is already an object", function () {
@@ -176,8 +170,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "title": "node-apn"});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "title": "node-apn"});
         });
       });
 
@@ -188,18 +181,18 @@ describe("Notification", function() {
         });
 
         it("retains the alert body", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
 
         it("sets the aps.alert.title property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Welcome");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.title", "Welcome");
         });
       });
 
       describe("setTitle", function () {
         it("is chainable", function () {
           expect(note.setTitle("Bienvenue")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.title", "Bienvenue");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.title", "Bienvenue");
         });
       });
     });
@@ -207,7 +200,7 @@ describe("Notification", function() {
     describe("subtitle", function () {
       it("sets the aps.alert.subtitle property", function () {
         note.subtitle = "node-apn";
-        expect(compiledOutput()).to.have.deep.property("aps.alert.subtitle", "node-apn");
+        expect(compiledOutput()).to.have.nested.property("aps.alert.subtitle", "node-apn");
       });
 
       context("alert is already an object", function () {
@@ -217,8 +210,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "subtitle": "node-apn"});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "subtitle": "node-apn"});
         });
       });
 
@@ -229,25 +221,25 @@ describe("Notification", function() {
         });
 
         it("retains the alert body", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
 
         it("sets the aps.alert.subtitle property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.subtitle", "Welcome");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.subtitle", "Welcome");
         });
       });
 
       describe("setSubtitle", function () {
         it("is chainable", function () {
           expect(note.setSubtitle("Bienvenue")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.subtitle", "Bienvenue");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.subtitle", "Bienvenue");
         });
       });
     });
     describe("titleLocKey", function () {
       it("sets the aps.alert.title-loc-key property", function () {
         note.titleLocKey = "Warning";
-        expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "Warning");
+        expect(compiledOutput()).to.have.nested.property("aps.alert.title\-loc\-key", "Warning");
       });
 
       context("alert is already an object", function () {
@@ -257,8 +249,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "title-loc-key": "Warning"});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "title-loc-key": "Warning"});
         });
       });
 
@@ -269,18 +260,18 @@ describe("Notification", function() {
         });
 
         it("retains the alert body correctly", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
 
         it("sets the aps.alert.title-loc-key property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "Warning");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.title\-loc\-key", "Warning");
         });
       });
 
       describe("setAlert", function () {
         it("is chainable", function () {
           expect(note.setTitleLocKey("greeting")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-key", "greeting");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.title\-loc\-key", "greeting");
         });
       });
     });
@@ -288,8 +279,7 @@ describe("Notification", function() {
     describe("titleLocArgs", function () {
       it("sets the aps.alert.title-loc-args property", function () {
         note.titleLocArgs = ["arg1", "arg2"];
-        expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
-          .that.deep.equals(["arg1", "arg2"]);
+        expect(compiledOutput()).to.have.deep.nested.property("aps.alert.title\-loc\-args",["arg1", "arg2"]);
       });
 
       context("alert is already an object", function () {
@@ -299,8 +289,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "title-loc-args": ["Hi there"]});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "title-loc-args": ["Hi there"]});
         });
       });
 
@@ -311,20 +300,18 @@ describe("Notification", function() {
         });
 
         it("retains the alert body", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
 
         it("sets the aps.alert.title-loc-args property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
-            .that.deep.equals(["Hi there"]);
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert.title\-loc\-args", ["Hi there"]);
         });
       });
 
       describe("setTitleLocArgs", function () {
         it("is chainable", function () {
           expect(note.setTitleLocArgs(["iPhone 6s"])).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.title\-loc\-args")
-            .that.deep.equals(["iPhone 6s"]);
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert.title\-loc\-args", ["iPhone 6s"]);
         });
       });
     });
@@ -332,7 +319,7 @@ describe("Notification", function() {
     describe("action", function () {
       it("sets the aps.alert.action property", function () {
         note.action = "View";
-        expect(compiledOutput()).to.have.deep.property("aps.alert.action", "View");
+        expect(compiledOutput()).to.have.nested.property("aps.alert.action", "View");
       });
 
       context("alert is already an object", function () {
@@ -342,8 +329,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "action": "View"});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "action": "View"});
         });
       });
 
@@ -354,18 +340,18 @@ describe("Notification", function() {
         });
 
         it("retains the alert body", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Alert");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Alert");
         });
 
         it("sets the aps.alert.action property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Investigate");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.action", "Investigate");
         });
       });
 
       describe("setAction", function () {
         it("is chainable", function () {
           expect(note.setAction("Reply")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.action", "Reply");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.action", "Reply");
         });
       });
     });
@@ -373,7 +359,7 @@ describe("Notification", function() {
     describe("actionLocKey", function () {
       it("sets the aps.alert.action-loc-key property", function () {
         note.actionLocKey = "reply_title";
-        expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "reply_title");
+        expect(compiledOutput()).to.have.nested.property("aps.alert.action\-loc\-key", "reply_title");
       });
 
       context("alert is already an object", function () {
@@ -383,8 +369,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "launch-image": "test.png", "action-loc-key": "reply_title"});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "launch-image": "test.png", "action-loc-key": "reply_title"});
         });
       });
 
@@ -395,18 +380,18 @@ describe("Notification", function() {
         });
 
         it("retains the alert body correctly", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
 
         it("sets the aps.alert.action-loc-key property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "ignore_title");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.action\-loc\-key", "ignore_title");
         });
       });
 
       describe("setActionLocKey", function () {
         it("is chainable", function () {
           expect(note.setActionLocKey("ignore_title")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.action\-loc\-key", "ignore_title");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.action\-loc\-key", "ignore_title");
         });
       });
     });
@@ -414,8 +399,7 @@ describe("Notification", function() {
     describe("launchImage", function () {
       it("sets the aps.alert.launch-image property", function () {
         note.launchImage = "testLaunch.png";
-        expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image")
-          .that.deep.equals("testLaunch.png");
+        expect(compiledOutput()).to.have.nested.property("aps.alert.launch\-image", "testLaunch.png");
       });
 
       context("alert is already an object", function () {
@@ -425,8 +409,7 @@ describe("Notification", function() {
         });
 
         it("contains all expected properties", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert")
-            .that.deep.equals({body: "Test", "title-loc-key": "node-apn", "launch-image": "apnLaunch.png"});
+          expect(compiledOutput()).to.have.deep.nested.property("aps.alert", {body: "Test", "title-loc-key": "node-apn", "launch-image": "apnLaunch.png"});
         });
       });
 
@@ -437,70 +420,69 @@ describe("Notification", function() {
         });
 
         it("retains the alert body", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.body", "Hello, world");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.body", "Hello, world");
         });
 
         it("sets the aps.alert.launch-image property", function () {
-          expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image")
-            .that.deep.equals("apnLaunch.png");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.launch\-image", "apnLaunch.png");
         })
       });
 
       describe("setLaunchImage", function () {
         it("is chainable", function () {
           expect(note.setLaunchImage("remoteLaunch.png")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.alert.launch\-image", "remoteLaunch.png");
+          expect(compiledOutput()).to.have.nested.property("aps.alert.launch\-image", "remoteLaunch.png");
         });
       });
     });
 
     describe("badge", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("aps.badge");
+        expect(compiledOutput()).to.not.have.nested.property("aps.badge");
       });
 
       it("can be set to a number", function() {
         note.badge = 5;
 
-        expect(compiledOutput()).to.have.deep.property("aps.badge", 5);
+        expect(compiledOutput()).to.have.nested.property("aps.badge", 5);
       });
 
       it("can be set to undefined", function() {
         note.badge = 5;
         note.badge = undefined;
 
-        expect(compiledOutput()).to.not.have.deep.property("aps.badge");
+        expect(compiledOutput()).to.not.have.nested.property("aps.badge");
       });
 
       it("can be set to zero", function() {
         note.badge = 0;
 
-        expect(compiledOutput()).to.have.deep.property("aps.badge", 0);
+        expect(compiledOutput()).to.have.nested.property("aps.badge", 0);
       });
 
       it("cannot be set to a string", function() {
         note.badge = "hello";
 
-        expect(compiledOutput()).to.not.have.deep.property("aps.badge");
+        expect(compiledOutput()).to.not.have.nested.property("aps.badge");
       });
 
       describe("setBadge", function () {
         it("is chainable", function () {
           expect(note.setBadge(7)).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.badge", 7);
+          expect(compiledOutput()).to.have.nested.property("aps.badge", 7);
         });
       });
     });
 
     describe("sound", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("aps.sound");
+        expect(compiledOutput()).to.not.have.nested.property("aps.sound");
       });
 
       it("can be set to a string", function() {
         note.sound = "sound.caf";
 
-        expect(compiledOutput()).to.have.deep.property("aps.sound", "sound.caf");
+        expect(compiledOutput()).to.have.nested.property("aps.sound", "sound.caf");
       });
 
       it("can be set to undefined", function() {
@@ -513,84 +495,84 @@ describe("Notification", function() {
       it("cannot be set to a number", function() {
         note.sound = 5;
 
-        expect(compiledOutput()).to.not.have.deep.property("aps.sound");
+        expect(compiledOutput()).to.not.have.nested.property("aps.sound");
       });
 
       describe("setSound", function () {
         it("is chainable", function () {
           expect(note.setSound("bee.caf")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.sound", "bee.caf");
+          expect(compiledOutput()).to.have.nested.property("aps.sound", "bee.caf");
         });
       });
     });
 
     describe("content-available", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
+        expect(compiledOutput()).to.not.have.nested.property("aps.content\-available");
       });
 
       it("can be set to a boolean value", function() {
         note.contentAvailable = true;
 
-        expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
+        expect(compiledOutput()).to.have.nested.property("aps.content\-available", 1);
       });
 
       it("can be set to `1`", function () {
         note.contentAvailable = 1;
 
-        expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
+        expect(compiledOutput()).to.have.nested.property("aps.content\-available", 1);
       });
 
       it("can be set to undefined", function() {
         note.contentAvailable = true;
         note.contentAvailable = undefined;
 
-        expect(compiledOutput()).to.not.have.deep.property("aps.content\-available");
+        expect(compiledOutput()).to.not.have.nested.property("aps.content\-available");
       });
 
       describe("setContentAvailable", function () {
         it("is chainable", function () {
           expect(note.setContentAvailable(true)).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.content\-available", 1);
+          expect(compiledOutput()).to.have.nested.property("aps.content\-available", 1);
         });
       });
     });
 
     describe("mutable-content", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("aps.mutable\-content");
+        expect(compiledOutput()).to.not.have.nested.property("aps.mutable\-content");
       });
 
       it("can be set to a boolean value", function() {
         note.mutableContent = true;
 
-        expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
+        expect(compiledOutput()).to.have.nested.property("aps.mutable\-content", 1);
       });
 
       it("can be set to `1`", function () {
         note.mutableContent = 1;
 
-        expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
+        expect(compiledOutput()).to.have.nested.property("aps.mutable\-content", 1);
       });
 
       it("can be set to undefined", function() {
         note.mutableContent = true;
         note.mutableContent = undefined;
 
-        expect(compiledOutput()).to.not.have.deep.property("aps.mutable\-content");
+        expect(compiledOutput()).to.not.have.nested.property("aps.mutable\-content");
       });
 
       describe("setMutableContent", function () {
         it("is chainable", function () {
           expect(note.setMutableContent(true)).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.mutable\-content", 1);
+          expect(compiledOutput()).to.have.nested.property("aps.mutable\-content", 1);
         });
       });
     });
 
     describe("mdm", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("mdm");
+        expect(compiledOutput()).to.not.have.nested.property("mdm");
       });
 
       it("can be set to a string", function() {
@@ -603,7 +585,7 @@ describe("Notification", function() {
         note.mdm = "mdm payload";
         note.mdm = undefined;
 
-        expect(compiledOutput()).to.not.have.deep.property("mdm");
+        expect(compiledOutput()).to.not.have.property("mdm");
       });
 
       it("does not include the aps payload", function() {
@@ -616,85 +598,83 @@ describe("Notification", function() {
       describe("setMdm", function () {
         it("is chainable", function () {
           expect(note.setMdm("hello")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("mdm", "hello");
+          expect(compiledOutput()).to.have.property("mdm", "hello");
         });
       });
     });
 
     describe("urlArgs", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
+        expect(compiledOutput()).to.not.have.nested.property("aps.url\-args");
       });
 
       it("can be set to an array", function() {
         note.urlArgs = ["arg1", "arg2"];
 
-        expect(compiledOutput()).to.have.deep.property("aps.url\-args")
-          .that.deep.equals(["arg1", "arg2"]);
+        expect(compiledOutput()).to.have.deep.nested.property("aps.url\-args", ["arg1", "arg2"]);
       });
 
       it("can be set to undefined", function() {
         note.urlArgs = ["arg1", "arg2"];
         note.urlArgs = undefined;
 
-        expect(compiledOutput()).to.not.have.deep.property("aps.url\-args");
+        expect(compiledOutput()).to.not.have.nested.property("aps.url\-args");
       });
 
       describe("setUrlArgs", function () {
         it("is chainable", function () {
           expect(note.setUrlArgs(["A318", "BA001"])).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.url\-args")
-            .that.deep.equals(["A318", "BA001"]);
+          expect(compiledOutput()).to.have.deep.nested.property("aps.url\-args", ["A318", "BA001"]);
         });
       });
     });
 
     describe("category", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("aps.category");
+        expect(compiledOutput()).to.not.have.nested.property("aps.category");
       });
 
       it("can be set to a string", function() {
         note.category = "the-category";
-        expect(compiledOutput()).to.have.deep.property("aps.category", "the-category");
+        expect(compiledOutput()).to.have.nested.property("aps.category", "the-category");
       });
 
       it("can be set to undefined", function() {
         note.category = "the-category";
         note.category = undefined;
-        expect(compiledOutput()).to.not.have.deep.property("aps.category");
+        expect(compiledOutput()).to.not.have.nested.property("aps.category");
       });
 
       describe("setCategory", function () {
         it("is chainable", function () {
           expect(note.setCategory("reminder")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.category", "reminder");
+          expect(compiledOutput()).to.have.nested.property("aps.category", "reminder");
         });
       });
     });
 
     describe("thread-id", function() {
       it("defaults to undefined", function() {
-        expect(compiledOutput()).to.not.have.deep.property("aps.thread\-id");
+        expect(compiledOutput()).to.not.have.nested.property("aps.thread\-id");
       });
 
       it("can be set to a string", function() {
         note.threadId = "the-thread-id";
 
-        expect(compiledOutput()).to.have.deep.property("aps.thread\-id", "the-thread-id");
+        expect(compiledOutput()).to.have.nested.property("aps.thread\-id", "the-thread-id");
       });
 
       it("can be set to undefined", function() {
         note.threadId = "the-thread-id";
         note.threadId = undefined;
 
-        expect(compiledOutput()).to.not.have.deep.property("aps.thread\-id");
+        expect(compiledOutput()).to.not.have.nested.property("aps.thread\-id");
       });
 
       describe("setThreadId", function () {
         it("is chainable", function () {
           expect(note.setThreadId("the-thread-id")).to.equal(note);
-          expect(compiledOutput()).to.have.deep.property("aps.thread\-id", "the-thread-id");
+          expect(compiledOutput()).to.have.nested.property("aps.thread\-id", "the-thread-id");
         });
       });
     });

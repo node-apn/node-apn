@@ -56,7 +56,7 @@ describe("Endpoint Manager", function () {
 
           it("is destroyed", function () {
             const endpoint = fakes.Endpoint.firstCall.returnValue;
-            expect(endpoint.destroy).to.be.called.once;
+            expect(endpoint.destroy).to.be.calledOnce;
           });
 
           it("emits wakeup", function (){
@@ -238,7 +238,7 @@ describe("Endpoint Manager", function () {
       });
 
       it("is destroyed", function () {
-        expect(endpoint.destroy).to.be.called.once;
+        expect(endpoint.destroy).to.be.calledOnce;
       });
 
       it("is no longer used for streams", function () {
