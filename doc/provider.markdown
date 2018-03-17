@@ -6,7 +6,8 @@ Options:
 
  - `token` {Object} Configuration for Provider Authentication Tokens. (Defaults to: `null` i.e. fallback to Certificates)
      - `token.key` {Buffer|String} The filename of the provider token key (as supplied by Apple) to load from disk, or a Buffer/String containing the key data.
-     - `token.keyId` {String} The ID of the key issued by Apple
+     - `token.keyId` {String} The ID of the key issued by Apple.
+         - when you download the key from the [Apple Developer Keys page](https://developer.apple.com/account/ios/authkey/), it will have a name like `AuthKey_A1BC23DE45.p8` the `A1BC23DE45` is the `keyId` that you need here (per [@touskar](https://github.com/node-apn/node-apn/issues/477#issuecomment-263531121)).
      - `token.teamId` {String} ID of the team associated with the provider token key
 
  - `cert` {Buffer|String} The filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
