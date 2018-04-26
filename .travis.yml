@@ -4,6 +4,7 @@ node_js:
 - 6
 - 8
 - 9
+- 10
 after_success:
 - npm install -g istanbul
 - npm install coveralls
