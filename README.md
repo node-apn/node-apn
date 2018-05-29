@@ -129,7 +129,7 @@ apnProvider.send(note, deviceToken).then( (result) => {
 This will result in the the following notification payload being sent to the device
 
 ```json
-{"messageFrom":"John Appelseed","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
+{"messageFrom":"John Appleseed","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
 ```
 
 You should only create one `Provider` per-process for each certificate/key pair you have. You do not need to create a new `Provider` for each notification. If you are only sending notifications to one app then there is no need for more than one `Provider`. 
