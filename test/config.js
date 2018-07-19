@@ -31,6 +31,7 @@ describe("config", function () {
       rejectUnauthorized: true,
       connectionRetryLimit: 10,
       heartBeat: 60000,
+      expires: null,
     });
   });
 
@@ -157,12 +158,13 @@ describe("config", function () {
       });
 
       it("loads and validates the TLS credentials", function () {
-        fakes.prepareCertificate.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData"});
+        fakes.prepareCertificate.returns({"cert": "certData", "key": "keyData", "pfx": "pfxData", "expires": "2019-04-15T18:03:39.000Z"});
 
         let configuration = config({});
         expect(configuration).to.have.property("cert", "certData");
         expect(configuration).to.have.property("key", "keyData");
         expect(configuration).to.have.property("pfx", "pfxData");
+        expect(configuration).to.have.property("expires", "2019-04-15T18:03:39.000Z");
       });
 
       it("prepares the CA certificates", function () {
