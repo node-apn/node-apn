@@ -1,6 +1,7 @@
 "use strict";
 
 const sinon = require("sinon");
+let fakeCredentials;
 
 describe("perpareCertificate", function () {
   let fakes, prepareCertificate;
@@ -94,6 +95,18 @@ describe("perpareCertificate", function () {
     });
   });
 
+  describe("credential file should be parsed", function() {
+    beforeEach(function() {
+      fakes.load.returns({ cert: "myCertData", key: "myKeyData" });
+      fakes.parse.returns(fakeCredentials());
+    });
+
+    it("should resolve with the credentials", function() {
+      let credentials = prepareCertificate({ cert: "myUnparseableCert.pem", key: "myUnparseableKey.pem", production: true });
+      return expect(credentials).to.deep.equal({ cert: "myCertData", key: "myKeyData", expires: '2050-01-30T12:00:00.000Z' });
+    });
+  });
+
   describe("credential file cannot be parsed", function() {
     beforeEach(function() {
       fakes.load.returns({ cert: "myCertData", key: "myKeyData" });
@@ -137,3 +150,30 @@ describe("perpareCertificate", function () {
     });
   });
 });
+
+fakeCredentials = function() {
+  return {
+    key: {
+      _fingerprint: "fingerprint1",
+      fingerprint: function() { return this._fingerprint; },
+    },
+    certificates: [{
+      _key: {
+        _fingerprint: "fingerprint1",
+        fingerprint: function() { return this._fingerprint; },
+      },
+      _validity: {
+        notBefore: new Date('2000-01-30T12:00:00.000Z'),
+        notAfter: new Date('2050-01-30T12:00:00.000Z')
+      },
+      key: function() { return this._key; },
+      validity: function() {
+        return this._validity;
+      },
+      environment: function() {
+        return { production: true, sandbox: false };
+      }
+    }],
+    production: true
+  };
+};
