@@ -19,6 +19,16 @@ describe("validateCredentials", function() {
     });
   });
 
+  describe("with missing certificate", function() {
+    it("throws", function() {
+      credentials.certificates = [];
+
+      expect(function() {
+        validateCredentials(credentials);
+      }).to.throw(/certificate is missing/);
+    });
+  });
+
   describe("with mismatched key and certificate", function() {
     it("throws", function() {
       sinon.stub(credentials.certificates[0]._key, "fingerprint").returns("fingerprint2");
