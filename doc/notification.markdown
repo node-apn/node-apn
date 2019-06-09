@@ -172,6 +172,14 @@ Provide one of the following values:
   * `5` - The push message is sent at a time that conserves power on the device receiving it.
 
 
+#### notification.pushType
+
+(Required when delivering notifications to devices running iOS 13 and later, or watchOS 6 and later. Ignored on earlier system versions.)
+
+The type of the notification. The value of this header is `alert` or `background`. Specify `alert` when the delivery of your notification displays an alert, plays a sound, or badges your app's icon. Specify `background` for silent notifications that do not interact with the user.
+
+The value of this header must accurately reflect the contents of your notification's payload. If there is a mismatch, or if the header is missing on required systems, APNs may delay the delivery of the notification or drop it altogether.
+
 #### notification.collapseId
 
 Multiple notifications with same collapse identifier are displayed to the user as a single notification. The value should not exceed 64 bytes.

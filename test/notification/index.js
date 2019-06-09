@@ -154,6 +154,14 @@ describe("Notification", function() {
 				expect(note.headers()).to.have.property("apns-collapse-id", "io.apn.collapse");
 			});
 		});
+
+		context("pushType is set", function () {
+			it("contains the apns-push-type header", function () {
+				note.pushType = "alert";
+
+				expect(note.headers()).to.have.property("apns-push-type", "alert");
+			});
+		});
 	});
 
 	describe("compile", function() {
