@@ -1,12 +1,16 @@
 {
   "name": "apn",
-  "description": "An interface to the Apple Push Notification service for Node.js",
+  "description": "An interface to the Apple Push Notification service for Node.js; forked by Keyo to resolve an HTTP2 bug",
   "version": "2.2.0",
   "author": "Andrew Naylor <argon@mkbot.net>",
   "contributors": [
     {
       "name": "Florian Reinhart",
       "email": "florian.reinhart@gmail.com"
+    },
+    {
+      "name": "David Edelhart",
+      "email": "dave@keyo.com"
     }
   ],
   "keywords": [
@@ -25,11 +29,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/node-apn/node-apn.git"
+    "url": "https://github.com/keyoai/node-apn.git"
   },
   "dependencies": {
     "debug": "^3.1.0",
-    "http2": "https://github.com/node-apn/node-http2/archive/apn-2.1.4.tar.gz",
     "node-forge": "^0.7.1",
     "jsonwebtoken": "^8.1.0",
     "verror": "^1.10.0"
