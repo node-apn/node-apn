@@ -150,6 +150,7 @@ export class Notification {
   public priority: number;
 
   public collapseId: string;
+  public pushType: string;
   public threadId: string;
 
   /**
