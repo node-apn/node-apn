@@ -171,6 +171,13 @@ Provide one of the following values:
     > The push notification must trigger an alert, sound, or badge on the device. It is an error to use this priority for a push notification that contains only the `content-available` key.
   * `5` - The push message is sent at a time that conserves power on the device receiving it.
 
+#### notification.pushType
+
+(Required when delivering notifications to devices running iOS 13 and later, or watchOS 6 and later. Ignored on earlier system versions.)
+
+The type of the notification. The value of this header is `alert` or `background`. Specify `alert` when the delivery of your notification displays an alert, plays a sound, or badges your app's icon. Specify `background` for silent notifications that do not interact with the user.
+
+The value of this header must accurately reflect the contents of your notification's payload. If there is a mismatch, or if the header is missing on required systems, APNs may delay the delivery of the notification or drop it altogether.
 
 #### notification.collapseId
 
