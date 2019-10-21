@@ -17,11 +17,26 @@ export interface ProviderToken {
   teamId: string;
 }
 
+export interface ProxyOptions {
+  /**
+   * The proxy host
+   */
+  host: string;
+  /**
+   * The proxy port
+   */
+  port: number;
+}
+
 export interface ProviderOptions {
   /**
    * Configuration for Provider Authentication Tokens. (Defaults to: null i.e. fallback to Certificates)
    */
   token?: ProviderToken;
+  /**
+   * Configuration for Proxy. (Defaults to: null)
+   */
+  proxy?: ProxyOptions;
   /**
    * The filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
    */
