@@ -1,12 +1,12 @@
 /// <reference types="node" />
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 export interface ProviderToken {
   /**
    * The filename of the provider token key (as supplied by Apple) to load from disk, or a Buffer/String containing the key data.
    */
-  key: Buffer|string;
+  key: Buffer | string;
   /**
    * The ID of the key issued by Apple
    */
@@ -25,19 +25,19 @@ export interface ProviderOptions {
   /**
    * The filename of the connection certificate to load from disk, or a Buffer/String containing the certificate data. (Defaults to: `cert.pem`)
    */
-  cert?: string|Buffer;
+  cert?: string | Buffer;
   /**
    * The filename of the connection key to load from disk, or a Buffer/String containing the key data. (Defaults to: `key.pem`)
    */
-  key?: string|Buffer;
+  key?: string | Buffer;
   /**
    * An array of trusted certificates. Each element should contain either a filename to load, or a Buffer/String (in PEM format) to be used directly. If this is omitted several well known "root" CAs will be used. - You may need to use this as some environments don't include the CA used by Apple (entrust_2048).
    */
-  ca?: (string|Buffer)[];
+  ca?: (string | Buffer)[];
   /**
    * File path for private key, certificate and CA certs in PFX or PKCS12 format, or a Buffer containing the PFX data. If supplied will always be used instead of certificate and key above.
    */
-  pfx?: string|Buffer;
+  pfx?: string | Buffer;
   /**
    * The passphrase for the connection key, if required
    */
@@ -57,25 +57,25 @@ export interface ProviderOptions {
 }
 
 interface ApsAlert {
-  body?: string
-  "loc-key"?: string
-  "loc-args"?: any[]
-  title?: string
-  "title-loc-key"?: string
-  "title-loc-args"?: any[]
-  action?: string
-  "action-loc-key"?: string
+  body?: string;
+  "loc-key"?: string;
+  "loc-args"?: any[];
+  title?: string;
+  "title-loc-key"?: string;
+  "title-loc-args"?: any[];
+  action?: string;
+  "action-loc-key"?: string;
 }
 
 interface Aps {
-  alert?: string | ApsAlert
-  "launch-image"?: string
-  badge?: number
-  sound?: string
-  "content-available"?: undefined | 1
-  "mutable-content"?: undefined | 1
-  "url-args"?: string[]
-  category?: string
+  alert?: string | ApsAlert;
+  "launch-image"?: string;
+  badge?: number;
+  sound?: string;
+  "content-available"?: undefined | 1;
+  "mutable-content"?: undefined | 1;
+  "url-args"?: string[];
+  category?: string;
 }
 
 export interface ResponseSent {
@@ -92,7 +92,7 @@ export interface ResponseFailure {
 }
 
 export interface Responses {
-  sent:   ResponseSent[];
+  sent: ResponseSent[];
   failed: ResponseFailure[];
 }
 
@@ -103,11 +103,26 @@ export class Provider extends EventEmitter {
    *
    * A "recipient" is a String containing the hex-encoded device token.
    */
-  send(notification: Notification, recipients: string|string[]): Promise<Responses>;
+  send(notification: Notification, recipients: string | string[]): Promise<Responses>;
   /**
    * Indicate to node-apn that it should close all open connections when the queue of pending notifications is fully drained. This will allow your application to terminate.
    */
   shutdown(): void;
+}
+
+export interface NotificationSoundOptions {
+  /**
+   * The critical alert flag. Set to 1 to enable the critical alert.
+   */
+  critical?: number;
+  /**
+   * The name of a sound file in your app’s main bundle or in the Library/Sounds folder of your app’s container directory. Specify the string "default" to play the system sound. For information about how to prepare sounds, see {@link https://developer.apple.com/documentation/usernotifications/unnotificationsound|UNNotificationSound}.
+   */
+  name?: string;
+  /**
+   * The volume for the critical alert’s sound. Set this to a value between 0.0 (silent) and 1.0 (full volume).
+   */
+  volume?: number;
 }
 
 export interface NotificationAlertOptions {
@@ -169,13 +184,13 @@ export class Notification {
    */
   public badge: number;
   /**
-   * The value to specify for `payload.aps.sound`
+   * The value to specify for `payload.aps.sound` can be either a `String` or an `Object` as outlined by the payload documentation.
    */
-  public sound: string;
+  public sound: string | NotificationSoundOptions;
   /**
    * The value to specify for `payload.aps.alert` can be either a `String` or an `Object` as outlined by the payload documentation.
    */
-  public alert: string|NotificationAlertOptions;
+  public alert: string | NotificationAlertOptions;
   /**
    * Setting this to true will specify "content-available" in the payload when it is compiled.
    */
@@ -187,11 +202,11 @@ export class Notification {
   /**
    * The value to specify for the `mdm` field where applicable.
    */
-  public mdm: string|Object;
+  public mdm: string | Object;
   /**
    * The value to specify for `payload.aps['url-args']`. This used for Safari Push NOtifications and should be an array of values in accordance with the Web Payload Documentation.
    */
   public urlArgs: string[];
 }
 
-export function token(token: (string | Buffer)) : string
+export function token(token: string | Buffer): string;
