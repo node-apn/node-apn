@@ -10,8 +10,8 @@ i.e. Account updates for users with one-or-more device tokens
 const apn = require("apn");
 
 let users = [
-  { name: "Wendy", "devices": ["<insert device token>", "<insert device token>"]},
-  { name: "John",  "devices": ["<insert device token>"]},
+  { name: "Wendy", "devices": ["<insert device token>", "<insert device token>"] },
+  { name: "John", "devices": ["<insert device token>"] },
 ];
 
 let service = new apn.Provider({
@@ -19,7 +19,7 @@ let service = new apn.Provider({
   key: "certificates/key.pem",
 });
 
-users.forEach( (user) => {
+users.forEach((user) => {
 
   let note = new apn.Notification();
   note.alert = `Hey ${user.name}, I just sent my first Push Notification`;
@@ -29,10 +29,10 @@ users.forEach( (user) => {
 
   console.log(`Sending: ${note.compile()} to ${user.devices}`);
 
-  service.send(note, user.devices).then( result => {
-      console.log("sent:", result.sent.length);
-      console.log("failed:", result.failed.length);
-      console.log(result.failed);
+  service.send(note, user.devices).then(result => {
+    console.log("sent:", result.sent.length);
+    console.log("failed:", result.failed.length);
+    console.log(result.failed);
   });
 });
 

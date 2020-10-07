@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  node-apn:
+    volumes:
+      - .:/home/node-apn:cached
+ 

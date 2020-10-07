@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  node-apn:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /home/node-apn
+    image: node-apn:latest
+    volumes:
+      - .:/home/node-apn
+    container_name: node-apn
+    restart: on-failure
+    command: ["/bin/bash", "-c", "npm install && while sleep 1000; do :; done"]
