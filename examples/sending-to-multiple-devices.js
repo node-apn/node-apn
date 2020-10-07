@@ -21,17 +21,17 @@ let service = new apn.Provider({
 });
 
 let note = new apn.Notification({
-	alert:  "Breaking News: I just sent my first Push Notification",
+  alert: "Breaking News: I just sent my first Push Notification",
 });
 
 // The topic is usually the bundle identifier of your application.
 note.topic = "<bundle identifier>";
 
 console.log(`Sending: ${note.compile()} to ${tokens}`);
-service.send(note, tokens).then( result => {
-    console.log("sent:", result.sent.length);
-    console.log("failed:", result.failed.length);
-    console.log(result.failed);
+service.send(note, tokens).then(result => {
+  console.log("sent:", result.sent.length);
+  console.log("failed:", result.failed.length);
+  console.log(result.failed);
 });
 
 
