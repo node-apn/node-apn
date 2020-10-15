@@ -192,6 +192,15 @@ export class Notification {
    * The value to specify for `payload.aps['url-args']`. This used for Safari Push NOtifications and should be an array of values in accordance with the Web Payload Documentation.
    */
   public urlArgs: string[];
+  /**
+   * Returns the Byte length of the notification payload
+   */
+  public length(): number;
+  /**
+   * Compile a notification down to its JSON format. Compilation is final, changes made to the notification after this method is called will not be reflected in further calls.
+   * Returns the stringified JSON payload for the notification.
+   */
+  public compile(): string;
 }
 
 export function token(token: (string | Buffer)) : string
