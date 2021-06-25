@@ -30,7 +30,7 @@
   "dependencies": {
     "debug": "^3.1.0",
     "http2": "https://github.com/node-apn/node-http2/archive/apn-2.1.4.tar.gz",
-    "node-forge": "^0.7.1",
+    "node-forge": "^0.10.0",
     "jsonwebtoken": "^8.1.0",
     "verror": "^1.10.0"
   },
