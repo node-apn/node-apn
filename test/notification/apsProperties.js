@@ -679,6 +679,32 @@ describe("Notification", function() {
       });
     });
 
+    describe("interruption-level", function() {
+      it("defaults to undefined", function() {
+        expect(compiledOutput()).to.not.have.nested.property("aps.interruption\-level");
+      });
+
+      it("can be set to a string", function() {
+        note.interruptionLevel = "the-interruption-level";
+
+        expect(compiledOutput()).to.have.nested.property("aps.interruption\-level", "the-interruption-level");
+      });
+
+      it("can be set to undefined", function() {
+        note.interruptionLevel = "the-interruption-level";
+        note.interruptionLevel = undefined;
+
+        expect(compiledOutput()).to.not.have.nested.property("aps.interruption\-level");
+      });
+
+      describe("setInterruptionLevel", function () {
+        it("is chainable", function () {
+          expect(note.setInterruptionLevel("the-interruption-level")).to.equal(note);
+          expect(compiledOutput()).to.have.nested.property("aps.interruption\-level", "the-interruption-level");
+        });
+      });
+    });
+
     context("when no aps properties are set", function() {
       it("is not present", function() {
         expect(compiledOutput().aps).to.be.undefined;

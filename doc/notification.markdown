@@ -105,6 +105,7 @@ This table shows the name of the setter, with the key-path of the underlying pro
 | `urlArgs`           | `aps.url-args`              | `Array`             |
 | `category`          | `aps.category`              | `String`            |
 | `threadId`          | `aps.thread-id`             | `String`            |
+| `interruptionLevel` | `aps.interruption-level`    | `String`            |
 | `mdm`               | `mdm`                       | `String`            |
 
 When the notification is transmitted these properties will be added to the output before encoding.
