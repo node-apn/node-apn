@@ -1,4 +1,5 @@
 const debug = require("debug")("apn");
+debug.log = console.log.bind(console);
 
 const credentials = require("./lib/credentials")({
   logger: debug
@@ -11,36 +12,16 @@ const config = require("./lib/config")({
   prepareCA: credentials.ca,
 });
 
-const tls = require("tls");
-const http = require("http");
-
-const framer     = require("http2/lib/protocol/framer");
-const compressor = require("http2/lib/protocol/compressor");
-
-const protocol = {
-  Serializer:   framer.Serializer,
-  Deserializer: framer.Deserializer,
-  Compressor:   compressor.Compressor,
-  Decompressor: compressor.Decompressor,
-  Connection:   require("http2/lib/protocol/connection").Connection,
-};
-
-const Endpoint = require("./lib/protocol/endpoint")({
-  tls,
-  http,
-  protocol,
-});
-
-const EndpointManager = require("./lib/protocol/endpointManager")({
-  Endpoint,
-});
+const http2 = require("http2");
 
 const Client = require("./lib/client")({
+  logger: debug,
   config,
-  EndpointManager,
+  http2,
 });
 
 const Provider = require("./lib/provider")({
+  logger: debug,
   Client,
 });
 
