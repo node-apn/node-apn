@@ -88,7 +88,9 @@ var options = {
   },
   proxy: {
     host: "192.168.10.92",
-    port: 8080
+    port: 8080,
+    username: "user", // optional
+    password: "secretPassword" // optional
   },
   production: false
 };
