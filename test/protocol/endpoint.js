@@ -169,6 +169,39 @@ describe("Endpoint", function () {
       });
     });
 
+    describe("HTTP proxy config", function() {
+      const getSystemProxy = require("../../lib/protocol/proxy/getSystemProxy")
+      var env;
+
+      // Mock environment and backup original
+      before(function () {
+        env = process.env;
+        process.env = { 
+          "http_proxy": "http://user1:pass@localhost:8080",
+          "https_proxy": "http://user2:pass@localhost:8081"
+        };
+      });
+
+      it("retrieves http proxy config from env", function() {
+        const proxy = getSystemProxy(80);
+        expect(proxy).to.have.property("username", "user1")
+        expect(proxy).to.have.property("port", "8080")
+        expect(proxy).to.have.property("protocol", "http:")
+      });
+
+      it("retrieves https proxy config from env", function() {
+        const proxy = getSystemProxy(443);
+        expect(proxy).to.have.property("username", "user2")
+        expect(proxy).to.have.property("port", "8081")
+        expect(proxy).to.have.property("protocol", "http:")
+      });
+
+      // restoring system envs back
+      after(function () {
+        process.env = env;
+      });
+    });
+
     context("using an HTTP proxy", function () {
       let endpointOptions;
       let fakeHttpRequest;
@@ -177,7 +210,10 @@ describe("Endpoint", function () {
         endpointOptions = {
           address: "localtest", 
           port: 443,
-          proxy: {host: "proxyaddress", port: 8080}
+          proxy: {
+            host: "proxyaddress", 
+            port: 8080
+          }
         };
 
         fakeHttpRequest = new EventEmitter();
