@@ -132,6 +132,40 @@ This will result in the the following notification payload being sent to the dev
 {"messageFrom":"John Appleseed","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message"}}
 ```
 
+Create a live activity notification object, configuring it with the relevant parameters (See the [notification documentation](doc/notification.markdown) for more details.)
+
+```javascript
+var note = new apn.Notification();
+
+note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+note.badge = 3;
+note.sound = "ping.aiff";
+note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
+note.payload = {'messageFrom': 'John Appleseed'};
+note.topic = "<your-app-bundle-id>";
+pushType = "liveactivity",
+relevanceScore = 75,
+timestamp = Math.floor(Date.now() / 1000); // Current time
+staleDate = Math.floor(Date.now() / 1000) + (8 * 3600); // Expires 8 hour from now.
+event = "update"
+contentState = {}
+```
+
+Send the notification to the API with `send`, which returns a promise.
+
+```javascript
+apnProvider.send(note, deviceToken).then( (result) => {
+  // see documentation for an explanation of result
+});
+```
+
+This will result in the the following notification payload being sent to the device
+
+
+```json
+{"messageFrom":"John Appleseed","aps":{"badge":3,"sound":"ping.aiff","alert":"\uD83D\uDCE7 \u2709 You have a new message", "relevance-score":75,"timestamp":1683129662,"stale-date":1683216062,"event":"update","content-state":{}}}
+```
+
 You should only create one `Provider` per-process for each certificate/key pair you have. You do not need to create a new `Provider` for each notification. If you are only sending notifications to one app then there is no need for more than one `Provider`. 
 
 If you are constantly creating `Provider` instances in your app, make sure to call `Provider.shutdown()` when you are done with each provider to release its resources and memory.
