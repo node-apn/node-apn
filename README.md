@@ -143,12 +143,12 @@ note.sound = "ping.aiff";
 note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
 note.payload = {'messageFrom': 'John Appleseed'};
 note.topic = "<your-app-bundle-id>";
-pushType = "liveactivity",
-relevanceScore = 75,
-timestamp = Math.floor(Date.now() / 1000); // Current time
-staleDate = Math.floor(Date.now() / 1000) + (8 * 3600); // Expires 8 hour from now.
-event = "update"
-contentState = {}
+note.pushType = "liveactivity",
+note.relevanceScore = 75,
+note.timestamp = Math.floor(Date.now() / 1000); // Current time
+note.staleDate = Math.floor(Date.now() / 1000) + (8 * 3600); // Expires 8 hour from now.
+note.event = "update"
+note.contentState = {}
 ```
 
 Send the notification to the API with `send`, which returns a promise.
