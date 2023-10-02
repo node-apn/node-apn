@@ -1,9 +1,5 @@
 [<p align="center"><img src="doc/logo.png" alt="node-apn" width="450" height="auto"></p>][node-apn]
 
-# ⚠️
-Unfortunately this repo is deprecated. However there is a fork maintained by the Parse Open Source Community
- [@parse/node-apn](https://github.com/parse-community/node-apn)
-
 node-apn
 ========
 
