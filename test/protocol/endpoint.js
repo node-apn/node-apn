@@ -169,6 +169,53 @@ describe("Endpoint", function () {
       });
     });
 
+    context("HTTP proxy env config", function() {
+      const getSystemProxy = require("../../lib/protocol/proxy/getSystemProxy")
+      const shouldProxy = require("../../lib/protocol/proxy/shouldProxy")
+      var env;
+
+      // Mock environment and backup original
+      before(function () {
+        env = process.env;
+        process.env = { 
+          "http_proxy": "http://user1:pass@localhost:8080",
+          "https_proxy": "http://user2:pass@localhost:8081",
+          "no_proxy": "*.example.com,example.com,.example.org,localhost:443,:4444"
+        };
+      });
+
+      it("retrieves http proxy config from env", function() {
+        const proxy = getSystemProxy(80);
+        expect(proxy).to.have.property("username", "user1")
+        expect(proxy).to.have.property("port", "8080")
+        expect(proxy).to.have.property("protocol", "http:")
+      });
+
+      it("retrieves https proxy config from env", function() {
+        const proxy = getSystemProxy(443);
+        expect(proxy).to.have.property("username", "user2")
+        expect(proxy).to.have.property("port", "8081")
+        expect(proxy).to.have.property("protocol", "http:")
+      });
+
+      it("respects no_proxy env", function() {
+        expect(shouldProxy("test.example.com", 443)).to.equal(false) // Matches: *.example.com
+        expect(shouldProxy("example.com", 443)).to.equal(false) // Matches: example.com
+        expect(shouldProxy("test.example.org", 443)).to.equal(false) // Matches: *.example.org
+        expect(shouldProxy("example.org", 443)).to.equal(true) // Should NOT match: *.example.org
+        expect(shouldProxy("localhost", 443)).to.equal(false) // Should match: localhost:443
+        expect(shouldProxy("localhost", 80)).to.equal(true) // Should not match: localhost:443
+        expect(shouldProxy("localhost", 4444)).to.equal(false) // Should match: :4444
+        expect(shouldProxy("example.org", 4444)).to.equal(false) // Should match: :4444
+        expect(shouldProxy("differentdomain", 8080)).to.equal(true) // Should not match anything..
+      });
+
+      // restoring system envs back
+      after(function () {
+        process.env = env;
+      });
+    });
+
     context("using an HTTP proxy", function () {
       let endpointOptions;
       let fakeHttpRequest;
@@ -177,7 +224,10 @@ describe("Endpoint", function () {
         endpointOptions = {
           address: "localtest", 
           port: 443,
-          proxy: {host: "proxyaddress", port: 8080}
+          proxy: {
+            host: "proxyaddress", 
+            port: 8080
+          }
         };
 
         fakeHttpRequest = new EventEmitter();

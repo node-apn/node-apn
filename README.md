@@ -77,7 +77,7 @@ Help with preparing the key and certificate files for connection can be found in
 
 #### Connecting through an HTTP proxy
 
-If you need to connect through an HTTP proxy, you simply need to provide the `proxy: {host, port}` option when creating the provider. For example:
+The provider will retrieve HTTP proxy connection info from the system environment variables `apn_proxy`, `http_proxy`/`https_proxy`. If you for some reason need to connect through another specific HTTP proxy, you simply need to provide the `proxy: {host, port}` option when creating the provider. For example:
 
 ```javascript
 var options = {
@@ -88,7 +88,9 @@ var options = {
   },
   proxy: {
     host: "192.168.10.92",
-    port: 8080
+    port: 8080,
+    username: "user", // optional
+    password: "secretPassword" // optional
   },
   production: false
 };
@@ -96,7 +98,9 @@ var options = {
 var apnProvider = new apn.Provider(options);
 ```
 
-The provider will first send an HTTP CONNECT request to the specified proxy in order to establish an HTTP tunnel. Once established, it will create a new secure connection to the Apple Push Notification provider API through the tunnel.
+To disable this default HTTP proxy behaviour, simply set the `proxy: false`.
+
+When enabled, the provider will first send an HTTP CONNECT request to the specified proxy in order to establish an HTTP tunnel. Once established, it will create a new secure connection to the Apple Push Notification provider API through the tunnel.
 
 ### Sending a notification
 To send a notification you will first need a device token from your app as a string
