@@ -1,6 +1,9 @@
 ## Changelog
 [Full Changelog](https://github.com/node-apn/node-apn/compare/v3.0.0...master)
 
+3.0.1:
+* NPM audit: update some packages to fix vulnerabilities.
+
 3.0.0: [Full ChangeLog](https://github.com/node-apn/node-apn/compare/v2.2.0...3.0.0)
 * Support zero-valued (0) `expiry`[#649](https://github.com/node-apn/node-apn/pull/649).  Thanks to [Nathan Hamblen](https://github.com/n8han)
 * add support for apns-push-type [#656](https://github.com/node-apn/node-apn/pull/656).  Thanks to [Stefan Trauth](https://github.com/funkenstrahlen)
